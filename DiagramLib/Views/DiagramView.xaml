@@ -1,0 +1,51 @@
+﻿<UserControl x:Class="DiagramLib.Views.DiagramView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:v="clr-namespace:DiagramLib.Views"
+             xmlns:cal="http://www.caliburnproject.org"
+             mc:Ignorable="d" 
+             MinHeight="300" MinWidth="300" >
+    <Border BorderThickness="1" BorderBrush="LightSkyBlue" >
+        <Canvas x:Name="diagram" Background="White" cal:Message.Attach="[Event MouseLeftButtonDown] = [Action DiagramClick($eventArgs,$source)]" >
+          
+                <!-- connectors-->
+        <ItemsControl Background="Transparent" Name="Edges" >
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <v:ConnectionView  
+                                    X1="{Binding X1}" Y1="{Binding Y1}" 
+                                    X2="{Binding X2}" Y2="{Binding Y2}"
+                                    Stroke="Green" StrokeThickness="2" Fill="Green" StrokeDashCap="Square" StrokeDashArray="2"></v:ConnectionView>
+
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas></Canvas>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+
+
+        <!-- attach descriptors -->
+        <ItemsControl Background="Transparent" Name="AttachDescriptors" >
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas></Canvas>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+
+        <!-- Dev node entities-->
+       <ItemsControl Background="Transparent" Name="DiagramItems">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas></Canvas>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+    </Canvas>
+    </Border>
+</UserControl>
