@@ -39,51 +39,26 @@ namespace DiagramLib.Views
         }
 
 
-        public static readonly DependencyProperty X1Property = DependencyProperty.Register("X1", typeof(double), typeof(ConnectionView),
-           new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender));
-
-        public static readonly DependencyProperty Y1Property = DependencyProperty.Register("Y1", typeof(double), typeof(ConnectionView),
-            new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender));
-
-
-        public static readonly DependencyProperty X2Property = DependencyProperty.Register("X2", typeof(double), typeof(ConnectionView),
-            new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender));
-
-        public static readonly DependencyProperty Y2Property = DependencyProperty.Register("Y2", typeof(double), typeof(ConnectionView),
-
-           new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsRender));
-
-
-        [TypeConverter(typeof(LengthConverter))]
-        public double X2
+        public Point FromPoint
         {
-            get { return (double)GetValue(X2Property); }
-            set { SetValue(X2Property, value); }
+            get { return (Point)GetValue(FromPointProperty); }
+            set { SetValue(FromPointProperty, value); }
         }
 
-        [TypeConverter(typeof(LengthConverter))]
-        public double Y2
+        public static readonly DependencyProperty FromPointProperty =
+            DependencyProperty.Register("FromPoint", typeof(Point), typeof(ConnectionView),
+             new FrameworkPropertyMetadata(new Point(0, 0), FrameworkPropertyMetadataOptions.AffectsRender));
+
+
+        public Point ToPoint
         {
-            get { return (double)GetValue(Y2Property); }
-            set { SetValue(Y2Property, value); }
+            get { return (Point)GetValue(ToPointProperty); }
+            set { SetValue(ToPointProperty, value); }
         }
 
-
-        [TypeConverter(typeof(LengthConverter))]
-        public double X1
-        {
-            get { return (double)base.GetValue(X1Property); }
-            set { base.SetValue(X1Property, value); }
-        }
-
-        [TypeConverter(typeof(LengthConverter))]
-        public double Y1
-        {
-            get { return (double)base.GetValue(Y1Property); }
-            set { base.SetValue(Y1Property, value); }
-        }
-
-
+        public static readonly DependencyProperty ToPointProperty =
+            DependencyProperty.Register("ToPoint", typeof(Point), typeof(ConnectionView), 
+            new FrameworkPropertyMetadata(new Point(0,0), FrameworkPropertyMetadataOptions.AffectsRender));
 
         protected override Geometry DefiningGeometry
         {
@@ -115,12 +90,12 @@ namespace DiagramLib.Views
             double sint = Math.Sin(theta);
             double cost = Math.Cos(theta);
 
-            Point pt1 = new Point(X1, Y1); 
+   
             
             double xDiff = X2 - X1;
             Point pt2 = new Point(X1 + (xDiff/3.0), Y1);
             Point pt3 =new Point(X2 - (xDiff / 3.0), Y2);
-            Point pt4 = new Point(X2, this.Y2);
+      
 
             if (vm != null)
             {
@@ -146,12 +121,10 @@ namespace DiagramLib.Views
                     pt3 = new Point(vm.AttachPointTo.Location.X - toOffset, vm.AttachPointTo.Location.Y);
             }
 
-            context.BeginFigure(pt1, false, false);
+            context.BeginFigure(FromPoint, false, false);
 
        
-            context.BezierTo(pt3, pt2,  pt4, true, true);
-
-
+            context.BezierTo(pt3, pt2,  ToPoint, true, true);
         }
     }
 }

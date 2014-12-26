@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiagramDesigner", "DiagramDesigner\DiagramDesigner.csproj", "{1DF8B415-639F-40DF-B24D-8777C5B7C0EF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiagramDesignerExample", "DiagramDesigner\DiagramDesignerExample.csproj", "{1DF8B415-639F-40DF-B24D-8777C5B7C0EF}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DiagramLib", "DiagramLib\DiagramLib.csproj", "{28019A1E-74D2-4481-8825-05961921DB7D}"
 EndProject

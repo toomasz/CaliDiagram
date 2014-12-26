@@ -2,3 +2,4 @@ pack
 packages
 */obj/
 */bin/
+*.suo

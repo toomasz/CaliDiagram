@@ -35,13 +35,8 @@ namespace DiagramLib.ViewModels
             From.LocationChanged += From_LocationChanged;
             To.LocationChanged += To_LocationChanged;
 
-            //    From.SizeChanged += From_SizeChanged;
-            //     To.SizeChanged += To_SizeChanged;
             From.BindingComplete += From_BindingComplete;
             To.BindingComplete += To_BindingComplete;
-            // FromDescriptor = new AttachDescriptorVm();
-            //   ToDescriptor = new AttachDescriptorVm();
-
         }
 
         private DiagramViewModel Diagram;
@@ -68,24 +63,19 @@ namespace DiagramLib.ViewModels
 
         private void AttachPointToOnLocationChanged(AttachPoint ap, Point location)
         {
-            X1 = location.X;
-            Y1 = location.Y;
+            FromPoint = new Point(location.X, location.Y);
         }
 
         void AttachPointFrom_LocationChanged(AttachPoint ap, Point location)
         {
-            X2 = location.X;
-            Y2 = location.Y;
+            ToPoint = new Point(location.X, location.Y);
         }
 
         public DiagramBaseViewModel FromDescriptor { get; set; }
         public DiagramBaseViewModel ToDescriptor { get; set; }
 
-
-
         Point[] AttachPoints(Rect rect)
         {
-
             return new Point[]
             {
                 DiagramHelpers.GetMiddlePoint(AttachDirection.Top, rect),
@@ -101,7 +91,6 @@ namespace DiagramLib.ViewModels
             double d = (Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2));
             return d;
         }
-
 
 
         /// <summary>
@@ -150,67 +139,41 @@ namespace DiagramLib.ViewModels
             set;
         }
 
-        private double _X1;
-        public double X1
+        private Point _FromPoint;
+        public Point FromPoint
         {
-            get { return _X1; }
+            get { return _FromPoint; }
             set
             {
-                if (_X1 != value)
+                if (_FromPoint != value)
                 {
-                    _X1 = value;
-                    NotifyOfPropertyChange(() => X1);
-                }
-            }
-        }
-        private double _Y1;
-        public double Y1
-        {
-            get { return _Y1; }
-            set
-            {
-                if (_Y1 != value)
-                {
-                    _Y1 = value;
-                    NotifyOfPropertyChange(() => Y1);
+                    _FromPoint = value;
+                    NotifyOfPropertyChange(() => FromPoint);
                 }
             }
         }
 
-        private double _X2;
-        public double X2
+        private Point _ToPoint;
+        public Point ToPoint
         {
-            get { return _X2; }
+            get { return _ToPoint; }
             set
             {
-                if (_X2 != value)
+                if (_ToPoint != value)
                 {
-                    _X2 = value;
-                    NotifyOfPropertyChange(() => X2);
+                    _ToPoint = value;
+                    NotifyOfPropertyChange(() => ToPoint);
                 }
             }
         }
 
-        private double _Y2;
-        public double Y2
-        {
-            get { return _Y2; }
-            set
-            {
-                if (_Y2 != value)
-                {
-                    _Y2 = value;
-                    NotifyOfPropertyChange(() => Y2);
-                }
-            }
-        }
+
 
         public AttachPoint AttachPointFrom;
         public AttachPoint AttachPointTo;
 
         public void Dispose()
         {
-
             From.LocationChanged -= From_LocationChanged;
             To.LocationChanged -= To_LocationChanged;
         }
