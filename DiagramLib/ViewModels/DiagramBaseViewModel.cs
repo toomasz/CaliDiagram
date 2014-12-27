@@ -42,7 +42,7 @@ namespace DiagramLib.ViewModels
         {
             get
             {
-                return new Rect(X, Y, Width, Height);
+                return new Rect(Location.X, Location.Y, Width, Height);
             }
         }
 
@@ -79,12 +79,7 @@ namespace DiagramLib.ViewModels
 
         public void SetLocation(double x, double y)
         {
-            if (X == x && Y == y)
-                return;
-            this.X = x;
-            this.Y = y;
-
-            RaiseLocationChanged();
+           SetLocation(new Point(x,y));
         }
 
         public void UpdateAttachPoints()
@@ -94,33 +89,24 @@ namespace DiagramLib.ViewModels
 
         public void SetLocation(Point point)
         {
-            SetLocation(point.X, point.Y);
-        }
-
-        double _x;
-        public double X
-        {
-            get { return _x; }
-            set
+            if (point.X != Location.X || point.Y != Location.Y)
             {
-                if (_x != value)
-                {
-                    _x = value;
-                    NotifyOfPropertyChange(() => X);
-                }
+                Location = new Point(point.X, point.Y);
+                
+                RaiseLocationChanged();
             }
         }
 
-        double _y;
-        public double Y
+        private Point _Location;
+        public Point Location
         {
-            get { return _y; }
+            get { return _Location; }
             set
             {
-                if (_y != value)
+                if (_Location != value)
                 {
-                    _y = value;
-                    NotifyOfPropertyChange(() => Y);
+                    _Location = value;
+                    NotifyOfPropertyChange(() => Location);
                 }
             }
         }
@@ -160,7 +146,8 @@ namespace DiagramLib.ViewModels
 
         public AttachDescriptorPlacement AttachPlacement
         {
-            get; set; }
+            get; set; 
+        }
 
         public AttachPoint Attach(DiagramBaseViewModel controlToAttach, AttachDirection direction)
         {

@@ -48,7 +48,17 @@ namespace DiagramLib.ViewModels
             }
         }
 
-        
+        public void RemoveNode(DiagramBaseViewModel node)
+        {
+            DiagramItems.Remove(node);
+            var edgesToRemove = Edges.Where(edge => edge.From == node || edge.To == node).ToList();
+            foreach (var edge in edgesToRemove)
+            {
+                AttachDescriptors.Remove(edge.FromDescriptor);
+                AttachDescriptors.Remove(edge.ToDescriptor);
+                Edges.Remove(edge);
+            }
+        }
 
         public void SelectNode(DiagramBaseViewModel vm)
         {

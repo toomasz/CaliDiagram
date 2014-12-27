@@ -144,12 +144,12 @@ namespace DiagramLib.ViewModels
 
                 if (direction.Key == AttachDirection.Left || direction.Key == AttachDirection.Right)
                 {
-                    foreach (var tuple in apByPositionOfConnectedTo.OrderBy(a => a.Item2.Y))
+                    foreach (var tuple in apByPositionOfConnectedTo.OrderBy(a => a.Item2.Location.Y))
                         tuple.Item1.Order = n++;
                 }
                 else if(direction.Key == AttachDirection.Top || direction.Key== AttachDirection.Bottom)
                 {
-                    foreach (var tuple in apByPositionOfConnectedTo.OrderBy(a => a.Item2.X))
+                    foreach (var tuple in apByPositionOfConnectedTo.OrderBy(a => a.Item2.Location.X))
                         tuple.Item1.Order = n++;
                 }
                     

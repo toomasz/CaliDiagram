@@ -15,11 +15,8 @@ namespace DiagramLib.ViewModels
     /// </summary>
     public class ConnectionViewModel : PropertyChangedBase, IDisposable
     {
-        public ConnectionViewModel(DiagramBaseViewModel from, DiagramBaseViewModel to, DiagramBaseViewModel fromAd, DiagramBaseViewModel toAd,
-            DiagramViewModel diagramVm
-            )
+        public ConnectionViewModel(DiagramBaseViewModel from, DiagramBaseViewModel to, DiagramBaseViewModel fromAd, DiagramBaseViewModel toAd)
         {
-            this.Diagram = diagramVm;
             this.FromDescriptor = fromAd;
             this.ToDescriptor = toAd;
             FromDescriptor.BelongsTo = this;
@@ -38,8 +35,6 @@ namespace DiagramLib.ViewModels
             From.BindingComplete += From_BindingComplete;
             To.BindingComplete += To_BindingComplete;
         }
-
-        private DiagramViewModel Diagram;
 
         void To_BindingComplete(object sender, EventArgs e)
         {
@@ -63,12 +58,12 @@ namespace DiagramLib.ViewModels
 
         private void AttachPointToOnLocationChanged(AttachPoint ap, Point location)
         {
-            FromPoint = new Point(location.X, location.Y);
+            FromPoint = location;
         }
 
         void AttachPointFrom_LocationChanged(AttachPoint ap, Point location)
         {
-            ToPoint = new Point(location.X, location.Y);
+            ToPoint = location;
         }
 
         public DiagramBaseViewModel FromDescriptor { get; set; }

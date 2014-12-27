@@ -47,32 +47,22 @@ namespace DiagramLib.Views
                
 
                 vm.LocationChanged += vm_LocationChanged;
-                UpdateGuiLocation(vm.X, vm.Y);
+                UpdateGuiLocation(vm.Location.X, vm.Location.Y);
             }
         }
 
         void vm_LocationChanged(object sender, EventArgs e)
         {
-            UpdateGuiLocation(vm.X, vm.Y);
+            UpdateGuiLocation(vm.Location.X, vm.Location.Y);
         }
-        /// <summary>
-        /// Gets or sets additional content for the UserControl
-        /// </summary>
-        public object AdditionalContent
-        {
-            get { return (object)GetValue(AdditionalContentProperty); }
-            set { SetValue(AdditionalContentProperty, value); }
-        }
-        public static readonly DependencyProperty AdditionalContentProperty =
-            DependencyProperty.Register("AdditionalContent", typeof(object), typeof(DiagramBaseView),
-              new PropertyMetadata(null));
+
 
 
         void TreeEntityView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
             var vm = DataContext as DiagramBaseViewModel;
             if (vm != null)
-                UpdateGuiLocation(vm.X, vm.Y);
+                UpdateGuiLocation(vm.Location.X, vm.Location.Y);
         }
 
         private void Control_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
@@ -94,7 +84,15 @@ namespace DiagramLib.Views
 
         void UpdateGuiLocation(double x, double y)
         {
-            RenderTransform = new TranslateTransform(x, y);
+            var rt = RenderTransform as TranslateTransform;
+            if (rt != null)
+            {
+                rt.X = x;
+                rt.Y = y;
+            }
+            else
+                RenderTransform = new TranslateTransform(x, y);
+            
         }
 
 

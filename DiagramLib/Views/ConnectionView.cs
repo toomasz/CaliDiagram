@@ -1,13 +1,7 @@
-﻿using System.Windows.Controls;
-using System.Windows.Input;
-using DiagramLib.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using DiagramLib.ViewModels;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -19,9 +13,6 @@ namespace DiagramLib.Views
         {
             Loaded += ConnectionView_Loaded;
             MouseLeftButtonDown += ConnectionView_MouseLeftButtonDown;
-            Cursor = Cursors.Pen;
-            ContextMenu = new ContextMenu();
-            ContextMenu.Items.Add("Remove");
         }
 
         void ConnectionView_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
@@ -64,17 +55,12 @@ namespace DiagramLib.Views
         {
             get
             {
-
-                // Create a StreamGeometry for describing the shape
                 StreamGeometry geometry = new StreamGeometry();
                 geometry.FillRule = FillRule.EvenOdd;
-
+                
                 using (StreamGeometryContext context = geometry.Open())
-                {
                     InternalDrawArrowGeometry(context);
-                }
-
-                // Freeze the geometry for performance benefits
+                
                 geometry.Freeze();
 
                 return geometry;
@@ -86,15 +72,10 @@ namespace DiagramLib.Views
         /// <span class="code-SummaryComment"></summary></span>
         private void InternalDrawArrowGeometry(StreamGeometryContext context)
         {
-            double theta = Math.Atan2(Y1 - Y2, X1 - X2);
-            double sint = Math.Sin(theta);
-            double cost = Math.Cos(theta);
+            double xDiff = ToPoint.Y - FromPoint.X;
 
-   
-            
-            double xDiff = X2 - X1;
-            Point pt2 = new Point(X1 + (xDiff/3.0), Y1);
-            Point pt3 =new Point(X2 - (xDiff / 3.0), Y2);
+            Point pt2 = new Point(FromPoint.X + (xDiff/3.0), FromPoint.Y);
+            Point pt3 =new Point(ToPoint.X - (xDiff / 3.0), ToPoint.Y);
       
 
             if (vm != null)

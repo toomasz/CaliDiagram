@@ -38,26 +38,17 @@ namespace DiagramDesigner
             }
             if (CurrentMode == DiagramMode.Delete)
             {
-                Diagram1.DiagramItems.Remove(e);
-                var edgesToRemove = Diagram1.Edges.Where(edge => edge.From == e || edge.To == e).ToList();
-                foreach (var edge in edgesToRemove)
-                {
-                    Diagram1.AttachDescriptors.Remove(edge.FromDescriptor);
-                    Diagram1.AttachDescriptors.Remove(edge.ToDescriptor);
-                    Diagram1.Edges.Remove(edge);
-                }
-
-
+                Diagram1.RemoveNode(e);
             }
         }
 
         void Diagram1_OnDiagramClick(object sender, System.Windows.Point e)
         {
             if(CurrentMode == DiagramMode.AddNode1)
-                Diagram1.DiagramItems.Add(new GraphNode1ViewModel("a1") { X = e.X, Y=e.Y});
+                Diagram1.DiagramItems.Add(new GraphNode1ViewModel("a1") { Location = e});
             else if (CurrentMode == DiagramMode.AddNode2)
             {
-                var newNode = new GraphNodeViewModel() {X = e.X, Y = e.Y};
+                var newNode = new GraphNodeViewModel() {Location = e};
                 Diagram1.DiagramItems.Add(newNode);
             }
         }
@@ -76,7 +67,7 @@ namespace DiagramDesigner
             var fromAttachDescriptor = new AttachDescriptorFromViewModel();
             var toAttachDescriptor = new AttachDescriptorToViewModel();
             
-            var connVm = new ConnectionViewModel(from, to, fromAttachDescriptor, toAttachDescriptor, Diagram1);
+            var connVm = new ConnectionViewModel(from, to, fromAttachDescriptor, toAttachDescriptor);
             Diagram1.AttachDescriptors.Add(fromAttachDescriptor);
             Diagram1.AttachDescriptors.Add(toAttachDescriptor);
             Diagram1.Edges.Add(connVm);
