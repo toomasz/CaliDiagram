@@ -65,10 +65,12 @@
     <Compile Include="AppBootstrapper.cs" />
     <Compile Include="ViewModels\AttachDescriptorToViewModel.cs" />
     <Compile Include="ViewModels\AttachDescriptorFromViewModel.cs" />
+    <Compile Include="ViewModels\SlimConnectionViewModel.cs" />
     <Compile Include="ViewModels\GraphNode1ViewModel.cs" />
     <Compile Include="ViewModels\GraphNodeViewModel.cs" />
     <Compile Include="ViewModels\IShell.cs" />
     <Compile Include="ViewModels\AppViewModel.cs" />
+    <Compile Include="ViewModels\ThickConnectionViewModel.cs" />
     <Compile Include="Views\AttachDescriptorToView.xaml.cs">
       <DependentUpon>AttachDescriptorToView.xaml</DependentUpon>
     </Compile>

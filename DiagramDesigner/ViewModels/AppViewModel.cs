@@ -64,13 +64,32 @@ namespace DiagramDesigner
         }
         void AddConnection(DiagramBaseViewModel from, DiagramBaseViewModel to)
         {
-            var fromAttachDescriptor = new AttachDescriptorFromViewModel();
-            var toAttachDescriptor = new AttachDescriptorToViewModel();
-            
-            var connVm = new ConnectionViewModel(from, to, fromAttachDescriptor, toAttachDescriptor);
-            Diagram1.AttachDescriptors.Add(fromAttachDescriptor);
-            Diagram1.AttachDescriptors.Add(toAttachDescriptor);
-            Diagram1.Edges.Add(connVm);
+            ConnectionViewModel connectionViewModel;
+
+            if (from is GraphNodeViewModel && to is GraphNodeViewModel)
+            {
+                connectionViewModel = new ThickConnectionViewModel(from, to)
+                {
+                    FromDescriptor = new AttachDescriptorFromViewModel(),
+                    ToDescriptor = new AttachDescriptorToViewModel()
+                };
+            }
+            else
+            {
+                connectionViewModel = new SlimConnectionViewModel(from, to)
+                {
+                    FromDescriptor = new AttachDescriptorFromViewModel(),
+                    ToDescriptor = new AttachDescriptorToViewModel()
+                };
+            }
+
+            if (connectionViewModel.FromDescriptor != null)
+                Diagram1.AttachDescriptors.Add(connectionViewModel.FromDescriptor);
+            if (connectionViewModel.ToDescriptor != null)
+                Diagram1.AttachDescriptors.Add(connectionViewModel.ToDescriptor);
+
+            Diagram1.Edges.Add(connectionViewModel);
+            connectionViewModel.UpdateConnection();
         }
 
         public DiagramViewModel Diagram1 { get; set; }

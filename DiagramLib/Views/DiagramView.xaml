@@ -14,8 +14,9 @@
         <ItemsControl Background="Transparent" Name="Edges" >
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <v:ConnectionView  FromPoint="{Binding FromPoint}" ToPoint="{Binding ToPoint}"
-                                    Stroke="Green" StrokeThickness="2" Fill="Green" StrokeDashCap="Square" StrokeDashArray="2"></v:ConnectionView>
+                        <v:EdgeView  FromPoint="{Binding AttachPointFrom.Location}" ToPoint="{Binding AttachPointTo.Location}"
+                                           Stroke="{Binding Stroke}" 
+                                           StrokeThickness="{Binding StrokeThickness}"></v:EdgeView>
 
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

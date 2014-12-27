@@ -7,68 +7,7 @@ using System.Windows;
 
 namespace DiagramLib.ViewModels
 {
-    public enum AttachDirection
-    {
-        Top = 0,
-        Right = 1,
-        Bottom = 2,
-        Left = 3,
-        Center,
-        Float
-    };
-
-    public delegate void AttachPointLocationChangedDelegate(AttachPoint ap, Point location);
-
-    public delegate void AttachPointDirectionChangedDelegate(AttachPoint ap, AttachDirection direction);
-
-    public class AttachPoint
-    {
-        public AttachPoint(DiagramBaseViewModel control, AttachDirection direction)
-        {
-            Direction = direction;
-            Control = control;
-        }
-
-        private AttachDirection _direction;
-        public AttachDirection Direction
-        {
-            get { return _direction; }
-            set
-            {
-                if (_direction != value)
-                {
-                    if (DirectionChanging != null)
-                        DirectionChanging(this, value);
-
-                    _direction = value;
-
-                }
-            }
-        }
-        public int Order { get; set; }
-
-        public DiagramBaseViewModel Control { get; private set; }
-
-        public event AttachPointLocationChangedDelegate LocationChanged;
-        public event AttachPointDirectionChangedDelegate DirectionChanging;
-
-        private Point _Location;
-        public Point Location
-        {
-            get { return _Location; }
-            set
-            {
-                if (_Location != value)
-                {
-                    _Location = value;
-                    if (LocationChanged != null)
-                        LocationChanged(this, Location);
-                }
-            }
-        }
-
-        public Point ControlLocation { get; set; }
-    }
+    
 
     public class AttachDescriptorPlacement
     {
@@ -118,10 +57,10 @@ namespace DiagramLib.ViewModels
                 return;
             }
 
-            if (AttachPoints.Any(kv => kv.Value.Count(a => a.Control.Width == 0) > 0))
-            {
-                return;
-            }
+            //if (AttachPoints.Any(kv => kv.Value.Count(a => a.Control.Width == 0) > 0))
+            //{
+            //    return;
+            //}
 
 
             foreach (var direction in AttachPoints)
@@ -132,7 +71,7 @@ namespace DiagramLib.ViewModels
                     new List<Tuple<AttachPoint, DiagramBaseViewModel>>();
                 foreach (var ap in direction.Value)
                 {
-                    ConnectionViewModel cvm = ap.Control.BelongsTo as ConnectionViewModel;
+                    ConnectionViewModel cvm = ap.Connection;
                     if (cvm != null)
                     {
                         DiagramBaseViewModel connTo = (cvm.AttachPointFrom == ap) ? cvm.To : cvm.From;
@@ -165,17 +104,17 @@ namespace DiagramLib.ViewModels
                 var attachPoints = directionPoints.Value;
 
 
-                if (attachPoints.Any(ap => ap.Control.Width == 0))
-                {
+                //if (attachPoints.Any(ap => ap.Control.Width == 0))
+                //{
 
-                }
+                //}
 
                 if (attachPoints.Count == 0)
                     continue;
 
-                int attachSpacing = 2;
-                double groupWidth = attachPoints.Sum(p => p.Control.Width) + attachSpacing * (attachPoints.Count - 1);
-                double groupHeight = attachPoints.Sum(p => p.Control.Height) + attachSpacing * (attachPoints.Count - 1);
+                int attachSpacing = 5;
+                double groupWidth = attachPoints.Sum(p => p.Width) + attachSpacing * (attachPoints.Count - 1);
+                double groupHeight = attachPoints.Sum(p => p.Height) + attachSpacing * (attachPoints.Count - 1);
 
                 var middlePoint = GetPoint(direction, parent.Rect);
 
@@ -186,34 +125,33 @@ namespace DiagramLib.ViewModels
                 {
                     if (direction == AttachDirection.Top || direction == AttachDirection.Bottom)
                     {
-                        attachPoint.Location = new Point(offsetX + (attachPoint.Control.Width / 2), middlePoint.Y);
-                        offsetX += attachPoint.Control.Width + attachSpacing;
+                        attachPoint.Location = new Point(offsetX + (attachPoint.Width / 2), middlePoint.Y);
+                        offsetX += attachPoint.Width + attachSpacing;
                     }
                     else if (direction == AttachDirection.Left || direction == AttachDirection.Right)
                     {
-                        attachPoint.Location = new Point(middlePoint.X, offsetY + (attachPoint.Control.Height / 2));
-                        offsetY += attachPoint.Control.Height + attachSpacing;
+                        attachPoint.Location = new Point(middlePoint.X, offsetY + (attachPoint.Height / 2));
+                        offsetY += attachPoint.Height + attachSpacing;
                     }
 
-                    attachPoint.ControlLocation = DiagramHelpers.GetAttachmentLocation(attachPoint.Control,
-                        attachPoint.Location, attachPoint.Direction);
+                    if (attachPoint.Control != null)
+                    {
+                        attachPoint.ControlLocation = DiagramHelpers.GetAttachmentLocation(attachPoint.Control,
+                            attachPoint.Location, attachPoint.Direction);
 
-              
-                    attachPoint.Control.SetLocation(attachPoint.ControlLocation.X, attachPoint.ControlLocation.Y);
-                  
 
+                        attachPoint.Control.SetLocation(attachPoint.ControlLocation.X, attachPoint.ControlLocation.Y);
+                    }
                 }
             }
         }
 
-        public AttachPoint Attach(DiagramBaseViewModel controlToAttach, AttachDirection direction)
+        public AttachPoint Attach(AttachDirection direction, ConnectionViewModel connection)
         {
-            AttachPoint attachPoint = new AttachPoint(controlToAttach, direction);
-            attachPoint.Control.SizeChanged += Control_SizeChanged;
-            attachPoint.Control.BindingComplete += Control_BindingComplete;
+            AttachPoint attachPoint = new AttachPoint(direction, connection);
             attachPoint.DirectionChanging += attachPoint_DirectionChanging;
             AttachPoints[direction].Add(attachPoint);
-            //UpdatePoints();
+            UpdatePoints();
             return attachPoint;
         }
 
@@ -224,21 +162,9 @@ namespace DiagramLib.ViewModels
             //UpdatePoints();
         }
 
-        void Control_BindingComplete(object sender, EventArgs e)
-        {
-            //UpdatePoints();
-        }
-
-        void Control_SizeChanged(object sender, EventArgs e)
-        {
-            //  UpdatePoints();
-        }
-
         public void Detach(AttachPoint point)
         {
             AttachPoints[point.Direction].Remove(point);
-            point.Control.BindingComplete -= Control_BindingComplete;
-            point.Control.SizeChanged -= Control_SizeChanged;
             point.DirectionChanging -= attachPoint_DirectionChanging;
             //UpdatePoints();
         }

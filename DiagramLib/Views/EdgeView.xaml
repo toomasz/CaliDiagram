@@ -1,11 +1,10 @@
-﻿<UserControl x:Class="DiagramLib.Views.DiagramBaseView"
+﻿<Shape x:Class="DiagramLib.Views.EdgeView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             mc:Ignorable="d" 
              xmlns:cal="http://www.caliburnproject.org"
+             mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" 
-             cal:Message.Attach="[Event MouseLeftButtonDown] = [Action SelectNode($dataContext)]">
-    <ContentControl x:Name="content1" ></ContentControl>
-</UserControl>
+             cal:Message.Attach="[Event MouseLeftButtonDown] = [Action SelectConnection($dataContext)]">
+</Shape>

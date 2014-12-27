@@ -1,4 +1,5 @@
-﻿using System.Windows.Shapes;
+﻿using System.Windows.Media;
+using System.Windows.Shapes;
 using Caliburn.Micro;
 using System;
 using System.Collections.Generic;
@@ -15,26 +16,48 @@ namespace DiagramLib.ViewModels
     /// </summary>
     public class ConnectionViewModel : PropertyChangedBase, IDisposable
     {
-        public ConnectionViewModel(DiagramBaseViewModel from, DiagramBaseViewModel to, DiagramBaseViewModel fromAd, DiagramBaseViewModel toAd)
+        public ConnectionViewModel(DiagramBaseViewModel from, DiagramBaseViewModel to)
         {
-            this.FromDescriptor = fromAd;
-            this.ToDescriptor = toAd;
-            FromDescriptor.BelongsTo = this;
-            ToDescriptor.BelongsTo = this;
-
             this.From = from;
             this.To = to;
 
-            UpdateConnection();
-
-            AttachPointFrom.LocationChanged += AttachPointFrom_LocationChanged;
-            AttachPointTo.LocationChanged += AttachPointToOnLocationChanged;
             From.LocationChanged += From_LocationChanged;
             To.LocationChanged += To_LocationChanged;
 
             From.BindingComplete += From_BindingComplete;
             To.BindingComplete += To_BindingComplete;
+            StrokeThickness = 2;
+            Stroke = Brushes.DarkOliveGreen;
+            
         }
+        private double _StrokeThickness;
+        public double StrokeThickness
+        {
+            get { return _StrokeThickness; }
+            set
+            {
+                if (_StrokeThickness != value)
+                {
+                    _StrokeThickness = value;
+                    NotifyOfPropertyChange(() => StrokeThickness);
+                }
+            }
+        }
+
+        private Brush _Stroke;
+        public Brush Stroke 
+        {
+            get { return _Stroke; }
+            set
+            {
+                if (_Stroke != value)
+                {
+                    _Stroke = value;
+                    NotifyOfPropertyChange(() => Stroke);
+                }
+            }
+        }
+        
 
         void To_BindingComplete(object sender, EventArgs e)
         {
@@ -54,16 +77,6 @@ namespace DiagramLib.ViewModels
         private void From_LocationChanged(object sender, EventArgs e)
         {
             UpdateConnection();
-        }
-
-        private void AttachPointToOnLocationChanged(AttachPoint ap, Point location)
-        {
-            FromPoint = location;
-        }
-
-        void AttachPointFrom_LocationChanged(AttachPoint ap, Point location)
-        {
-            ToPoint = location;
         }
 
         public DiagramBaseViewModel FromDescriptor { get; set; }
@@ -87,17 +100,10 @@ namespace DiagramLib.ViewModels
             return d;
         }
 
-
-        /// <summary>
-        /// 0 - top
-        /// 1 - right
-        /// 2 - bottom
-        /// 3 - left
-        /// </summary>
-        public void UpdateConnection()
+        Tuple<AttachDirection, AttachDirection> GetAttachDirections(Rect fromRect, Rect toRect)
         {
-            var attachPointsFrom = AttachPoints(From.Rect);
-            var attachPointsTo = AttachPoints(To.Rect);
+            var attachPointsFrom = AttachPoints(fromRect);
+            var attachPointsTo = AttachPoints(toRect);
 
             var results = new List<Tuple<Point, Point, double, int, int>>();
             for (int i = 0; i < attachPointsFrom.Length; i++)
@@ -107,17 +113,34 @@ namespace DiagramLib.ViewModels
             }
 
             var bestMatch = results.OrderBy(r => r.Item3).First();
+            return Tuple.Create((AttachDirection) bestMatch.Item4, (AttachDirection) bestMatch.Item5);
+        }
 
-
+        /// <summary>
+        /// 0 - top
+        /// 1 - right
+        /// 2 - bottom
+        /// 3 - left
+        /// </summary>
+        public void UpdateConnection()
+        {
+            var bestDirections = GetAttachDirections(From.Rect, To.Rect);
+            
             if (AttachPointFrom == null)
-                AttachPointFrom = From.Attach(FromDescriptor, (AttachDirection) bestMatch.Item4);
+            {
+                AttachPointFrom = From.Attach(bestDirections.Item1, this);
+                AttachPointFrom.Control = FromDescriptor;
+            }
             else
-                AttachPointFrom.Direction = (AttachDirection)bestMatch.Item4;
+                AttachPointFrom.Direction = bestDirections.Item1;
 
             if (AttachPointTo == null)
-                AttachPointTo = To.Attach(ToDescriptor, (AttachDirection)bestMatch.Item5);
+            {
+                AttachPointTo = To.Attach(bestDirections.Item2, this);
+                AttachPointTo.Control = ToDescriptor;
+            }
             else
-                AttachPointTo.Direction = (AttachDirection)bestMatch.Item5;
+                AttachPointTo.Direction = bestDirections.Item2;
 
             To.UpdateAttachPoints();
             From.UpdateAttachPoints();
@@ -134,39 +157,35 @@ namespace DiagramLib.ViewModels
             set;
         }
 
-        private Point _FromPoint;
-        public Point FromPoint
+
+        private AttachPoint _AttachPointFrom;
+        public AttachPoint AttachPointFrom
         {
-            get { return _FromPoint; }
+            get { return _AttachPointFrom; }
             set
             {
-                if (_FromPoint != value)
+                if (_AttachPointFrom != value)
                 {
-                    _FromPoint = value;
-                    NotifyOfPropertyChange(() => FromPoint);
+                    _AttachPointFrom = value;
+                    NotifyOfPropertyChange(() => AttachPointFrom);
                 }
             }
         }
 
-        private Point _ToPoint;
-        public Point ToPoint
+        private AttachPoint _AttachPointTo;
+        public AttachPoint AttachPointTo
         {
-            get { return _ToPoint; }
+            get { return _AttachPointTo; }
             set
             {
-                if (_ToPoint != value)
+                if (_AttachPointTo != value)
                 {
-                    _ToPoint = value;
-                    NotifyOfPropertyChange(() => ToPoint);
+                    _AttachPointTo = value;
+                    NotifyOfPropertyChange(() => AttachPointTo);
                 }
             }
         }
-
-
-
-        public AttachPoint AttachPointFrom;
-        public AttachPoint AttachPointTo;
-
+        
         public void Dispose()
         {
             From.LocationChanged -= From_LocationChanged;

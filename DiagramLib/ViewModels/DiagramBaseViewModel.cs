@@ -149,9 +149,9 @@ namespace DiagramLib.ViewModels
             get; set; 
         }
 
-        public AttachPoint Attach(DiagramBaseViewModel controlToAttach, AttachDirection direction)
+        public AttachPoint Attach(AttachDirection direction, ConnectionViewModel connection)
         {
-            return AttachPlacement.Attach(controlToAttach, direction);
+            return AttachPlacement.Attach(direction, connection);
         }
 
         public void Detach(AttachPoint ap)

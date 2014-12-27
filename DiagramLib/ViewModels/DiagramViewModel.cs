@@ -25,6 +25,7 @@ namespace DiagramLib.ViewModels
         public ObservableCollection<ConnectionViewModel> Edges { get; set; }
         public event EventHandler<Point> OnDiagramClick;
         public event EventHandler<DiagramBaseViewModel> NodeSelected;
+        public event EventHandler<ConnectionViewModel> ConnectionSelected;
 
         public void DiagramClick(MouseButtonEventArgs args, FrameworkElement el)
         {
@@ -60,6 +61,11 @@ namespace DiagramLib.ViewModels
             }
         }
 
+        public void SelectConnection(ConnectionViewModel edge)
+        {
+            if (ConnectionSelected != null)
+                ConnectionSelected(this, edge);
+        }
         public void SelectNode(DiagramBaseViewModel vm)
         {
             SelectedNode = vm;
