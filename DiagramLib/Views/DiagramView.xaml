@@ -14,9 +14,18 @@
         <ItemsControl Background="Transparent" Name="Edges" >
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                        <v:EdgeView  FromPoint="{Binding AttachPointFrom.Location}" ToPoint="{Binding AttachPointTo.Location}"
-                                           Stroke="{Binding Stroke}" 
-                                           StrokeThickness="{Binding StrokeThickness}"></v:EdgeView>
+                        <v:EdgeView cal:Bind.Model="{Binding}"  
+                                    cal:Message.Attach="[Event MouseLeftButtonDown] = [Action SelectConnection($dataContext)]"
+                                    FromPoint="{Binding AttachPointFrom.Location}" 
+                                    ToPoint="{Binding AttachPointTo.Location}"
+                                    Stroke="{Binding Stroke}" 
+                                    StrokeThickness="{Binding StrokeThickness}">
+                            <v:EdgeView.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem>Remove</MenuItem>
+                                </ContextMenu>
+                            </v:EdgeView.ContextMenu>
+                        </v:EdgeView>
 
                 </DataTemplate>
             </ItemsControl.ItemTemplate>

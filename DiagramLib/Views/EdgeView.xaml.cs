@@ -25,11 +25,13 @@ namespace DiagramLib.Views
         {
             Loaded += ConnectionView_Loaded;
            // MouseLeftButtonDown += ConnectionView_MouseLeftButtonDown;
+        //    ContextMenu = new ContextMenu();
+       //     ContextMenu.Items.Add("Remo");
         }
 
         void ConnectionView_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-
+        //    Caliburn.Micro.Message.SetAttach();
         }
 
         private ConnectionViewModel vm;
@@ -86,40 +88,47 @@ namespace DiagramLib.Views
         /// <span class="code-SummaryComment"></summary></span>
         private void InternalDrawArrowGeometry(StreamGeometryContext context)
         {
-            double xDiff = ToPoint.Y - FromPoint.X;
+            double weirdDiff = ToPoint.Y - FromPoint.X;
 
-            Point pt2 = new Point(FromPoint.X + (xDiff / 3.0), FromPoint.Y);
-            Point pt3 = new Point(ToPoint.X - (xDiff / 3.0), ToPoint.Y);
+            Point pt2 = new Point(FromPoint.X + (weirdDiff / 3.0), FromPoint.Y);
+            Point pt3 = new Point(ToPoint.X - (weirdDiff / 3.0), ToPoint.Y);
 
             vm = DataContext as ConnectionViewModel;
             if (vm != null)
             {
-                double fromOffset = 60;
+           
+                double xDiff = Math.Abs(FromPoint.X - ToPoint.X);
+                double yDiff = Math.Abs(FromPoint.Y - ToPoint.Y);
 
+
+                double dist = Math.Sqrt(xDiff*xDiff + yDiff*yDiff);
+
+                double xOffset = dist/2;
+                double yOffset = dist/2;
                 if (vm.AttachPointFrom.Direction == AttachDirection.Top)
-                    pt2 = new Point(vm.AttachPointFrom.Location.X, vm.AttachPointFrom.Location.Y - fromOffset);
+                    pt2 = new Point(vm.AttachPointFrom.Location.X, vm.AttachPointFrom.Location.Y - yOffset);
                 if (vm.AttachPointFrom.Direction == AttachDirection.Right)
-                    pt2 = new Point(vm.AttachPointFrom.Location.X + fromOffset, vm.AttachPointFrom.Location.Y);
+                    pt2 = new Point(vm.AttachPointFrom.Location.X + xOffset, vm.AttachPointFrom.Location.Y);
                 if (vm.AttachPointFrom.Direction == AttachDirection.Bottom)
-                    pt2 = new Point(vm.AttachPointFrom.Location.X, vm.AttachPointFrom.Location.Y + fromOffset);
+                    pt2 = new Point(vm.AttachPointFrom.Location.X, vm.AttachPointFrom.Location.Y + yOffset);
                 if (vm.AttachPointFrom.Direction == AttachDirection.Left)
-                    pt2 = new Point(vm.AttachPointFrom.Location.X - fromOffset, vm.AttachPointFrom.Location.Y);
+                    pt2 = new Point(vm.AttachPointFrom.Location.X - xOffset, vm.AttachPointFrom.Location.Y);
 
-                double toOffset = 60;
+                
                 if (vm.AttachPointTo.Direction == AttachDirection.Top)
-                    pt3 = new Point(vm.AttachPointTo.Location.X, vm.AttachPointTo.Location.Y - toOffset);
+                    pt3 = new Point(vm.AttachPointTo.Location.X, vm.AttachPointTo.Location.Y - yOffset);
                 if (vm.AttachPointTo.Direction == AttachDirection.Right)
-                    pt3 = new Point(vm.AttachPointTo.Location.X + toOffset, vm.AttachPointTo.Location.Y);
+                    pt3 = new Point(vm.AttachPointTo.Location.X + xOffset, vm.AttachPointTo.Location.Y);
                 if (vm.AttachPointTo.Direction == AttachDirection.Bottom)
-                    pt3 = new Point(vm.AttachPointTo.Location.X, vm.AttachPointTo.Location.Y + toOffset);
+                    pt3 = new Point(vm.AttachPointTo.Location.X, vm.AttachPointTo.Location.Y + yOffset);
                 if (vm.AttachPointTo.Direction == AttachDirection.Left)
-                    pt3 = new Point(vm.AttachPointTo.Location.X - toOffset, vm.AttachPointTo.Location.Y);
+                    pt3 = new Point(vm.AttachPointTo.Location.X - xOffset, vm.AttachPointTo.Location.Y);
             }
 
             context.BeginFigure(FromPoint, false, false);
 
-
-            context.BezierTo(pt2, pt3, ToPoint, true, true);
+           // context.LineTo(ToPoint, true, false);
+           context.BezierTo(pt2, pt3, ToPoint, true, true);
         }
     }
 }

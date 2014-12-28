@@ -42,6 +42,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Caliburn.Micro.2.0.1\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
@@ -63,11 +64,16 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AppBootstrapper.cs" />
+    <Compile Include="Model\DiagramConnection.cs" />
+    <Compile Include="Model\DiagramModel.cs" />
+    <Compile Include="Model\DiagramNodeBase.cs" />
+    <Compile Include="Model\DiagramNodeBig.cs" />
+    <Compile Include="Model\DiagramNodeSmall.cs" />
     <Compile Include="ViewModels\AttachDescriptorToViewModel.cs" />
     <Compile Include="ViewModels\AttachDescriptorFromViewModel.cs" />
     <Compile Include="ViewModels\SlimConnectionViewModel.cs" />
-    <Compile Include="ViewModels\GraphNode1ViewModel.cs" />
-    <Compile Include="ViewModels\GraphNodeViewModel.cs" />
+    <Compile Include="ViewModels\DiagramNodeSmallViewModel.cs" />
+    <Compile Include="ViewModels\DiagramNodeBigViewModel.cs" />
     <Compile Include="ViewModels\IShell.cs" />
     <Compile Include="ViewModels\AppViewModel.cs" />
     <Compile Include="ViewModels\ThickConnectionViewModel.cs" />
@@ -77,11 +83,11 @@
     <Compile Include="Views\AttachDescriptorFromView.xaml.cs">
       <DependentUpon>AttachDescriptorFromView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\GraphNode1View.xaml.cs">
-      <DependentUpon>GraphNode1View.xaml</DependentUpon>
+    <Compile Include="Views\DiagramNodeSmallView.xaml.cs">
+      <DependentUpon>DiagramNodeSmallView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\GraphNodeView.xaml.cs">
-      <DependentUpon>GraphNodeView.xaml</DependentUpon>
+    <Compile Include="Views\DiagramNodeBigView.xaml.cs">
+      <DependentUpon>DiagramNodeBigView.xaml</DependentUpon>
     </Compile>
     <Page Include="Views\AppView.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -103,11 +109,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\GraphNode1View.xaml">
+    <Page Include="Views\DiagramNodeSmallView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\GraphNodeView.xaml">
+    <Page Include="Views\DiagramNodeBigView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

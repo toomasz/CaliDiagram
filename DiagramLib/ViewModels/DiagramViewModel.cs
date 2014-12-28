@@ -61,6 +61,27 @@ namespace DiagramLib.ViewModels
             }
         }
 
+        public void AddConnection(ConnectionViewModel edge)
+        {
+            if (edge.FromDescriptor != null)
+                AttachDescriptors.Add(edge.FromDescriptor);
+            if (edge.ToDescriptor != null)
+                AttachDescriptors.Add(edge.ToDescriptor);
+
+            Edges.Add(edge);
+            edge.UpdateConnection();
+        }
+
+        public void RemoveConnection(ConnectionViewModel edge)
+        {
+            edge.Dispose();
+            if(edge.FromDescriptor != null)
+                AttachDescriptors.Remove(edge.FromDescriptor);
+            if(edge.ToDescriptor != null)
+                AttachDescriptors.Remove(edge.ToDescriptor);
+            Edges.Remove(edge);
+        }
+
         public void SelectConnection(ConnectionViewModel edge)
         {
             if (ConnectionSelected != null)

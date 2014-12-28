@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace DiagramDesigner.Views
 {
     /// <summary>
-    /// Interaction logic for GraphNode1View.xaml
+    /// Interaction logic for DiagramNodeSmallView.xaml
     /// </summary>
-    public partial class GraphNode1View : UserControl
+    public partial class DiagramNodeSmallView : UserControl
     {
-        public GraphNode1View()
+        public DiagramNodeSmallView()
         {
             InitializeComponent();
         }

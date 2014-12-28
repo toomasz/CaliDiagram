@@ -6,5 +6,10 @@
              xmlns:cal="http://www.caliburnproject.org"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300" 
-             cal:Message.Attach="[Event MouseLeftButtonDown] = [Action SelectConnection($dataContext)]">
+             >
+    <Shape.ContextMenu>
+        <ContextMenu>
+            <MenuItem>Remove</MenuItem>
+        </ContextMenu>
+    </Shape.ContextMenu>
 </Shape>

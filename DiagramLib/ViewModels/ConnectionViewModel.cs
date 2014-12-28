@@ -30,6 +30,8 @@ namespace DiagramLib.ViewModels
             Stroke = Brushes.DarkOliveGreen;
             
         }
+
+     
         private double _StrokeThickness;
         public double StrokeThickness
         {
@@ -190,6 +192,10 @@ namespace DiagramLib.ViewModels
         {
             From.LocationChanged -= From_LocationChanged;
             To.LocationChanged -= To_LocationChanged;
+            From.BindingComplete -= From_BindingComplete;
+            To.BindingComplete -= To_BindingComplete;
+            From.Detach(AttachPointFrom);
+            To.Detach(AttachPointTo);
         }
     }
 }

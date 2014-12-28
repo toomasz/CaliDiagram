@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace DiagramDesigner.ViewModels
 {
-    public class GraphNode1ViewModel : DiagramBaseViewModel
+    public class DiagramNodeSmallViewModel : DiagramBaseViewModel
     {
-        public GraphNode1ViewModel(string name)
+        public DiagramNodeSmallViewModel(string name)
         {
             this.Name = name;
         }

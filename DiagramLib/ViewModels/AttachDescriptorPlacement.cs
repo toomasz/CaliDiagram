@@ -166,7 +166,7 @@ namespace DiagramLib.ViewModels
         {
             AttachPoints[point.Direction].Remove(point);
             point.DirectionChanging -= attachPoint_DirectionChanging;
-            //UpdatePoints();
+            UpdatePoints();
         }
 
     }

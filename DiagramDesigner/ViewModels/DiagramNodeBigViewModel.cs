@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace DiagramDesigner.ViewModels
 {
 
-    internal class GraphNodeViewModel : DiagramBaseViewModel
+    internal class DiagramNodeBigViewModel : DiagramBaseViewModel
     {
     }
 

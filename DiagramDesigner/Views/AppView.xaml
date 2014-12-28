@@ -12,6 +12,8 @@
                 </ListBox.ItemsPanel>
                 <ListBox.BorderThickness>0</ListBox.BorderThickness>
             </ListBox>
+            <Button Name="SaveDiagram">Save diagram</Button>
+            <Button Name="LoadDiagram">Load diagram</Button>
         </WrapPanel>
        <ContentControl DockPanel.Dock="Bottom" Name="Diagram1"></ContentControl>
     </DockPanel>
