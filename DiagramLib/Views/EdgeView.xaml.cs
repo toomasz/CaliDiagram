@@ -88,23 +88,34 @@ namespace DiagramLib.Views
         /// <span class="code-SummaryComment"></summary></span>
         private void InternalDrawArrowGeometry(StreamGeometryContext context)
         {
-            double weirdDiff = ToPoint.Y - FromPoint.X;
-
-            Point pt2 = new Point(FromPoint.X + (weirdDiff / 3.0), FromPoint.Y);
-            Point pt3 = new Point(ToPoint.X - (weirdDiff / 3.0), ToPoint.Y);
-
             vm = DataContext as ConnectionViewModel;
-            if (vm != null)
+            if (vm == null)
+                return;
+
+            if(vm.Type == EdgeLineType.Line)
             {
-           
+                context.BeginFigure(FromPoint, false, false);
+
+                context.LineTo(ToPoint, true, false);
+            }
+            else if (vm.Type == EdgeLineType.Bezier)
+            {
+                double weirdDiff = ToPoint.Y - FromPoint.X;
+
+                Point pt2 = new Point(FromPoint.X + (weirdDiff / 3.0), FromPoint.Y);
+                Point pt3 = new Point(ToPoint.X - (weirdDiff / 3.0), ToPoint.Y);
+
+
+
+
                 double xDiff = Math.Abs(FromPoint.X - ToPoint.X);
                 double yDiff = Math.Abs(FromPoint.Y - ToPoint.Y);
 
 
-                double dist = Math.Sqrt(xDiff*xDiff + yDiff*yDiff);
+                double dist = Math.Sqrt(xDiff * xDiff + yDiff * yDiff);
 
-                double xOffset = dist/2;
-                double yOffset = dist/2;
+                double xOffset = dist / 2;
+                double yOffset = dist / 2;
                 if (vm.AttachPointFrom.Direction == AttachDirection.Top)
                     pt2 = new Point(vm.AttachPointFrom.Location.X, vm.AttachPointFrom.Location.Y - yOffset);
                 if (vm.AttachPointFrom.Direction == AttachDirection.Right)
@@ -114,7 +125,7 @@ namespace DiagramLib.Views
                 if (vm.AttachPointFrom.Direction == AttachDirection.Left)
                     pt2 = new Point(vm.AttachPointFrom.Location.X - xOffset, vm.AttachPointFrom.Location.Y);
 
-                
+
                 if (vm.AttachPointTo.Direction == AttachDirection.Top)
                     pt3 = new Point(vm.AttachPointTo.Location.X, vm.AttachPointTo.Location.Y - yOffset);
                 if (vm.AttachPointTo.Direction == AttachDirection.Right)
@@ -123,12 +134,11 @@ namespace DiagramLib.Views
                     pt3 = new Point(vm.AttachPointTo.Location.X, vm.AttachPointTo.Location.Y + yOffset);
                 if (vm.AttachPointTo.Direction == AttachDirection.Left)
                     pt3 = new Point(vm.AttachPointTo.Location.X - xOffset, vm.AttachPointTo.Location.Y);
+
+
+                context.BeginFigure(FromPoint, false, false);
+                context.BezierTo(pt2, pt3, ToPoint, true, true);
             }
-
-            context.BeginFigure(FromPoint, false, false);
-
-           // context.LineTo(ToPoint, true, false);
-           context.BezierTo(pt2, pt3, ToPoint, true, true);
         }
     }
 }

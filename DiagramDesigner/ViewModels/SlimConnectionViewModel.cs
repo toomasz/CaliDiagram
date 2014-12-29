@@ -13,7 +13,7 @@ namespace DiagramDesigner.ViewModels
         public SlimConnectionViewModel(DiagramBaseViewModel from, DiagramBaseViewModel to):
             base(from, to)
         {
-            StrokeThickness = 2;
+            StrokeThickness = 3;
         }
     }
 }

@@ -14,6 +14,9 @@ namespace DiagramLib.ViewModels
     /// <summary>
     /// ViewModel representing connection between two resource tree controllers
     /// </summary>
+
+    public enum EdgeLineType { Bezier, Line};
+
     public class ConnectionViewModel : PropertyChangedBase, IDisposable
     {
         public ConnectionViewModel(DiagramBaseViewModel from, DiagramBaseViewModel to)
@@ -24,14 +27,24 @@ namespace DiagramLib.ViewModels
             From.LocationChanged += From_LocationChanged;
             To.LocationChanged += To_LocationChanged;
 
-            From.BindingComplete += From_BindingComplete;
-            To.BindingComplete += To_BindingComplete;
             StrokeThickness = 2;
             Stroke = Brushes.DarkOliveGreen;
-            
+            Type = EdgeLineType.Bezier;
         }
-
-     
+        private EdgeLineType _Type;
+        public EdgeLineType Type
+        {
+            get { return _Type; }
+            set
+            {
+                if (_Type != value)
+                {
+                    _Type = value;
+                    NotifyOfPropertyChange(() => Type);
+                }
+            }
+        }
+        
         private double _StrokeThickness;
         public double StrokeThickness
         {
@@ -59,17 +72,7 @@ namespace DiagramLib.ViewModels
                 }
             }
         }
-        
 
-        void To_BindingComplete(object sender, EventArgs e)
-        {
-            UpdateConnection();
-        }
-
-        void From_BindingComplete(object sender, EventArgs e)
-        {
-            UpdateConnection();
-        }
 
         private void To_LocationChanged(object sender, EventArgs e)
         {
@@ -192,8 +195,7 @@ namespace DiagramLib.ViewModels
         {
             From.LocationChanged -= From_LocationChanged;
             To.LocationChanged -= To_LocationChanged;
-            From.BindingComplete -= From_BindingComplete;
-            To.BindingComplete -= To_BindingComplete;
+
             From.Detach(AttachPointFrom);
             To.Detach(AttachPointTo);
         }

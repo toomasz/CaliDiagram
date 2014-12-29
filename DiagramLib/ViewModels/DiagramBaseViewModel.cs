@@ -23,15 +23,9 @@ namespace DiagramLib.ViewModels
         {
         }
 
-        public object BelongsTo
-        {
-            get; set; 
-            
-        }
-
         protected virtual void OnSizeChanged()
         {
-
+            AttachPlacement.UpdatePoints();
         }
         protected virtual void OnBindingCompleted()
         {

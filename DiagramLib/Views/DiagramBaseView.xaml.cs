@@ -29,7 +29,17 @@ namespace DiagramLib.Views
             this.MouseLeftButtonUp += new MouseButtonEventHandler(Control_MouseLeftButtonUp);
             this.MouseMove += new MouseEventHandler(Control_MouseMove);
             DataContextChanged += TreeEntityView_DataContextChanged;
-            
+            SizeChanged += DiagramBaseView_SizeChanged;
+        }
+
+        void DiagramBaseView_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+           vm = DataContext as DiagramBaseViewModel;
+           if (vm != null)
+           {
+               vm.Width = ActualWidth;
+               vm.Height = ActualHeight;
+           }
         }
 
         protected bool isDragging;

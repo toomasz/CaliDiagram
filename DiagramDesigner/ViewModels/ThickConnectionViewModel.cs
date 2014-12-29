@@ -15,12 +15,13 @@ namespace DiagramDesigner.ViewModels
         public ThickConnectionViewModel(DiagramBaseViewModel from, DiagramBaseViewModel to) :
             base(from, to)
         {
-            StrokeThickness = 7;
+            StrokeThickness = 6;
             Stroke = Brushes.Red;
             DispatcherTimer timer = new DispatcherTimer();
             timer.Interval = new TimeSpan(0,0,1);
             timer.Tick += timer_Tick;
             timer.Start();
+            Type = EdgeLineType.Bezier;
         }
 
         private int n = 0;

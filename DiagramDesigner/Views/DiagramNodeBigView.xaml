@@ -5,5 +5,14 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              Background="DeepSkyBlue">
-    <Image Source="./server-icon.jpg" Width="200" RenderOptions.BitmapScalingMode="Fant"></Image>
+    <Grid>
+        <Image Source="./server-icon.jpg" Width="200" RenderOptions.BitmapScalingMode="Fant"></Image>
+        <TextBox Text="S1" Name="Name" Margin="20,6" Foreground="White"  FontWeight="Bold" FontSize="20" FontFamily="Verdana" 
+                     Background="Transparent" BorderThickness="0" BorderBrush="Transparent" TextAlignment="Center" VerticalAlignment="Center"
+                      HorizontalAlignment="Center" AcceptsReturn="True" MinWidth="20">
+            <TextBox.Effect>
+                <DropShadowEffect BlurRadius="6"  RenderingBias="Performance"  Color="#FF3756E2" ShadowDepth="1"></DropShadowEffect>
+            </TextBox.Effect>
+        </TextBox>
+    </Grid>
 </UserControl>

@@ -16,14 +16,13 @@ using System.Windows.Shapes;
 namespace DiagramDesigner.Views
 {
     /// <summary>
-    /// Interaction logic for DiagramNodeSmallView.xaml
+    /// Interaction logic for DiagramNodeBroker.xaml
     /// </summary>
-    public partial class DiagramNodeSmallView : UserControl
+    public partial class DiagramNodeBrokerView : UserControl
     {
-        public DiagramNodeSmallView()
+        public DiagramNodeBrokerView()
         {
             InitializeComponent();
         }
-        
     }
 }

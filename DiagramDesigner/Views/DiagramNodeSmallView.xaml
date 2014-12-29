@@ -8,6 +8,8 @@
         <Border.Effect>
             <DropShadowEffect BlurRadius="2" ShadowDepth="0"/>
         </Border.Effect>
-        <TextBlock Name="Name" Margin="20,6" Foreground="White" FontFamily="Verdana" FontWeight="Bold" HorizontalAlignment="Center"></TextBlock>
+        <TextBox Name="Name" Margin="20,6" Foreground="White" FontFamily="Verdana" 
+                 Background="Transparent" BorderThickness="0" BorderBrush="Transparent"
+                 FontWeight="Bold" HorizontalAlignment="Center" AcceptsReturn="True"></TextBox>
     </Border>
 </UserControl>

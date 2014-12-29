@@ -59,6 +59,7 @@
   <ItemGroup>
     <Compile Include="Binding\SizeChange.cs" />
     <Compile Include="DiagramLibHelpers.cs" />
+    <Compile Include="IDiagramDefinition.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -72,7 +73,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Settings.cs" />
+    <Compile Include="XmlSettings.cs" />
     <Compile Include="ViewModels\AttachDescriptorPlacement.cs" />
     <Compile Include="ViewModels\AttachPoint.cs" />
     <Compile Include="ViewModels\ConnectionViewModel.cs" />

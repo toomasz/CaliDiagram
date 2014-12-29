@@ -12,6 +12,7 @@ namespace DiagramDesigner.ViewModels
 
     internal class DiagramNodeBigViewModel : DiagramBaseViewModel
     {
+        public string Name { get; set; }
     }
 
 }

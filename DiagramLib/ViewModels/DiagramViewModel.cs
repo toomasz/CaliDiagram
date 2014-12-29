@@ -14,11 +14,13 @@ namespace DiagramLib.ViewModels
 {
     public class DiagramViewModel: PropertyChangedBase
     {
-        public DiagramViewModel()
+        IDiagramDefinition Definition;
+        public DiagramViewModel(IDiagramDefinition diagramDefinition)
         {
             DiagramItems = new ObservableCollection<DiagramBaseViewModel>();
             Edges = new ObservableCollection<ConnectionViewModel>();
             AttachDescriptors = new ObservableCollection<DiagramBaseViewModel>();
+            this.Definition = diagramDefinition;
         }
         public ObservableCollection<DiagramBaseViewModel> AttachDescriptors { get; set; } 
         public ObservableCollection<DiagramBaseViewModel> DiagramItems { get; set; }
@@ -61,17 +63,6 @@ namespace DiagramLib.ViewModels
             }
         }
 
-        public void AddConnection(ConnectionViewModel edge)
-        {
-            if (edge.FromDescriptor != null)
-                AttachDescriptors.Add(edge.FromDescriptor);
-            if (edge.ToDescriptor != null)
-                AttachDescriptors.Add(edge.ToDescriptor);
-
-            Edges.Add(edge);
-            edge.UpdateConnection();
-        }
-
         public void RemoveConnection(ConnectionViewModel edge)
         {
             edge.Dispose();
@@ -81,7 +72,14 @@ namespace DiagramLib.ViewModels
                 AttachDescriptors.Remove(edge.ToDescriptor);
             Edges.Remove(edge);
         }
-
+        public void ClearDiagram()
+        {
+            foreach (var edge in Edges)
+                edge.Dispose();
+            Edges.Clear();
+            AttachDescriptors.Clear();
+            DiagramItems.Clear();
+        }
         public void SelectConnection(ConnectionViewModel edge)
         {
             if (ConnectionSelected != null)
@@ -92,6 +90,21 @@ namespace DiagramLib.ViewModels
             SelectedNode = vm;
             if (NodeSelected != null)
                 NodeSelected(this, vm);
+        }
+
+        public void AddConnection(DiagramBaseViewModel from, DiagramBaseViewModel to)
+        {
+            var edge = Definition.CreateConnection(from, to);
+         
+       
+
+            if (edge.FromDescriptor != null)
+                AttachDescriptors.Add(edge.FromDescriptor);
+            if (edge.ToDescriptor != null)
+                AttachDescriptors.Add(edge.ToDescriptor);
+
+            Edges.Add(edge);
+            edge.UpdateConnection();
         }
     }
 }

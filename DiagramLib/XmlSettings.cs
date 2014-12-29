@@ -11,22 +11,26 @@ using System.Xml;
 namespace DiagramLib
 {
     
-    public class Settings<T> where T: new()
+    public class XmlSettings<T> where T: new()
     {
-        public static T ModelFromSettings(string filename, IEnumerable<Type> knownTypes)
+        DataContractSerializer serializer;
+        public XmlSettings(IEnumerable<Type> knownTypes)
         {
-            try
-            {
-                var ser = new DataContractSerializer(typeof(T), knownTypes,
+            serializer = new DataContractSerializer(typeof(T), knownTypes,
             0x7FFF /*maxItemsInObjectGraph*/,
             false /*ignoreExtensionDataObject*/,
             true /*preserveObjectReferences : this is where the magic happens */,
             null /*dataContractSurrogate*/);
+        }
+        public T ModelFromSettings(string filename)
+        {
+            try
+            {
                 if (!File.Exists(filename))
                     return new T();
                 using (FileStream fs = File.Open(filename, FileMode.Open))
                 {
-                    T model = (T)ser.ReadObject(fs);
+                    T model = (T)serializer.ReadObject(fs);
                    // model.SettingsFilename = filename;
                     return model;
                 }
@@ -40,20 +44,14 @@ namespace DiagramLib
             }
         }
 
-        public static void SaveModel(T appModel, string filename, IEnumerable<Type> knownTypes )
+        public void SaveModel(T appModel, string filename)
         {
             try
             {
-         
-                var ser = new DataContractSerializer(typeof(T), knownTypes,
-            0x7FFF /*maxItemsInObjectGraph*/,
-            false /*ignoreExtensionDataObject*/,
-            true /*preserveObjectReferences : this is where the magic happens */,
-            null /*dataContractSurrogate*/);
                 var settings = new XmlWriterSettings { Indent = true };
 
                 using (var w = XmlWriter.Create(filename, settings))
-                    ser.WriteObject(w, appModel);
+                    serializer.WriteObject(w, appModel);
             }
             catch (Exception ex)
             {
