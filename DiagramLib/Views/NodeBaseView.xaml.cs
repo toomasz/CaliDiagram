@@ -19,9 +19,9 @@ namespace DiagramLib.Views
     /// <summary>
     /// Interaction logic for DiagramBaseView.xaml
     /// </summary>
-    public partial class DiagramBaseView : UserControl
+    public partial class NodeBaseView : UserControl
     {
-        public DiagramBaseView()
+        public NodeBaseView()
         {
             InitializeComponent();
             Loaded += DiagramBaseView_Loaded;
@@ -34,26 +34,24 @@ namespace DiagramLib.Views
 
         void DiagramBaseView_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-           vm = DataContext as DiagramBaseViewModel;
+           vm = DataContext as NodeBaseViewModel;
            if (vm != null)
            {
-               vm.Width = ActualWidth;
-               vm.Height = ActualHeight;
+               vm.Size = new Size(ActualWidth, ActualHeight);
            }
         }
 
         protected bool isDragging;
         private Point clickPosition;
-        private DiagramBaseViewModel vm;
+        private NodeBaseViewModel vm;
         void DiagramBaseView_Loaded(object sender, RoutedEventArgs e)
         {
-            vm = DataContext as DiagramBaseViewModel;
+            vm = DataContext as NodeBaseViewModel;
             if (vm != null)
             {
-                vm.Width = ActualWidth;
-                vm.Height = ActualHeight;
+                vm.Size = new Size(ActualWidth, ActualHeight);
 
-                vm.RaiseBindingComplete();
+               // vm.RaiseBindingComplete();
                
 
                 vm.LocationChanged += vm_LocationChanged;
@@ -70,7 +68,7 @@ namespace DiagramLib.Views
 
         void TreeEntityView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            var vm = DataContext as DiagramBaseViewModel;
+            var vm = DataContext as NodeBaseViewModel;
             if (vm != null)
                 UpdateGuiLocation(vm.Location.X, vm.Location.Y);
         }
@@ -130,11 +128,11 @@ namespace DiagramLib.Views
                 //   transform.X = x;
                 //    transform.Y = y;
 
-                var vm = DataContext as DiagramBaseViewModel;
+                var vm = DataContext as NodeBaseViewModel;
 
                 // UpdateGuiLocation(x, y);
                 if (vm != null)
-                    vm.SetLocation(x, y);
+                    vm.Location = new Point(x, y);
                 //Console.Beep(3000, 40);
             }
         }

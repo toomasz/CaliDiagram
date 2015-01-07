@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Caliburn.Micro;
 using System.Windows.Input;
 using System.Windows;
+using System.Windows.Threading;
 
 namespace DiagramLib.ViewModels
 {
@@ -17,17 +18,22 @@ namespace DiagramLib.ViewModels
         IDiagramDefinition Definition;
         public DiagramViewModel(IDiagramDefinition diagramDefinition)
         {
-            DiagramItems = new ObservableCollection<DiagramBaseViewModel>();
+            Nodes = new ObservableCollection<NodeBaseViewModel>();
             Edges = new ObservableCollection<ConnectionViewModel>();
-            AttachDescriptors = new ObservableCollection<DiagramBaseViewModel>();
+            AttachDescriptors = new ObservableCollection<NodeBaseViewModel>();
             this.Definition = diagramDefinition;
         }
-        public ObservableCollection<DiagramBaseViewModel> AttachDescriptors { get; set; } 
-        public ObservableCollection<DiagramBaseViewModel> DiagramItems { get; set; }
+        public ObservableCollection<NodeBaseViewModel> AttachDescriptors { get; set; } 
+        public ObservableCollection<NodeBaseViewModel> Nodes { get; set; }
         public ObservableCollection<ConnectionViewModel> Edges { get; set; }
         public event EventHandler<Point> OnDiagramClick;
-        public event EventHandler<DiagramBaseViewModel> NodeSelected;
+        public event EventHandler<NodeBaseViewModel> NodeSelected;
         public event EventHandler<ConnectionViewModel> ConnectionSelected;
+
+        public void ForceRedraw()
+        {
+            Application.Current.Dispatcher.Invoke(new System.Action(() => { }), DispatcherPriority.ContextIdle, null);
+        }
 
         public void DiagramClick(MouseButtonEventArgs args, FrameworkElement el)
         {
@@ -37,8 +43,8 @@ namespace DiagramLib.ViewModels
         }
 
 
-        private DiagramBaseViewModel _SelectedNode;
-        public DiagramBaseViewModel SelectedNode
+        private NodeBaseViewModel _SelectedNode;
+        public NodeBaseViewModel SelectedNode
         {
             get { return _SelectedNode; }
             set
@@ -50,10 +56,15 @@ namespace DiagramLib.ViewModels
                 }
             }
         }
-
-        public void RemoveNode(DiagramBaseViewModel node)
+        public void AddNode(NodeBaseViewModel node, Point location)
         {
-            DiagramItems.Remove(node);
+            node.Location = location;
+            Nodes.Add(node);
+            Console.WriteLine(string.Format("Added {0}", node.Name));
+        }
+        public void RemoveNode(NodeBaseViewModel node)
+        {
+            Nodes.Remove(node);
             var edgesToRemove = Edges.Where(edge => edge.From == node || edge.To == node).ToList();
             foreach (var edge in edgesToRemove)
             {
@@ -78,21 +89,21 @@ namespace DiagramLib.ViewModels
                 edge.Dispose();
             Edges.Clear();
             AttachDescriptors.Clear();
-            DiagramItems.Clear();
+            Nodes.Clear();
         }
         public void SelectConnection(ConnectionViewModel edge)
         {
             if (ConnectionSelected != null)
                 ConnectionSelected(this, edge);
         }
-        public void SelectNode(DiagramBaseViewModel vm)
+        public void SelectNode(NodeBaseViewModel vm)
         {
             SelectedNode = vm;
             if (NodeSelected != null)
                 NodeSelected(this, vm);
         }
 
-        public void AddConnection(DiagramBaseViewModel from, DiagramBaseViewModel to)
+        public void AddConnection(NodeBaseViewModel from, NodeBaseViewModel to)
         {
             var edge = Definition.CreateConnection(from, to);
          
@@ -103,7 +114,14 @@ namespace DiagramLib.ViewModels
             if (edge.ToDescriptor != null)
                 AttachDescriptors.Add(edge.ToDescriptor);
 
+            edge.FromDescriptor.Name = "from";
+            edge.ToDescriptor.Name = "to";
             Edges.Add(edge);
+
+            var bestDirections = DiagramHelpers.GetAttachDirections(from.Rect, to.Rect);
+            edge.AttachPointFrom = from.Attach(bestDirections.Item1, edge, edge.FromDescriptor);
+            edge.AttachPointTo = to.Attach(bestDirections.Item2, edge, edge.ToDescriptor);
+
             edge.UpdateConnection();
         }
     }

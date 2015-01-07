@@ -10,7 +10,7 @@ namespace DiagramDesigner.ViewModels
 {
     public class SampleDiagramDefinition: IDiagramDefinition
     {
-        public ConnectionViewModel CreateConnection(DiagramBaseViewModel from, DiagramBaseViewModel to)
+        public ConnectionViewModel CreateConnection(NodeBaseViewModel from, NodeBaseViewModel to)
         {
             ConnectionViewModel connectionViewModel;
 

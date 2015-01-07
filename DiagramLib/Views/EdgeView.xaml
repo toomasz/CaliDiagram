@@ -5,11 +5,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:cal="http://www.caliburnproject.org"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300" 
              >
-    <Shape.ContextMenu>
-        <ContextMenu>
-            <MenuItem>Remove</MenuItem>
-        </ContextMenu>
-    </Shape.ContextMenu>
+    <!-- this xaml is not working-->
 </Shape>

@@ -21,13 +21,13 @@ namespace DiagramLib
 
         private UIElement LocateForModel(object o, DependencyObject dependencyObject, object arg3)
         {
-            if (o is DiagramBaseViewModel)
+            if (o is NodeBaseViewModel)
             {
                 Type type = o.GetType();
 
-                DiagramBaseView diagramBaseView = new DiagramBaseView();
+                NodeBaseView diagramBaseView = new NodeBaseView();
              //   diagramBaseView.con = "asd";
-                if (type.IsSubclassOf(typeof(DiagramBaseViewModel)))
+                if (type.IsSubclassOf(typeof(NodeBaseViewModel)))
                 {
                     UIElement element = OriginalLocateForModel(o, dependencyObject, arg3);
                     FrameworkElement fe = element as FrameworkElement;

@@ -7,6 +7,9 @@ using System.Text;
 using System.Threading.Tasks;
 using DiagramLib;
 using DiagramDesigner.ViewModels;
+using System.Windows;
+using System.Windows.Threading;
+
 
 namespace DiagramDesigner.Model
 {
@@ -24,32 +27,32 @@ namespace DiagramDesigner.Model
                     typeof(DiagramNodeBroker)
                 });
         }
-        int n = 1;
-        DiagramBaseViewModel ViewModelFromModel(DiagramNodeBase model)
+
+        NodeBaseViewModel ViewModelFromModel(DiagramNodeBase model)
         {
             if (model is DiagramNodeBig)
-                return new DiagramNodeBigViewModel() { Location = model.Location, Name = model.Name };
+                return new DiagramNodeBigViewModel(model.Name) { Location = model.Location };
             if (model is DiagramNodeSmall)
-                return new DiagramNodeSmallViewModel("c" + (n++).ToString()) { Location = model.Location, Name = model.Name };
+                return new DiagramNodeSmallViewModel(model.Name) { Location = model.Location };
             if (model is DiagramNodeBroker)
-                return new DiagramNodeBrokerViewModel() { Location = model.Location};
+                return new DiagramNodeBrokerViewModel(model.Name) { Location = model.Location };
             return null;
         }
-        DiagramNodeBase ModelFromViewModel(DiagramBaseViewModel viewModel)
+        DiagramNodeBase ModelFromViewModel(NodeBaseViewModel viewModel)
         {
             if (viewModel is DiagramNodeSmallViewModel)
-                return new DiagramNodeSmall() { Location = viewModel.Location, Name = ((DiagramNodeSmallViewModel)viewModel).Name };
+                return new DiagramNodeSmall() { Location = viewModel.Location, Name = viewModel.Name };
             if (viewModel is DiagramNodeBigViewModel)
-                return new DiagramNodeBig() { Location = viewModel.Location, Name = ((DiagramNodeBigViewModel)viewModel).Name };
+                return new DiagramNodeBig() { Location = viewModel.Location, Name = viewModel.Name };
             if (viewModel is DiagramNodeBrokerViewModel)
-                return new DiagramNodeBroker() { Location = viewModel.Location };
+                return new DiagramNodeBroker() { Location = viewModel.Location, Name = viewModel.Name };
             return null;
         }
         public void SaveDiagram(string filename)
         {
             DiagramModel diagramModel = new DiagramModel();
-            Dictionary<DiagramBaseViewModel, DiagramNodeBase> nodeDictionary = new Dictionary<DiagramBaseViewModel, DiagramNodeBase>();
-            foreach (var node in diagramViewModel.DiagramItems)
+            Dictionary<NodeBaseViewModel, DiagramNodeBase> nodeDictionary = new Dictionary<NodeBaseViewModel, DiagramNodeBase>();
+            foreach (var node in diagramViewModel.Nodes)
             {
                 DiagramNodeBase diagramNode = ModelFromViewModel(node);               
                 if (diagramNode != null)
@@ -76,22 +79,38 @@ namespace DiagramDesigner.Model
 
             diagramViewModel.ClearDiagram();
 
-            Dictionary<DiagramNodeBase, DiagramBaseViewModel> nodeDictionary = new Dictionary<DiagramNodeBase, DiagramBaseViewModel>();
+            Dictionary<DiagramNodeBase, NodeBaseViewModel> nodeDictionary = new Dictionary<DiagramNodeBase, NodeBaseViewModel>();
             foreach (var node in model.Nodes)
             {
-                DiagramBaseViewModel nodeViewModel = ViewModelFromModel(node);
+                NodeBaseViewModel nodeViewModel = ViewModelFromModel(node);
                
                 if (nodeViewModel != null)
                 {
-                    diagramViewModel.DiagramItems.Add(nodeViewModel);
+                    diagramViewModel.Nodes.Add(nodeViewModel);
                     nodeDictionary.Add(node, nodeViewModel);
                 }
             }
+            // Force rendering so we can have sizes of all nodes
+            diagramViewModel.ForceRedraw();
 
             foreach (var edge in model.Edges)
             {
                 diagramViewModel.AddConnection(nodeDictionary[edge.From], nodeDictionary[edge.To]);                
             }
+            // Render again so we can have sizes of attach descriptors
+            diagramViewModel.ForceRedraw();
+
+            Console.WriteLine("Model loaded");
+
+            foreach (var conn in diagramViewModel.Edges)
+                conn.UpdateConnection();
+
+            foreach (var node in diagramViewModel.AttachDescriptors)
+                node.RaiseInitialize();
+
+            foreach (var node in diagramViewModel.Nodes)
+                node.RaiseInitialize();
+
         }
     }
 }

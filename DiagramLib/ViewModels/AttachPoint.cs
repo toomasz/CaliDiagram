@@ -24,29 +24,39 @@ namespace DiagramLib.ViewModels
 
     public class AttachPoint : PropertyChangedBase
     {
-        public AttachPoint(AttachDirection direction, ConnectionViewModel connection)
+        public AttachPoint(AttachDirection direction, ConnectionViewModel connection, NodeBaseViewModel associatedControl)
         {
             Direction = direction;
             this.Connection = connection;
+            this.Control = associatedControl;
         }
+        /// <summary>
+        /// Control associated with this attach point
+        /// </summary>
+        public NodeBaseViewModel Control { get; private set; }
 
+        /// <summary>
+        /// Width if control
+        /// </summary>
         public double Width
         {
             get
             {
                 if(Control == null)
                     return 0;
-                return Control.Width;
+                return Control.Size.Width;
             }
         }
-
+        /// <summary>
+        /// Height of control
+        /// </summary>
         public double Height
         {
             get
             {
                 if(Control == null)
                     return 0;
-                return Control.Height;
+                return Control.Size.Height;
             }
         }
         public ConnectionViewModel Connection
@@ -72,7 +82,7 @@ namespace DiagramLib.ViewModels
         }
         public int Order { get; set; }
 
-        public DiagramBaseViewModel Control { get; set; }
+        
 
         public event AttachPointLocationChangedDelegate LocationChanged;
         public event AttachPointDirectionChangedDelegate DirectionChanging;

@@ -12,7 +12,7 @@ namespace DiagramDesigner.ViewModels
 {
     class ThickConnectionViewModel: ConnectionViewModel
     {
-        public ThickConnectionViewModel(DiagramBaseViewModel from, DiagramBaseViewModel to) :
+        public ThickConnectionViewModel(NodeBaseViewModel from, NodeBaseViewModel to) :
             base(from, to)
         {
             StrokeThickness = 6;

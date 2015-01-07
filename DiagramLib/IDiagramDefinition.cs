@@ -9,6 +9,6 @@ namespace DiagramLib
     using ViewModels;
     public interface IDiagramDefinition
     {
-        ConnectionViewModel CreateConnection(DiagramBaseViewModel from, DiagramBaseViewModel to);
+        ConnectionViewModel CreateConnection(NodeBaseViewModel from, NodeBaseViewModel to);
     }
 }

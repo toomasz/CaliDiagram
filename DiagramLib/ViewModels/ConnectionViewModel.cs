@@ -19,7 +19,7 @@ namespace DiagramLib.ViewModels
 
     public class ConnectionViewModel : PropertyChangedBase, IDisposable
     {
-        public ConnectionViewModel(DiagramBaseViewModel from, DiagramBaseViewModel to)
+        public ConnectionViewModel(NodeBaseViewModel from, NodeBaseViewModel to)
         {
             this.From = from;
             this.To = to;
@@ -59,6 +59,29 @@ namespace DiagramLib.ViewModels
             }
         }
 
+        public Geometry PathGeometry1
+        {
+            get
+            {
+                PathGeometry animationPath = new PathGeometry();
+                PathFigure pFigure = new PathFigure();
+                pFigure.StartPoint = AttachPointFrom.Location;
+
+                LineSegment seg = new LineSegment(AttachPointTo.Location, true);
+        
+               
+                pFigure.Segments.Add(seg);
+                animationPath.Figures.Add(pFigure);
+
+                // Freeze the PathGeometry for performance benefits.
+             //   animationPath.Freeze();
+            
+                return animationPath;
+
+            }
+        }
+        
+
         private Brush _Stroke;
         public Brush Stroke 
         {
@@ -77,49 +100,17 @@ namespace DiagramLib.ViewModels
         private void To_LocationChanged(object sender, EventArgs e)
         {
             UpdateConnection();
+            NotifyOfPropertyChange(() => PathGeometry1);
         }
 
         private void From_LocationChanged(object sender, EventArgs e)
         {
             UpdateConnection();
+            NotifyOfPropertyChange(() => PathGeometry1);
         }
 
-        public DiagramBaseViewModel FromDescriptor { get; set; }
-        public DiagramBaseViewModel ToDescriptor { get; set; }
-
-        Point[] AttachPoints(Rect rect)
-        {
-            return new Point[]
-            {
-                DiagramHelpers.GetMiddlePoint(AttachDirection.Top, rect),
-                DiagramHelpers.GetMiddlePoint(AttachDirection.Right, rect),
-                DiagramHelpers.GetMiddlePoint(AttachDirection.Bottom, rect),
-                DiagramHelpers.GetMiddlePoint(AttachDirection.Left, rect)
-            };
-
-        }
-
-        double DistanceBetweenPoints(Point a, Point b)
-        {
-            double d = (Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2));
-            return d;
-        }
-
-        Tuple<AttachDirection, AttachDirection> GetAttachDirections(Rect fromRect, Rect toRect)
-        {
-            var attachPointsFrom = AttachPoints(fromRect);
-            var attachPointsTo = AttachPoints(toRect);
-
-            var results = new List<Tuple<Point, Point, double, int, int>>();
-            for (int i = 0; i < attachPointsFrom.Length; i++)
-            {
-                for (int j = 0; j < attachPointsTo.Length; j++)
-                    results.Add(Tuple.Create(attachPointsFrom[i], attachPointsTo[j], DistanceBetweenPoints(attachPointsFrom[i], attachPointsTo[j]), i, j));
-            }
-
-            var bestMatch = results.OrderBy(r => r.Item3).First();
-            return Tuple.Create((AttachDirection) bestMatch.Item4, (AttachDirection) bestMatch.Item5);
-        }
+        public NodeBaseViewModel FromDescriptor { get; set; }
+        public NodeBaseViewModel ToDescriptor { get; set; }
 
         /// <summary>
         /// 0 - top
@@ -129,34 +120,21 @@ namespace DiagramLib.ViewModels
         /// </summary>
         public void UpdateConnection()
         {
-            var bestDirections = GetAttachDirections(From.Rect, To.Rect);
-            
-            if (AttachPointFrom == null)
-            {
-                AttachPointFrom = From.Attach(bestDirections.Item1, this);
-                AttachPointFrom.Control = FromDescriptor;
-            }
-            else
-                AttachPointFrom.Direction = bestDirections.Item1;
+            var bestDirections = DiagramHelpers.GetAttachDirections(From.Rect, To.Rect);
+            AttachPointFrom.Direction = bestDirections.Item1;
+            AttachPointTo.Direction = bestDirections.Item2;
 
-            if (AttachPointTo == null)
-            {
-                AttachPointTo = To.Attach(bestDirections.Item2, this);
-                AttachPointTo.Control = ToDescriptor;
-            }
-            else
-                AttachPointTo.Direction = bestDirections.Item2;
-
-            To.UpdateAttachPoints();
             From.UpdateAttachPoints();
+            To.UpdateAttachPoints();
+           
         }
 
-        public DiagramBaseViewModel From
+        public NodeBaseViewModel From
         {
             get;
             set;
         }
-        public DiagramBaseViewModel To
+        public NodeBaseViewModel To
         {
             get;
             set;

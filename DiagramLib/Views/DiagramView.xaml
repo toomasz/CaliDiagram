@@ -14,24 +14,25 @@
         <ItemsControl Background="Transparent" Name="Edges" >
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                        <v:EdgeView cal:Bind.Model="{Binding}"  
-                                    cal:Message.Attach="[Event MouseLeftButtonDown] = [Action SelectConnection($dataContext)]"
-                                    FromPoint="{Binding AttachPointFrom.Location}" 
-                                    ToPoint="{Binding AttachPointTo.Location}"
-                                    Stroke="{Binding Stroke}" 
-                                    StrokeThickness="{Binding StrokeThickness}">
-                            <v:EdgeView.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem>Remove</MenuItem>
-                                </ContextMenu>
-                            </v:EdgeView.ContextMenu>
-                        </v:EdgeView>
-
-                </DataTemplate>
+                        <Grid>
+                            <v:EdgeView 
+                                cal:Bind.Model="{Binding}"  
+                                cal:Message.Attach="[Event MouseLeftButtonDown] = [Action SelectConnection($dataContext)]"
+                                FromPoint="{Binding AttachPointFrom.Location}" 
+                                ToPoint="{Binding AttachPointTo.Location}"
+                                Stroke="{Binding Stroke}" 
+                                StrokeThickness="{Binding StrokeThickness}"
+                                >
+                               
+                            
+                            </v:EdgeView>
+                            <!--<v:DiagramPacketView></v:DiagramPacketView>-->
+                        </Grid>
+                    </DataTemplate>
             </ItemsControl.ItemTemplate>
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <Canvas></Canvas>
+                    <Canvas Canvas.Top="0" Canvas.Left="0" Background="Tan"></Canvas>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ItemsControl>
@@ -47,7 +48,7 @@
         </ItemsControl>
 
         <!-- Dev node entities-->
-       <ItemsControl Background="Transparent" Name="DiagramItems">
+       <ItemsControl Background="Transparent" Name="Nodes">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Canvas></Canvas>

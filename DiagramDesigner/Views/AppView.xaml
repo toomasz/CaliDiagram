@@ -12,9 +12,9 @@
                 </ListBox.ItemsPanel>
                 <ListBox.BorderThickness>0</ListBox.BorderThickness>
             </ListBox>
-            <Button Name="SaveDiagram">Save diagram</Button>
-            <Button Name="LoadDiagram">Load diagram</Button>
-            <Button Name="ClearDiagram">Clear</Button>
+            <Button Name="SaveDiagram" Margin="3">Save diagram</Button>
+            <Button Name="LoadDiagram" Margin="3">Load diagram</Button>
+            <Button Name="ClearDiagram" Margin="3">Clear</Button>
         </WrapPanel>
        <ContentControl DockPanel.Dock="Bottom" Name="Diagram1"></ContentControl>
     </DockPanel>

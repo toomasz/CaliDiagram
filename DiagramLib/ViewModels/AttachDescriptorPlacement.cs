@@ -7,12 +7,10 @@ using System.Windows;
 
 namespace DiagramLib.ViewModels
 {
-    
-
     public class AttachDescriptorPlacement
     {
-        private DiagramBaseViewModel parent;
-        public AttachDescriptorPlacement(DiagramBaseViewModel parentControl)
+        private NodeBaseViewModel parent;
+        public AttachDescriptorPlacement(NodeBaseViewModel parentControl)
         {
             parent = parentControl;
             AttachPoints = new Dictionary<AttachDirection, List<AttachPoint>>();
@@ -44,18 +42,13 @@ namespace DiagramLib.ViewModels
         /// -On create(When parent view has size, when all attachnment have size
         /// </summary>
 
-        public void UpdatePoints()
+        public void UpdateAttachPoints()
         {
             if (AttachPoints.All((kv) => kv.Value.Count == 0))
             {
                 return;
             }
 
-
-            if (parent.Width == 0)
-            {
-                return;
-            }
 
             //if (AttachPoints.Any(kv => kv.Value.Count(a => a.Control.Width == 0) > 0))
             //{
@@ -67,14 +60,14 @@ namespace DiagramLib.ViewModels
             {
 
 
-                List<Tuple<AttachPoint, DiagramBaseViewModel>> apByPositionOfConnectedTo =
-                    new List<Tuple<AttachPoint, DiagramBaseViewModel>>();
+                List<Tuple<AttachPoint, NodeBaseViewModel>> apByPositionOfConnectedTo =
+                    new List<Tuple<AttachPoint, NodeBaseViewModel>>();
                 foreach (var ap in direction.Value)
                 {
                     ConnectionViewModel cvm = ap.Connection;
                     if (cvm != null)
                     {
-                        DiagramBaseViewModel connTo = (cvm.AttachPointFrom == ap) ? cvm.To : cvm.From;
+                        NodeBaseViewModel connTo = (cvm.AttachPointFrom == ap) ? cvm.To : cvm.From;
                         apByPositionOfConnectedTo.Add(Tuple.Create(ap, connTo));
                     }
 
@@ -140,18 +133,18 @@ namespace DiagramLib.ViewModels
                             attachPoint.Location, attachPoint.Direction);
 
 
-                        attachPoint.Control.SetLocation(attachPoint.ControlLocation.X, attachPoint.ControlLocation.Y);
+                        attachPoint.Control.Location = attachPoint.ControlLocation;
                     }
                 }
             }
         }
 
-        public AttachPoint Attach(AttachDirection direction, ConnectionViewModel connection)
+        public AttachPoint Attach(AttachDirection direction, ConnectionViewModel connection, NodeBaseViewModel associatedControl)
         {
-            AttachPoint attachPoint = new AttachPoint(direction, connection);
+            AttachPoint attachPoint = new AttachPoint(direction, connection, associatedControl );
             attachPoint.DirectionChanging += attachPoint_DirectionChanging;
             AttachPoints[direction].Add(attachPoint);
-            UpdatePoints();
+            UpdateAttachPoints();
             return attachPoint;
         }
 
@@ -166,7 +159,7 @@ namespace DiagramLib.ViewModels
         {
             AttachPoints[point.Direction].Remove(point);
             point.DirectionChanging -= attachPoint_DirectionChanging;
-            UpdatePoints();
+            UpdateAttachPoints();
         }
 
     }

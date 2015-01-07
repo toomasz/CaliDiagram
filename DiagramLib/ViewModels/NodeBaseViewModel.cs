@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 namespace DiagramLib.ViewModels
 {
 
-    public abstract class DiagramBaseViewModel : PropertyChangedBase
+    public abstract class NodeBaseViewModel : PropertyChangedBase
     {
-        public DiagramBaseViewModel()
+        public NodeBaseViewModel()
         {
             AttachPlacement = new AttachDescriptorPlacement(this);
         }
@@ -25,71 +25,79 @@ namespace DiagramLib.ViewModels
 
         protected virtual void OnSizeChanged()
         {
-            AttachPlacement.UpdatePoints();
         }
         protected virtual void OnBindingCompleted()
         {
-
         }
 
         public Rect Rect
         {
             get
             {
-                return new Rect(Location.X, Location.Y, Width, Height);
+                return new Rect(Location, Size);
             }
         }
 
         void RaiseLocationChanged()
         {
+            if (!isInitialized)
+                return;
             // AttachPlacement.UpdatePoints();
+          //  Console.WriteLine("{0} NewLocation: {1}", Name, Location);
             OnLocationChanged();
             if (LocationChanged != null)
                 LocationChanged(this, null);
         }
 
-        public void RaiseBindingComplete()
-        {
-            OnBindingCompleted();
-            // AttachPlacement.UpdatePoints();
-    
-            //   Width = view.ActualWidth;
-            //   Height = view.ActualHeight;
+        //public void RaiseBindingComplete()
+        //{
+        //    OnBindingCompleted();
+        //    Console.WriteLine(Name + " BC");
+        //    // AttachPlacement.UpdatePoints();
 
-            if (BindingComplete != null)
-                BindingComplete(this, null);
-        }
+        //    if (BindingComplete != null)
+        //        BindingComplete(this, null);
+            
+        //}
 
         public void RaiseSizeChanged()
         {
-
-            //  AttachPlacement.UpdatePoints();
+            if (!isInitialized)
+                return;
+            Console.WriteLine(Name + " SC");
+            AttachPlacement.UpdateAttachPoints();
             OnSizeChanged();
             if (SizeChanged != null)
                 SizeChanged(this, null);
         }
-
-        public bool HaveSize { get; private set; }
-
-        public void SetLocation(double x, double y)
+        bool isInitialized = false;
+        public void RaiseInitialize()
         {
-           SetLocation(new Point(x,y));
+            Console.WriteLine(Name + " initialized");
+            isInitialized = true;
+            AttachPlacement.UpdateAttachPoints();
         }
 
         public void UpdateAttachPoints()
         {
-            AttachPlacement.UpdatePoints();
+            AttachPlacement.UpdateAttachPoints();
         }
 
-        public void SetLocation(Point point)
+        private string _Name;
+        public string Name
         {
-            if (point.X != Location.X || point.Y != Location.Y)
+            get { return _Name; }
+            set
             {
-                Location = new Point(point.X, point.Y);
-                
-                RaiseLocationChanged();
+                if (_Name != value)
+                {
+                    _Name = value;
+                    NotifyOfPropertyChange(() => Name);
+                }
             }
         }
+        
+
 
         private Point _Location;
         public Point Location
@@ -100,59 +108,42 @@ namespace DiagramLib.ViewModels
                 if (_Location != value)
                 {
                     _Location = value;
+                    RaiseLocationChanged();
                     NotifyOfPropertyChange(() => Location);
                 }
             }
         }
 
-
-        private double _Width;
-        public double Width
+        private Size _Size;
+        public Size Size
         {
-            get { return _Width; }
+            get { return _Size; }
             set
             {
-                if (_Width != value)
+                if (_Size != value)
                 {
-                    _Width = value;
-                    NotifyOfPropertyChange(() => Width);
+                    _Size = value;
+                    NotifyOfPropertyChange(() => Size);
                     RaiseSizeChanged();
                 }
             }
         }
-
-        private double _Height;
-        public double Height
-        {
-            get { return _Height; }
-            set
-            {
-                if (_Height != value)
-                {
-                    _Height = value;
-                    NotifyOfPropertyChange(() => Height);
-                    RaiseSizeChanged();
-                    HaveSize = true;
-                }
-            }
-        }
-
+        
 
         public AttachDescriptorPlacement AttachPlacement
         {
             get; set; 
         }
 
-        public AttachPoint Attach(AttachDirection direction, ConnectionViewModel connection)
+        public AttachPoint Attach(AttachDirection direction, ConnectionViewModel connection, NodeBaseViewModel node)
         {
-            return AttachPlacement.Attach(direction, connection);
+            return AttachPlacement.Attach(direction, connection, node);
         }
 
         public void Detach(AttachPoint ap)
         {
             AttachPlacement.Detach(ap);
         }
-
 
         public event EventHandler<ViewAttachedEventArgs> ViewAttached;
     }

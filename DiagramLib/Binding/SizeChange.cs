@@ -69,10 +69,10 @@ namespace ResourceTreeVisualTest.Binding
             FrameworkElement fe = dependencyObject as FrameworkElement;
             if (fe == null)
                 return;
-            DiagramBaseViewModel viewModel = fe.DataContext as DiagramBaseViewModel;
+            NodeBaseViewModel viewModel = fe.DataContext as NodeBaseViewModel;
             if (viewModel == null)
                 return;
-            viewModel.Height = GetActualHeight(dependencyObject);
+         //   viewModel.Height = GetActualHeight(dependencyObject);
         }
 
         // Getter of ActualHeight property. The name of this method
@@ -113,10 +113,10 @@ namespace ResourceTreeVisualTest.Binding
             FrameworkElement fe = dependencyObject as FrameworkElement;
             if (fe == null)
                 return;
-            DiagramBaseViewModel viewModel = fe.DataContext as DiagramBaseViewModel;
+            NodeBaseViewModel viewModel = fe.DataContext as NodeBaseViewModel;
             if (viewModel == null)
                 return;
-            viewModel.Width = GetActualWidth(dependencyObject);
+         //   viewModel.Width = GetActualWidth(dependencyObject);
 
         }
 
@@ -157,11 +157,11 @@ namespace ResourceTreeVisualTest.Binding
             }
 
 
-            var em = element.DataContext as DiagramBaseViewModel;
+            var em = element.DataContext as NodeBaseViewModel;
             if (em != null)
             {
-                em.Height = GetActualHeight(obj);
-                em.Width = GetActualWidth(obj);
+             //   em.Height = GetActualHeight(obj);
+             //   em.Width = GetActualWidth(obj);
             }
 
 

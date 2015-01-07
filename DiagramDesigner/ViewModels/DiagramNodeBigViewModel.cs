@@ -10,9 +10,12 @@ using System.Threading.Tasks;
 namespace DiagramDesigner.ViewModels
 {
 
-    internal class DiagramNodeBigViewModel : DiagramBaseViewModel
+    internal class DiagramNodeBigViewModel : NodeBaseViewModel
     {
-        public string Name { get; set; }
+        public DiagramNodeBigViewModel(string name)
+        {
+            this.Name = name;
+        }
     }
 
 }

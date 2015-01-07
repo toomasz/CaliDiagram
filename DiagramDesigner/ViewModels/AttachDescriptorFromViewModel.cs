@@ -7,7 +7,7 @@ using DiagramLib.ViewModels;
 
 namespace DiagramDesigner.ViewModels
 {
-    public class AttachDescriptorFromViewModel: DiagramBaseViewModel
+    public class AttachDescriptorFromViewModel: NodeBaseViewModel
     {
     }
 }

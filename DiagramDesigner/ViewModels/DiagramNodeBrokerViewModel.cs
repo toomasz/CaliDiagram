@@ -7,7 +7,11 @@ using System.Threading.Tasks;
 
 namespace DiagramDesigner.ViewModels
 {
-    public class DiagramNodeBrokerViewModel: DiagramBaseViewModel
+    public class DiagramNodeBrokerViewModel: NodeBaseViewModel
     {
+        public DiagramNodeBrokerViewModel(string name)
+        {
+            this.Name = name;
+        }
     }
 }

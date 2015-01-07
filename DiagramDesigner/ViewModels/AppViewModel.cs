@@ -46,9 +46,9 @@ namespace DiagramDesigner
         {
             Diagram1.ClearDiagram();
         }
-        private DiagramBaseViewModel prevSelectedNode = null;
+        private NodeBaseViewModel prevSelectedNode = null;
 
-        void Diagram1_NodeSelected(object sender, DiagramBaseViewModel e)
+        void Diagram1_NodeSelected(object sender, NodeBaseViewModel e)
         {
             if (CurrentMode == DiagramMode.AddConnection)
             {
@@ -69,19 +69,20 @@ namespace DiagramDesigner
             }
         }
         int clientNo = 1;
+        int serverNo = 1;
+        int brokerNo = 1;
+
         void Diagram1_OnDiagramClick(object sender, System.Windows.Point e)
         {
             if(CurrentMode == DiagramMode.AddNode1)
-                Diagram1.DiagramItems.Add(new DiagramNodeSmallViewModel("c" +(clientNo++).ToString()) { Location = e});
+                Diagram1.AddNode(new DiagramNodeSmallViewModel(string.Format("c{0}", clientNo++)), e);
             else if (CurrentMode == DiagramMode.AddNode2)
             {
-                var newNode = new DiagramNodeBigViewModel() {Location = e};
-                Diagram1.DiagramItems.Add(newNode);
+                Diagram1.AddNode(new DiagramNodeBigViewModel(string.Format("S{0}", serverNo++)), e);
             }
             else if (CurrentMode == DiagramMode.AddBroker)
             {
-                var newNode = new DiagramNodeBrokerViewModel() { Location = e };
-                Diagram1.DiagramItems.Add(newNode);
+                Diagram1.AddNode(new DiagramNodeBrokerViewModel(string.Format("Br{0}", brokerNo++)), e);
             }
         }
 
