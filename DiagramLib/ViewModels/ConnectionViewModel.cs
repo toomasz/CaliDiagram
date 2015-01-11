@@ -120,13 +120,14 @@ namespace DiagramLib.ViewModels
         /// </summary>
         public void UpdateConnection()
         {
-            var bestDirections = DiagramHelpers.GetAttachDirections(From.Rect, To.Rect);
-            AttachPointFrom.Direction = bestDirections.Item1;
-            AttachPointTo.Direction = bestDirections.Item2;
+           // Console.WriteLine("UpdateConnection {0} -> {1}", From.Name, To.Name);
+            var newOrSameSides = DiagramHelpers.GetAttachmentSidesForConnection(From.Rect, To.Rect);
+
+            AttachPointFrom.Side = newOrSameSides.FromSide;
+            AttachPointTo.Side = newOrSameSides.ToSide;
 
             From.UpdateAttachPoints();
-            To.UpdateAttachPoints();
-           
+            To.UpdateAttachPoints();           
         }
 
         public NodeBaseViewModel From

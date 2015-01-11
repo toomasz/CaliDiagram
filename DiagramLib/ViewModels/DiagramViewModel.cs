@@ -23,9 +23,9 @@ namespace DiagramLib.ViewModels
             AttachDescriptors = new ObservableCollection<NodeBaseViewModel>();
             this.Definition = diagramDefinition;
         }
-        public ObservableCollection<NodeBaseViewModel> AttachDescriptors { get; set; } 
-        public ObservableCollection<NodeBaseViewModel> Nodes { get; set; }
-        public ObservableCollection<ConnectionViewModel> Edges { get; set; }
+        public IList<NodeBaseViewModel> AttachDescriptors { get; private set; }
+        public IList<NodeBaseViewModel> Nodes { get; private set; }
+        public IList<ConnectionViewModel> Edges { get; private set; }
         public event EventHandler<Point> OnDiagramClick;
         public event EventHandler<NodeBaseViewModel> NodeSelected;
         public event EventHandler<ConnectionViewModel> ConnectionSelected;
@@ -56,14 +56,20 @@ namespace DiagramLib.ViewModels
                 }
             }
         }
+        public bool IsInBatchMode { get; internal set; }
         public void AddNode(NodeBaseViewModel node, Point location)
         {
+            if (node.ParentDiagram != null)
+                throw new InvalidOperationException("Node is already added to diagram");
+            node.ParentDiagram = this;
             node.Location = location;
             Nodes.Add(node);
-            Console.WriteLine(string.Format("Added {0}", node.Name));
+            ForceRedraw();
+            node.RaiseInitialize();
         }
         public void RemoveNode(NodeBaseViewModel node)
         {
+            node.ParentDiagram = null;
             Nodes.Remove(node);
             var edgesToRemove = Edges.Where(edge => edge.From == node || edge.To == node).ToList();
             foreach (var edge in edgesToRemove)
@@ -103,26 +109,49 @@ namespace DiagramLib.ViewModels
                 NodeSelected(this, vm);
         }
 
-        public void AddConnection(NodeBaseViewModel from, NodeBaseViewModel to)
+        public ConnectionViewModel AddConnection(NodeBaseViewModel from, NodeBaseViewModel to)
         {
             var edge = Definition.CreateConnection(from, to);
-         
-       
+
+
 
             if (edge.FromDescriptor != null)
+            {
                 AttachDescriptors.Add(edge.FromDescriptor);
+                
+                edge.FromDescriptor.Name = "from";
+
+                if (!IsInBatchMode)
+                {
+                    ForceRedraw();
+                    edge.FromDescriptor.RaiseInitialize();
+                }
+            }
             if (edge.ToDescriptor != null)
+            {
                 AttachDescriptors.Add(edge.ToDescriptor);
 
-            edge.FromDescriptor.Name = "from";
-            edge.ToDescriptor.Name = "to";
+                edge.ToDescriptor.Name = "to";
+                if (!IsInBatchMode)
+                {
+                    ForceRedraw();
+                    edge.ToDescriptor.RaiseInitialize();
+                }
+            }
+            if (!IsInBatchMode)
+                ForceRedraw();
+
+            
+            
             Edges.Add(edge);
 
-            var bestDirections = DiagramHelpers.GetAttachDirections(from.Rect, to.Rect);
-            edge.AttachPointFrom = from.Attach(bestDirections.Item1, edge, edge.FromDescriptor);
-            edge.AttachPointTo = to.Attach(bestDirections.Item2, edge, edge.ToDescriptor);
+            var sides = DiagramHelpers.GetAttachmentSidesForConnection(from.Rect, to.Rect);
+            edge.AttachPointFrom = from.Attach(sides.FromSide, edge, edge.FromDescriptor);
+            edge.AttachPointTo = to.Attach(sides.ToSide, edge, edge.ToDescriptor);
 
-            edge.UpdateConnection();
+            if (!IsInBatchMode)
+                edge.UpdateConnection();
+            return edge;
         }
     }
 }

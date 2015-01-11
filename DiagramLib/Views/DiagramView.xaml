@@ -38,6 +38,16 @@
         </ItemsControl>
 
 
+      
+        <!-- Dev node entities-->
+       <ItemsControl Background="Transparent" Name="Nodes">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas></Canvas>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+            
         <!-- attach descriptors -->
         <ItemsControl Background="Transparent" Name="AttachDescriptors" >
             <ItemsControl.ItemsPanel>
@@ -47,14 +57,6 @@
             </ItemsControl.ItemsPanel>
         </ItemsControl>
 
-        <!-- Dev node entities-->
-       <ItemsControl Background="Transparent" Name="Nodes">
-            <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <Canvas></Canvas>
-                </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-        </ItemsControl>
-    </Canvas>
+        </Canvas>
     </Border>
 </UserControl>

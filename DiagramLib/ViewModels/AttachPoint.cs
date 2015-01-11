@@ -26,7 +26,7 @@ namespace DiagramLib.ViewModels
     {
         public AttachPoint(AttachDirection direction, ConnectionViewModel connection, NodeBaseViewModel associatedControl)
         {
-            Direction = direction;
+            Side = direction;
             this.Connection = connection;
             this.Control = associatedControl;
         }
@@ -65,7 +65,7 @@ namespace DiagramLib.ViewModels
             private set;
         }
         private AttachDirection _direction;
-        public AttachDirection Direction
+        public AttachDirection Side
         {
             get { return _direction; }
             set

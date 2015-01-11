@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,28 +35,8 @@ namespace DiagramLib.ViewModels
 
         public Dictionary<AttachDirection, List<AttachPoint>> AttachPoints;
 
-        /// <summary>
-        /// Updates attach points belongig to this descriptor(which belongs to entityviewmodel)
-        /// When call it?
-        /// -Parent control size or location changed
-        /// -Any attachment view size or location changed
-        /// -On create(When parent view has size, when all attachnment have size
-        /// </summary>
-
-        public void UpdateAttachPoints()
+        void UpdateAttachPointOrder()
         {
-            if (AttachPoints.All((kv) => kv.Value.Count == 0))
-            {
-                return;
-            }
-
-
-            //if (AttachPoints.Any(kv => kv.Value.Count(a => a.Control.Width == 0) > 0))
-            //{
-            //    return;
-            //}
-
-
             foreach (var direction in AttachPoints)
             {
 
@@ -79,17 +60,44 @@ namespace DiagramLib.ViewModels
                     foreach (var tuple in apByPositionOfConnectedTo.OrderBy(a => a.Item2.Location.Y))
                         tuple.Item1.Order = n++;
                 }
-                else if(direction.Key == AttachDirection.Top || direction.Key== AttachDirection.Bottom)
+                else if (direction.Key == AttachDirection.Top || direction.Key == AttachDirection.Bottom)
                 {
                     foreach (var tuple in apByPositionOfConnectedTo.OrderBy(a => a.Item2.Location.X))
                         tuple.Item1.Order = n++;
                 }
-                    
-                
+
+
+            }
+        }
+
+        /// <summary>
+        /// Updates attach points belongig to this descriptor(which belongs to entityviewmodel)
+        /// When call it?
+        /// -Parent control size or location changed
+        /// -Any attachment view size or location changed
+        /// -On create(When parent view has size, when all attachnment have size
+        /// </summary>        
+        public void UpdateAttachPoints()
+        {
+            if (parent.ParentDiagram == null)
+                return;
+            // update attach point ic called from external code in case of batch mode usage
+            if (parent.ParentDiagram.IsInBatchMode)
+                return;
+
+          //  Console.WriteLine(parent.Name + "::UpdateAttachPoints");
+            if (AttachPoints.All((kv) => kv.Value.Count == 0))
+            {
+                return;
             }
 
+            
+            //if (AttachPoints.Any(kv => kv.Value.Count(a => a.Control.Width == 0) > 0))
+            //{
+            //    return;
+            //}
 
-
+            UpdateAttachPointOrder();
 
             foreach (var directionPoints in AttachPoints)
             {
@@ -97,10 +105,10 @@ namespace DiagramLib.ViewModels
                 var attachPoints = directionPoints.Value;
 
 
-                //if (attachPoints.Any(ap => ap.Control.Width == 0))
-                //{
+                if (attachPoints.Any(ap => ap.Width == 0))
+                {
 
-                //}
+                }
 
                 if (attachPoints.Count == 0)
                     continue;
@@ -116,6 +124,13 @@ namespace DiagramLib.ViewModels
 
                 foreach (var attachPoint in attachPoints.OrderBy(a=>a.Order))
                 {
+                    if(attachPoint.Width == 0)
+                    {
+                        if(attachPoint.Control != null)
+                            Trace.TraceWarning("W: width of attach point is 0: {0}", attachPoint.Control.Name);
+                        else
+                            Trace.TraceWarning("W: no control associated with attach point");
+                    }
                     if (direction == AttachDirection.Top || direction == AttachDirection.Bottom)
                     {
                         attachPoint.Location = new Point(offsetX + (attachPoint.Width / 2), middlePoint.Y);
@@ -130,7 +145,7 @@ namespace DiagramLib.ViewModels
                     if (attachPoint.Control != null)
                     {
                         attachPoint.ControlLocation = DiagramHelpers.GetAttachmentLocation(attachPoint.Control,
-                            attachPoint.Location, attachPoint.Direction);
+                            attachPoint.Location, attachPoint.Side);
 
 
                         attachPoint.Control.Location = attachPoint.ControlLocation;
@@ -143,21 +158,21 @@ namespace DiagramLib.ViewModels
         {
             AttachPoint attachPoint = new AttachPoint(direction, connection, associatedControl );
             attachPoint.DirectionChanging += attachPoint_DirectionChanging;
-            AttachPoints[direction].Add(attachPoint);
+            AttachPoints[direction].Add(attachPoint);            
             UpdateAttachPoints();
             return attachPoint;
         }
 
         void attachPoint_DirectionChanging(AttachPoint ap, AttachDirection direction)
         {
-            AttachPoints[ap.Direction].Remove(ap);
+            AttachPoints[ap.Side].Remove(ap);
             AttachPoints[direction].Add(ap);
             //UpdatePoints();
         }
 
         public void Detach(AttachPoint point)
         {
-            AttachPoints[point.Direction].Remove(point);
+            AttachPoints[point.Side].Remove(point);
             point.DirectionChanging -= attachPoint_DirectionChanging;
             UpdateAttachPoints();
         }

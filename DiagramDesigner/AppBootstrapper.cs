@@ -11,16 +11,37 @@ namespace DiagramDesigner
     using System.Collections.Generic;
     using Caliburn.Micro;
     using System.Windows;
+    using System.Diagnostics;
 
+
+    class TextListener : TraceListener
+    {
+
+        public override void Write(string message)
+        {
+            Console.Write(message);
+        }
+
+        public override void WriteLine(string message)
+        {
+            Console.WriteLine(message);
+        }
+    }
     public class AppBootstrapper : BootstrapperBase
     {
         private SimpleContainer container;
 
         public AppBootstrapper()
         {
+            EnableTrace();
             Initialize();
         }
-
+        void EnableTrace()
+        {
+            Trace.Listeners.Add(new TextListener());
+            Trace.AutoFlush = true;
+            Trace.Indent();
+        }
         protected override IEnumerable<Assembly> SelectAssemblies()
         {
             Assembly diagramAssembly = typeof (DiagramViewModel).Assembly;

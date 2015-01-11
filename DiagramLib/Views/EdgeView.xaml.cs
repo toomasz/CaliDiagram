@@ -37,9 +37,9 @@ namespace DiagramLib.Views
         private ConnectionViewModel vm;
         void ConnectionView_Loaded(object sender, RoutedEventArgs e)
         {
-            vm = DataContext as ConnectionViewModel;
-            if (vm != null)
-                vm.UpdateConnection();
+           // vm = DataContext as ConnectionViewModel;
+           // if (vm != null)
+           //     vm.UpdateConnection();
 
         }
 
@@ -116,23 +116,23 @@ namespace DiagramLib.Views
 
                 double xOffset = dist / 2;
                 double yOffset = dist / 2;
-                if (vm.AttachPointFrom.Direction == AttachDirection.Top)
+                if (vm.AttachPointFrom.Side == AttachDirection.Top)
                     pt2 = new Point(vm.AttachPointFrom.Location.X, vm.AttachPointFrom.Location.Y - yOffset);
-                if (vm.AttachPointFrom.Direction == AttachDirection.Right)
+                if (vm.AttachPointFrom.Side == AttachDirection.Right)
                     pt2 = new Point(vm.AttachPointFrom.Location.X + xOffset, vm.AttachPointFrom.Location.Y);
-                if (vm.AttachPointFrom.Direction == AttachDirection.Bottom)
+                if (vm.AttachPointFrom.Side == AttachDirection.Bottom)
                     pt2 = new Point(vm.AttachPointFrom.Location.X, vm.AttachPointFrom.Location.Y + yOffset);
-                if (vm.AttachPointFrom.Direction == AttachDirection.Left)
+                if (vm.AttachPointFrom.Side == AttachDirection.Left)
                     pt2 = new Point(vm.AttachPointFrom.Location.X - xOffset, vm.AttachPointFrom.Location.Y);
 
 
-                if (vm.AttachPointTo.Direction == AttachDirection.Top)
+                if (vm.AttachPointTo.Side == AttachDirection.Top)
                     pt3 = new Point(vm.AttachPointTo.Location.X, vm.AttachPointTo.Location.Y - yOffset);
-                if (vm.AttachPointTo.Direction == AttachDirection.Right)
+                if (vm.AttachPointTo.Side == AttachDirection.Right)
                     pt3 = new Point(vm.AttachPointTo.Location.X + xOffset, vm.AttachPointTo.Location.Y);
-                if (vm.AttachPointTo.Direction == AttachDirection.Bottom)
+                if (vm.AttachPointTo.Side == AttachDirection.Bottom)
                     pt3 = new Point(vm.AttachPointTo.Location.X, vm.AttachPointTo.Location.Y + yOffset);
-                if (vm.AttachPointTo.Direction == AttachDirection.Left)
+                if (vm.AttachPointTo.Side == AttachDirection.Left)
                     pt3 = new Point(vm.AttachPointTo.Location.X - xOffset, vm.AttachPointTo.Location.Y);
 
 

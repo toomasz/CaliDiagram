@@ -59,12 +59,17 @@ namespace DiagramLib.ViewModels
         //        BindingComplete(this, null);
             
         //}
+        public DiagramViewModel ParentDiagram
+        {
+            get;
+            set;
+        }
 
         public void RaiseSizeChanged()
         {
             if (!isInitialized)
                 return;
-            Console.WriteLine(Name + " SC");
+            //Console.WriteLine(Name + " SC");
             AttachPlacement.UpdateAttachPoints();
             OnSizeChanged();
             if (SizeChanged != null)
@@ -73,7 +78,11 @@ namespace DiagramLib.ViewModels
         bool isInitialized = false;
         public void RaiseInitialize()
         {
-            Console.WriteLine(Name + " initialized");
+            if(Size.Width == 0)
+            {
+                throw new Exception("Raise initialize called on viewmodel not bound to view");
+            }
+            //Console.WriteLine(Name + " initialized");
             isInitialized = true;
             AttachPlacement.UpdateAttachPoints();
         }

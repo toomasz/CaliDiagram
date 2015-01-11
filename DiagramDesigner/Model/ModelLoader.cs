@@ -79,37 +79,45 @@ namespace DiagramDesigner.Model
 
             diagramViewModel.ClearDiagram();
 
-            Dictionary<DiagramNodeBase, NodeBaseViewModel> nodeDictionary = new Dictionary<DiagramNodeBase, NodeBaseViewModel>();
-            foreach (var node in model.Nodes)
+            using (var bm = new DiagramBatchMode(diagramViewModel))
             {
-                NodeBaseViewModel nodeViewModel = ViewModelFromModel(node);
-               
-                if (nodeViewModel != null)
+                Dictionary<DiagramNodeBase, NodeBaseViewModel> nodeDictionary = new Dictionary<DiagramNodeBase, NodeBaseViewModel>();
+                foreach (var node in model.Nodes)
                 {
-                    diagramViewModel.Nodes.Add(nodeViewModel);
-                    nodeDictionary.Add(node, nodeViewModel);
+                    NodeBaseViewModel nodeViewModel = ViewModelFromModel(node);
+
+                    if (nodeViewModel != null)
+                    {
+                        nodeViewModel.ParentDiagram = diagramViewModel;
+                        diagramViewModel.Nodes.Add(nodeViewModel);
+                        nodeDictionary.Add(node, nodeViewModel);                        
+                    }
                 }
-            }
-            // Force rendering so we can have sizes of all nodes
-            diagramViewModel.ForceRedraw();
+                // Force rendering so we can have sizes of all nodes
+                diagramViewModel.ForceRedraw();
 
-            foreach (var edge in model.Edges)
-            {
-                diagramViewModel.AddConnection(nodeDictionary[edge.From], nodeDictionary[edge.To]);                
-            }
-            // Render again so we can have sizes of attach descriptors
-            diagramViewModel.ForceRedraw();
+                foreach (var edge in model.Edges)
+                {
+                    diagramViewModel.AddConnection(nodeDictionary[edge.From], nodeDictionary[edge.To]);
+                }
+                // Render again so we can have sizes of attach descriptors
+                diagramViewModel.ForceRedraw();
 
-            Console.WriteLine("Model loaded");
+                Console.WriteLine("Model loaded");
+
+                foreach (var node in diagramViewModel.Nodes)
+                    node.RaiseInitialize();
+
+                foreach (var node in diagramViewModel.AttachDescriptors)
+                    node.RaiseInitialize();
+
+                diagramViewModel.ForceRedraw();
+
+                
+            }
 
             foreach (var conn in diagramViewModel.Edges)
                 conn.UpdateConnection();
-
-            foreach (var node in diagramViewModel.AttachDescriptors)
-                node.RaiseInitialize();
-
-            foreach (var node in diagramViewModel.Nodes)
-                node.RaiseInitialize();
 
         }
     }

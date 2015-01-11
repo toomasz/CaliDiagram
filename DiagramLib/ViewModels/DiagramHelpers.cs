@@ -58,7 +58,41 @@ namespace DiagramLib.ViewModels
             return d;
         }
 
-        public static Tuple<AttachDirection, AttachDirection> GetAttachDirections(Rect fromRect, Rect toRect)
+        public static AttachSides GetAttachmentSidesForConnection(Rect fromRect, Rect toRect)
+        {
+            var fromMiddlePoint = new Point(fromRect.X + fromRect.Width / 2.0, fromRect.Y + fromRect.Height / 2.0);
+            var toMiddlePoint = new Point(toRect.X + toRect.Width / 2.0, toRect.Y + toRect.Height / 2.0);
+            const double Rad2Deg = 180.0 / Math.PI;
+            double angle = Math.Atan2(fromMiddlePoint.X - toMiddlePoint.X, fromMiddlePoint.Y - toMiddlePoint.Y) * Rad2Deg +90;
+            if (angle < 0)
+                angle = 360 + angle;
+
+            if(angle == 0)
+                return new AttachSides(AttachDirection.Top, AttachDirection.Top);
+
+            if (angle > 330 || angle < 45)
+                return new AttachSides(AttachDirection.Right, AttachDirection.Left);
+           // if (angle >= 30 && angle < 60)
+          //      return new AttachSides(AttachDirection.Right, AttachDirection.Bottom);
+            if (angle >= 45 && angle < 135)
+                return new AttachSides(AttachDirection.Top, AttachDirection.Bottom);
+            if (angle >= 120 && angle < 150)
+                return new AttachSides(AttachDirection.Left, AttachDirection.Bottom);
+            if (angle >= 150 && angle < 210)
+                return new AttachSides(AttachDirection.Left, AttachDirection.Right);
+            if (angle >= 210 && angle < 240)
+                return new AttachSides(AttachDirection.Left, AttachDirection.Top);
+            if (angle >= 240 && angle < 300)
+                return new AttachSides(AttachDirection.Bottom, AttachDirection.Top);
+
+            if (angle >= 300 && angle < 330)
+                return new AttachSides(AttachDirection.Bottom, AttachDirection.Left);
+
+            Console.WriteLine("angle = {0}", angle);
+            return new AttachSides(AttachDirection.Top, AttachDirection.Top);
+        }
+
+        public static AttachSides GetAttachmentSidesForConnectionOld(Rect fromRect, Rect toRect)
         {
             var attachPointsFrom = AttachPoints(fromRect);
             var attachPointsTo = AttachPoints(toRect);
@@ -71,7 +105,8 @@ namespace DiagramLib.ViewModels
             }
 
             var bestMatch = results.OrderBy(r => r.Item3).First();
-            return Tuple.Create((AttachDirection)bestMatch.Item4, (AttachDirection)bestMatch.Item5);
+
+            return new AttachSides((AttachDirection)bestMatch.Item4, (AttachDirection)bestMatch.Item5);
         }
     }
 }
