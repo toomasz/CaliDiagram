@@ -4,6 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d">
-    <Ellipse Width="14" Height="14"
-              Stroke="Gray" Fill="White" StrokeThickness="2"></Ellipse>
+    <Ellipse x:Name="effect" Width="15" Height="15"
+              Stroke="#FF7E5D17" Fill="#FF4EBEE0" StrokeThickness="2" StrokeDashArray="1" >
+        <Ellipse.Effect>
+            <DropShadowEffect ShadowDepth="1"/>
+        </Ellipse.Effect>
+    </Ellipse>
 </UserControl>
