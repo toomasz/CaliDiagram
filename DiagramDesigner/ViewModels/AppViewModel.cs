@@ -9,6 +9,7 @@ using DiagramDesigner.Views;
 using DiagramLib;
 using DiagramLib.ViewModels;
 using DiagramLib.Views;
+using DiagramLib.Model;
 
 namespace DiagramDesigner
 {

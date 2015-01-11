@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 
-namespace DiagramDesigner.Model
+namespace DiagramLib.Model
 {
     [DataContract]
     public class DiagramNodeBase

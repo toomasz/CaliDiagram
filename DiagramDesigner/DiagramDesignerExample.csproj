@@ -64,9 +64,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AppBootstrapper.cs" />
-    <Compile Include="Model\DiagramConnection.cs" />
-    <Compile Include="Model\DiagramModel.cs" />
-    <Compile Include="Model\DiagramNodeBase.cs" />
     <Compile Include="Model\DiagramNodeBig.cs" />
     <Compile Include="Model\DiagramNodeBroker.cs" />
     <Compile Include="Model\DiagramNodeSmall.cs" />
