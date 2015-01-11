@@ -31,6 +31,9 @@ namespace DiagramLib.ViewModels
             Stroke = Brushes.DarkOliveGreen;
             Type = EdgeLineType.Bezier;
         }
+
+        public DiagramViewModel ParentDiagram { get; internal set; }
+
         private EdgeLineType _Type;
         public EdgeLineType Type
         {
@@ -121,7 +124,8 @@ namespace DiagramLib.ViewModels
         public void UpdateConnection()
         {
            // Console.WriteLine("UpdateConnection {0} -> {1}", From.Name, To.Name);
-            var newOrSameSides = DiagramHelpers.GetAttachmentSidesForConnection(From.Rect, To.Rect);
+
+            var newOrSameSides = ParentDiagram.Definition.ConnectorSideStrategy.GetSidesForConnection(this);
 
             AttachPointFrom.Side = newOrSameSides.FromSide;
             AttachPointTo.Side = newOrSameSides.ToSide;

@@ -61,7 +61,8 @@
   <ItemGroup>
     <Compile Include="Binding\SizeChange.cs" />
     <Compile Include="DiagramLibHelpers.cs" />
-    <Compile Include="IDiagramDefinition.cs" />
+    <Compile Include="IConnectorSideStrategy.cs" />
+    <Compile Include="DiagramDefinitionBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -75,6 +76,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="VerticalFavourizedConnectionSrategy.cs" />
     <Compile Include="ViewModels\AttachSides.cs" />
     <Compile Include="ViewModels\DiagramBatchMode.cs" />
     <Compile Include="Views\DiagramPacketView.xaml.cs">

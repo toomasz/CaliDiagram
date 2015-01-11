@@ -15,8 +15,12 @@ namespace DiagramLib.ViewModels
 {
     public class DiagramViewModel: PropertyChangedBase
     {
-        IDiagramDefinition Definition;
-        public DiagramViewModel(IDiagramDefinition diagramDefinition)
+        public DiagramDefinitionBase Definition
+        {
+            get;
+            private set;
+        }
+        public DiagramViewModel(DiagramDefinitionBase diagramDefinition)
         {
             Nodes = new ObservableCollection<NodeBaseViewModel>();
             Edges = new ObservableCollection<ConnectionViewModel>();
@@ -113,6 +117,15 @@ namespace DiagramLib.ViewModels
         {
             var edge = Definition.CreateConnection(from, to);
 
+            // prevent showing attach descriptors  when their position is not calculated yet
+            // this can be possible not necessary if calculation their location was done before data binding of AttachDescriptors collection
+            // but then we would not have size of attach descriptors and size is necessary for calculating position
+            if(edge.FromDescriptor != null)
+                edge.FromDescriptor.Location = new Point(-1000, -1000);
+            if(edge.ToDescriptor != null)
+                edge.ToDescriptor.Location = new Point(-1000, -1000);
+
+            edge.ParentDiagram = this;
 
 
             if (edge.FromDescriptor != null)
@@ -145,7 +158,7 @@ namespace DiagramLib.ViewModels
             
             Edges.Add(edge);
 
-            var sides = DiagramHelpers.GetAttachmentSidesForConnection(from.Rect, to.Rect);
+            var sides = Definition.ConnectorSideStrategy.GetSidesForConnection(edge);
             edge.AttachPointFrom = from.Attach(sides.FromSide, edge, edge.FromDescriptor);
             edge.AttachPointTo = to.Attach(sides.ToSide, edge, edge.ToDescriptor);
 

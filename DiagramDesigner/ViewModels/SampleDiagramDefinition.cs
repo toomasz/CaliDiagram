@@ -8,9 +8,14 @@ using System.Threading.Tasks;
 
 namespace DiagramDesigner.ViewModels
 {
-    public class SampleDiagramDefinition: IDiagramDefinition
+    public class SampleDiagramDefinition: DiagramDefinitionBase
     {
-        public ConnectionViewModel CreateConnection(NodeBaseViewModel from, NodeBaseViewModel to)
+        public SampleDiagramDefinition()
+        {
+            //Set custom connector placement strategy
+            //ConnectorSideStrategy = new VerticalFavourizedConnectionSrategy();
+        }
+        public override ConnectionViewModel CreateConnection(NodeBaseViewModel from, NodeBaseViewModel to)
         {
             ConnectionViewModel connectionViewModel;
 
