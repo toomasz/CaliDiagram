@@ -8,8 +8,8 @@
         <Rectangle Width="16" Height="16"  Stroke="#FF000A6A" Fill="#FFA6E3FF" StrokeThickness="2" StrokeDashArray="1">
         </Rectangle>
         <Ellipse Fill="#FF342B23" Margin="4" Cursor="Hand"/>
-        <Grid.Effect>
+        <!--<Grid.Effect>
             <DropShadowEffect ShadowDepth="1" Color="#FF0037F3"/>
-        </Grid.Effect>
+        </Grid.Effect>-->
     </Grid>
 </UserControl>

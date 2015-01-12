@@ -22,10 +22,9 @@ namespace DiagramDesigner
             Diagram1.OnDiagramClick += Diagram1_OnDiagramClick;
             Diagram1.NodeSelected += Diagram1_NodeSelected;
             Diagram1.ConnectionSelected += Diagram1_ConnectionSelected;
-            modelLoader = new ModelLoader<DiagramModel>(Diagram1);
-            
+            modelLoader = new DiagramXmlSerializer(Diagram1);            
         }
-        ModelLoader<DiagramModel> modelLoader;
+        DiagramXmlSerializer modelLoader;
         void Diagram1_ConnectionSelected(object sender, ConnectionViewModel e)
         {
             if (CurrentMode == DiagramMode.Delete)

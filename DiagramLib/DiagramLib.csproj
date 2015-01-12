@@ -66,7 +66,7 @@
     <Compile Include="Model\DiagramNodeBase.cs" />
     <Compile Include="IConnectorSideStrategy.cs" />
     <Compile Include="DiagramDefinitionBase.cs" />
-    <Compile Include="Model\ModelLoaderBase.cs" />
+    <Compile Include="Model\DiagramXmlSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>

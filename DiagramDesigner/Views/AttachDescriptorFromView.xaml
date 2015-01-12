@@ -6,8 +6,8 @@
              mc:Ignorable="d">
     <Ellipse x:Name="effect" Width="15" Height="15"
               Stroke="#FF7E5D17" Fill="#FF4EBEE0" StrokeThickness="2" StrokeDashArray="1" >
-        <Ellipse.Effect>
+        <!--<Ellipse.Effect>
             <DropShadowEffect ShadowDepth="1"/>
-        </Ellipse.Effect>
+        </Ellipse.Effect>-->
     </Ellipse>
 </UserControl>

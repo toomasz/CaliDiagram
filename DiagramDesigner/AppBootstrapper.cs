@@ -29,10 +29,12 @@ namespace DiagramDesigner
     }
     public class AppBootstrapper : BootstrapperBase
     {
+        
         private SimpleContainer container;
 
         public AppBootstrapper()
         {
+
             EnableTrace();
             Initialize();
         }

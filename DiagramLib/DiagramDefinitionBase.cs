@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DiagramLib
 {
-    class NodeBehaviour
+    internal class NodeBehaviour
     {
         public string Name
         {
@@ -20,7 +20,12 @@ namespace DiagramLib
         }
         public Func<NodeBaseViewModel, DiagramNodeBase> ConvertViewModelToModel;
         public Func<DiagramNodeBase, NodeBaseViewModel> ConvertModelToViewModel;
-        public Type Type
+        public Type TypeViewModel
+        {
+            get;
+            set;
+        }
+        public Type TypeModel
         {
             get;
             set;
@@ -33,7 +38,7 @@ namespace DiagramLib
         {
             get
             {
-                return nodeBehaviours.Select(n => n.Value.Type).ToArray();
+                return nodeBehaviours.Select(n => n.Value.TypeModel).ToArray();
             }
         }
 
@@ -43,12 +48,24 @@ namespace DiagramLib
             where TModel: DiagramNodeBase
         {
             nodeBehaviours.Add(nodeTypeName, new NodeBehaviour() {
-                Type = typeof(TModel), 
+                TypeViewModel = typeof(TViewModel), 
+                TypeModel = typeof(TModel),
                 Name = nodeTypeName, 
                 Caption = "to do",
                 ConvertViewModelToModel = vmToM,
                 ConvertModelToViewModel = modelToVm
             });
+        }
+
+        internal NodeBaseViewModel ModelToViewModel(DiagramNodeBase model)
+        {
+            var ctx = nodeBehaviours.FirstOrDefault(b => b.Value.TypeModel == model.GetType());
+            return ctx.Value.ConvertModelToViewModel(model);
+        }
+        internal DiagramNodeBase ViewModelToModel(NodeBaseViewModel viewModel)
+        {
+            var ctx = nodeBehaviours.FirstOrDefault(b => b.Value.TypeViewModel == viewModel.GetType());
+            return ctx.Value.ConvertViewModelToModel(viewModel);
         }
         public DiagramDefinitionBase()
         {

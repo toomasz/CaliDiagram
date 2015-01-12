@@ -67,11 +67,10 @@
     <Compile Include="Model\DiagramNodeBig.cs" />
     <Compile Include="Model\DiagramNodeBroker.cs" />
     <Compile Include="Model\DiagramNodeSmall.cs" />
-    <Compile Include="Model\ModelLoader.cs" />
     <Compile Include="ViewModels\AttachDescriptorToViewModel.cs" />
     <Compile Include="ViewModels\AttachDescriptorFromViewModel.cs" />
     <Compile Include="ViewModels\DiagramNodeBrokerViewModel.cs" />
-    <Compile Include="ViewModels\SampleDiagramDefinition.cs" />
+    <Compile Include="Model\SampleDiagramDefinition.cs" />
     <Compile Include="ViewModels\SlimConnectionViewModel.cs" />
     <Compile Include="ViewModels\DiagramNodeSmallViewModel.cs" />
     <Compile Include="ViewModels\DiagramNodeBigViewModel.cs" />

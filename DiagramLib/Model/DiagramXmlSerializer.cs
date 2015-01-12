@@ -7,20 +7,16 @@ using System.Threading.Tasks;
 
 namespace DiagramLib.Model
 {
-    public abstract class ModelLoaderBase<TDiagramModel> where TDiagramModel : new()
+    public class DiagramXmlSerializer
     {
         DiagramViewModel diagramViewModel;
         XmlSettings<DiagramModel> xmlSettings;
-        public ModelLoaderBase(DiagramViewModel diagramViewModel)
+        public DiagramXmlSerializer(DiagramViewModel diagramViewModel)
         {
             this.diagramViewModel = diagramViewModel;
             xmlSettings = new XmlSettings<DiagramModel>(diagramViewModel.Definition.NodeTypes);
+           
         }
-
-
-        protected abstract NodeBaseViewModel ViewModelFromModel(DiagramNodeBase model);
-
-        protected abstract DiagramNodeBase ModelFromViewModel(NodeBaseViewModel viewModel);
 
         public void SaveDiagram(string filename)
         {
@@ -28,7 +24,7 @@ namespace DiagramLib.Model
             Dictionary<NodeBaseViewModel, DiagramNodeBase> nodeDictionary = new Dictionary<NodeBaseViewModel, DiagramNodeBase>();
             foreach (var node in diagramViewModel.Nodes)
             {
-                DiagramNodeBase diagramNode = ModelFromViewModel(node);
+                DiagramNodeBase diagramNode = diagramViewModel.Definition.ViewModelToModel(node);
                 if (diagramNode != null)
                 {
                     diagramModel.Nodes.Add(diagramNode);
@@ -58,7 +54,7 @@ namespace DiagramLib.Model
                 Dictionary<DiagramNodeBase, NodeBaseViewModel> nodeDictionary = new Dictionary<DiagramNodeBase, NodeBaseViewModel>();
                 foreach (var node in model.Nodes)
                 {
-                    NodeBaseViewModel nodeViewModel = ViewModelFromModel(node);
+                    NodeBaseViewModel nodeViewModel =  diagramViewModel.Definition.ModelToViewModel(node);
 
                     if (nodeViewModel != null)
                     {
