@@ -11,22 +11,29 @@ namespace DiagramDesigner.ViewModels
 {
     public class SampleDiagramDefinition: DiagramDefinitionBase
     {
+        int clientNo = 1;
+        int serverNo = 1;
+        int brokerNo = 1;
+
         public SampleDiagramDefinition()
         {
             //Set custom connector placement strategy
             //ConnectorSideStrategy = new VerticalFavourizedConnectionSrategy();
             AddModelFor<DiagramNodeBrokerViewModel, DiagramNodeBroker>(
                 "node_broker",
+                (p) => new DiagramNodeBrokerViewModel(string.Format("Br{0}", brokerNo++)) { Location = p },
                 (vm) => new DiagramNodeBroker() { Location = vm.Location, Name = vm.Name },
-                (m) => new DiagramNodeBrokerViewModel(m.Name) {  Location = m.Location}
+                (m) => new DiagramNodeBrokerViewModel(m.Name) { Location = m.Location }
             );
             AddModelFor<DiagramNodeSmallViewModel, DiagramNodeSmall>(
                 "node_small",
+                (p) => new DiagramNodeSmallViewModel(string.Format("c{0}", clientNo++)) { Location = p },
                 (vm) => new DiagramNodeSmall() { Location = vm.Location, Name = vm.Name },
                 (m) => new DiagramNodeSmallViewModel(m.Name) { Location = m.Location }
             );
             AddModelFor<DiagramNodeBigViewModel, DiagramNodeBig>(
                 "node_big",
+                (p) => new DiagramNodeBigViewModel(string.Format("S{0}", serverNo++)) { Location = p },
                 (vm) => new DiagramNodeBig() { Location = vm.Location, Name = vm.Name },
                 (m) => new DiagramNodeBigViewModel(m.Name) { Location = m.Location }
             );

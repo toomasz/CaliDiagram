@@ -4,7 +4,7 @@
         Title="Sample diagram designer" Height="500" Width="725" WindowStartupLocation="CenterScreen">
     <DockPanel LastChildFill="True" >
         <WrapPanel Margin="0,0,0,0" DockPanel.Dock="Top">
-            <ListBox Name="ModeList" SelectedItem="{Binding CurrentMode}">
+            <ListBox Name="commands" ItemsSource="{Binding Diagram1.Commands}" SelectedItem="{Binding Diagram1.SelectedCommand}">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal"></StackPanel>

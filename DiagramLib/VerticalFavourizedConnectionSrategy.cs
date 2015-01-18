@@ -19,9 +19,6 @@ namespace DiagramLib
         {
             double angle = DiagramHelpers.GetAngleBetweenRects(fromRect, toRect);
 
-            if (angle == 0)
-                return new AttachSides(AttachDirection.Top, AttachDirection.Top);
-
             if (angle > 320 || angle < 40)
                 return new AttachSides(AttachDirection.Right, AttachDirection.Left);
             if (angle >= 40 && angle < 140)

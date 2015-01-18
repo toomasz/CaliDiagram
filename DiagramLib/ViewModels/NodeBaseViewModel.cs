@@ -5,20 +5,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 
 namespace DiagramLib.ViewModels
 {
 
-    public abstract class NodeBaseViewModel : PropertyChangedBase
+    public abstract class NodeBaseViewModel : PropertyChangedBase, IDisposable
     {
         public NodeBaseViewModel()
         {
             AttachPlacement = new AttachDescriptorPlacement(this);
+            Connections = new ObservableCollection<ConnectionViewModel>();
         }
         public event EventHandler LocationChanged;
         public event EventHandler SizeChanged;
-        public event EventHandler BindingComplete;
-
+        
         protected virtual void OnLocationChanged()
         {
         }
@@ -26,10 +27,36 @@ namespace DiagramLib.ViewModels
         protected virtual void OnSizeChanged()
         {
         }
-        protected virtual void OnBindingCompleted()
+
+        protected virtual void OnNodeCreated()
         {
+
+        }
+        protected virtual bool OnNodeDeleting()
+        {
+            return true;
         }
 
+        protected virtual void OnConnectionAdded(ConnectionViewModel connection)
+        {
+
+        }
+        protected virtual void OnConnectionRemoved(ConnectionViewModel connection)
+        {
+
+        }
+        internal void RaiseConnectionAdded(ConnectionViewModel connection)
+        {
+            Connections.Add(connection);
+            if(isInitialized)
+                OnConnectionAdded(connection);
+        }
+        internal virtual void RaiseConnectionRemoved(ConnectionViewModel connection)
+        {
+            Connections.Remove(connection);
+            if(isInitialized)
+                OnConnectionRemoved(connection);
+        }
         public Rect Rect
         {
             get
@@ -42,23 +69,11 @@ namespace DiagramLib.ViewModels
         {
             if (!isInitialized)
                 return;
-            // AttachPlacement.UpdatePoints();
-          //  Console.WriteLine("{0} NewLocation: {1}", Name, Location);
             OnLocationChanged();
             if (LocationChanged != null)
                 LocationChanged(this, null);
         }
 
-        //public void RaiseBindingComplete()
-        //{
-        //    OnBindingCompleted();
-        //    Console.WriteLine(Name + " BC");
-        //    // AttachPlacement.UpdatePoints();
-
-        //    if (BindingComplete != null)
-        //        BindingComplete(this, null);
-            
-        //}
         public DiagramViewModel ParentDiagram
         {
             get;
@@ -69,22 +84,22 @@ namespace DiagramLib.ViewModels
         {
             if (!isInitialized)
                 return;
-            //Console.WriteLine(Name + " SC");
             AttachPlacement.UpdateAttachPoints();
             OnSizeChanged();
             if (SizeChanged != null)
                 SizeChanged(this, null);
         }
         bool isInitialized = false;
+
         public void RaiseInitialize()
         {
             if(Size.Width == 0)
             {
                 throw new Exception("Raise initialize called on viewmodel not bound to view");
             }
-            //Console.WriteLine(Name + " initialized");
             isInitialized = true;
             AttachPlacement.UpdateAttachPoints();
+            OnNodeCreated();
         }
 
         public void UpdateAttachPoints()
@@ -105,8 +120,12 @@ namespace DiagramLib.ViewModels
                 }
             }
         }
-        
 
+        public ObservableCollection<ConnectionViewModel> Connections
+        {
+            get;
+            set;
+        }
 
         private Point _Location;
         public Point Location
@@ -155,5 +174,16 @@ namespace DiagramLib.ViewModels
         }
 
         public event EventHandler<ViewAttachedEventArgs> ViewAttached;
+        public bool IsDisposed
+        {
+            get;
+            private set;
+        }
+        public void Dispose()
+        {
+            IsDisposed = true;
+            OnNodeDeleting();
+            
+        }
     }
 }

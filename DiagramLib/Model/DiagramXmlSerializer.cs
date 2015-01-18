@@ -25,11 +25,11 @@ namespace DiagramLib.Model
             foreach (var node in diagramViewModel.Nodes)
             {
                 DiagramNodeBase diagramNode = diagramViewModel.Definition.ViewModelToModel(node);
-                if (diagramNode != null)
-                {
-                    diagramModel.Nodes.Add(diagramNode);
-                    nodeDictionary.Add(node, diagramNode);
-                }
+                if (diagramNode == null)
+                    continue;
+                diagramModel.Nodes.Add(diagramNode);
+                nodeDictionary.Add(node, diagramNode);
+                
             }
 
             foreach (var edge in diagramViewModel.Edges)
@@ -55,16 +55,16 @@ namespace DiagramLib.Model
                 foreach (var node in model.Nodes)
                 {
                     NodeBaseViewModel nodeViewModel =  diagramViewModel.Definition.ModelToViewModel(node);
-
-                    if (nodeViewModel != null)
-                    {
-                        nodeViewModel.ParentDiagram = diagramViewModel;
-                        diagramViewModel.Nodes.Add(nodeViewModel);
-                        nodeDictionary.Add(node, nodeViewModel);
-                    }
+                    if (nodeViewModel == null)
+                        continue;
+                    
+                    nodeViewModel.ParentDiagram = diagramViewModel;
+                    diagramViewModel.Nodes.Add(nodeViewModel);
+                    nodeDictionary.Add(node, nodeViewModel);
+                    
                 }
                 // Force rendering so we can have sizes of all nodes
-                diagramViewModel.ForceRedraw();
+              //  diagramViewModel.ForceRedraw();
 
                 foreach (var edge in model.Edges)
                 {

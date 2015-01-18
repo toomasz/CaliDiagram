@@ -20,7 +20,7 @@ namespace DiagramDesigner.ViewModels
             DispatcherTimer timer = new DispatcherTimer();
             timer.Interval = new TimeSpan(0,0,1);
             timer.Tick += timer_Tick;
-            timer.Start();
+         //   timer.Start();
             Type = EdgeLineType.Bezier;
         }
 
