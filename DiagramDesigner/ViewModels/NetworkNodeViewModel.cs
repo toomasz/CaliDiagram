@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System;
+using System.Threading;
 
 namespace DiagramDesigner.ViewModels
 {
@@ -27,6 +28,8 @@ namespace DiagramDesigner.ViewModels
             InputQueue = new BlockingCollection<object>();
             
         }
+
+       
 
         public BlockingCollection<object> InputQueue
         {

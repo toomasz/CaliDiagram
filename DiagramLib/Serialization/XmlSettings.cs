@@ -8,9 +8,12 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Xml;
 
-namespace DiagramLib
+namespace DiagramLib.Serialization
 {
-    
+    /// <summary>
+    /// Using data contract serializer to load or save object tree into xml files
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class XmlSettings<T> where T: new()
     {
         DataContractSerializer serializer;

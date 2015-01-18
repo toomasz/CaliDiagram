@@ -1,25 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Controls;
 using Caliburn.Micro;
-using DiagramDesigner.Model;
-using DiagramDesigner.ViewModels;
-using DiagramDesigner.Views;
-using DiagramLib;
+using DiagramLib.Serialization;
 using DiagramLib.ViewModels;
-using DiagramLib.Views;
-using DiagramLib.Model;
+using System.Collections.Generic;
 
 namespace DiagramDesigner
 {
     public class AppViewModel : PropertyChangedBase, IShell
     {
-        public enum DiagramMode {Move, AddNode1, AddNode2, AddBroker, AddConnection, Delete}
         public AppViewModel(IWindowManager wm)
         {
             Diagram1 = new DiagramViewModel(new SampleDiagramDefinition());
-            //Diagram1.ConnectionSelected += Diagram1_ConnectionSelected;
             modelLoader = new DiagramXmlSerializer(Diagram1);            
         }
         DiagramXmlSerializer modelLoader;
@@ -44,10 +34,7 @@ namespace DiagramDesigner
         {
             Diagram1.ClearDiagram();
         }
-        
 
-
-        public DiagramMode CurrentMode { get; set; }
 
         public IEnumerable<string> ModeList
         {
@@ -58,6 +45,22 @@ namespace DiagramDesigner
         }
 
         public DiagramViewModel Diagram1 { get; set; }
+
+        private bool _CanEditNames;
+        public bool CanEditNames
+        {
+            get { return _CanEditNames; }
+            set
+            {
+                if (_CanEditNames != value)
+                {
+                    _CanEditNames = value;
+                    Diagram1.CanEditNames = value;
+                    NotifyOfPropertyChange(() => CanEditNames);
+                }
+            }
+        }
+        
     
     }
 

@@ -34,17 +34,27 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Caliburn.Metro">
+      <HintPath>..\packages\Caliburn.Metro.0.5.0\lib\net45\Caliburn.Metro.dll</HintPath>
+    </Reference>
+    <Reference Include="Caliburn.Metro.Core">
+      <HintPath>..\packages\Caliburn.Metro.0.5.0\lib\net45\Caliburn.Metro.Core.dll</HintPath>
+    </Reference>
     <Reference Include="Caliburn.Micro">
       <HintPath>..\packages\Caliburn.Micro.Core.2.0.1\lib\net45\Caliburn.Micro.dll</HintPath>
     </Reference>
     <Reference Include="Caliburn.Micro.Platform">
       <HintPath>..\packages\Caliburn.Micro.2.0.1\lib\net45\Caliburn.Micro.Platform.dll</HintPath>
     </Reference>
+    <Reference Include="MahApps.Metro">
+      <HintPath>..\packages\MahApps.Metro.1.0.1-ALPHA027\lib\net45\MahApps.Metro.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Caliburn.Micro.2.0.1\lib\net45\System.Windows.Interactivity.dll</HintPath>
+      <HintPath>..\packages\MahApps.Metro.1.0.1-ALPHA027\lib\net45\System.Windows.Interactivity.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
@@ -67,11 +77,14 @@
     <Compile Include="Model\DiagramNodeBig.cs" />
     <Compile Include="Model\DiagramNodeBroker.cs" />
     <Compile Include="Model\DiagramNodeSmall.cs" />
+    <Compile Include="Raft\NetworkNode.cs" />
+    <Compile Include="Raft\NodeChannel.cs" />
+    <Compile Include="Raft\RaftNode.cs" />
     <Compile Include="ViewModels\AttachDescriptorToViewModel.cs" />
     <Compile Include="ViewModels\AttachDescriptorFromViewModel.cs" />
     <Compile Include="ViewModels\DelayTimer.cs" />
     <Compile Include="ViewModels\DiagramNodeBrokerViewModel.cs" />
-    <Compile Include="Model\SampleDiagramDefinition.cs" />
+    <Compile Include="SampleDiagramDefinition.cs" />
     <Compile Include="ViewModels\NetworkNodeViewModel.cs" />
     <Compile Include="ViewModels\SlimConnectionViewModel.cs" />
     <Compile Include="ViewModels\DiagramNodeSmallViewModel.cs" />
@@ -94,6 +107,10 @@
     <Compile Include="Views\DiagramNodeBigView.xaml.cs">
       <DependentUpon>DiagramNodeBigView.xaml</DependentUpon>
     </Compile>
+    <Page Include="Resources\Icons.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Styles\BlueButton.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -163,6 +180,7 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
+    <Resource Include="Resources\Entypo.ttf" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
@@ -178,6 +196,13 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Views\broker.png" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\WindowsIcons-license.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\Entypo-license.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

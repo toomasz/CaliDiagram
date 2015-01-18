@@ -8,6 +8,9 @@ using System.Windows;
 
 namespace DiagramLib.Model
 {
+    /// <summary>
+    /// Base diagram node base
+    /// </summary>
     [DataContract]
     public class DiagramNodeBase
     {

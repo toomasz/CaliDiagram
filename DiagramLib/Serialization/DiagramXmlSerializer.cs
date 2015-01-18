@@ -1,22 +1,27 @@
-﻿using DiagramLib.ViewModels;
+﻿using DiagramLib.Model;
+using DiagramLib.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DiagramLib.Model
+namespace DiagramLib.Serialization
 {
+    /// <summary>
+    /// Saving and loading diagram as Xml file
+    /// </summary>
     public class DiagramXmlSerializer
     {
-        DiagramViewModel diagramViewModel;
-        XmlSettings<DiagramModel> xmlSettings;
+        
         public DiagramXmlSerializer(DiagramViewModel diagramViewModel)
         {
             this.diagramViewModel = diagramViewModel;
             xmlSettings = new XmlSettings<DiagramModel>(diagramViewModel.Definition.NodeTypes);
            
         }
+        DiagramViewModel diagramViewModel;
+        XmlSettings<DiagramModel> xmlSettings;
 
         public void SaveDiagram(string filename)
         {

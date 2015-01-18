@@ -8,8 +8,13 @@
              mc:Ignorable="d" 
              MinHeight="300" MinWidth="300" >
     <Border BorderThickness="1" BorderBrush="LightSkyBlue" >
-        <Canvas x:Name="diagram" Background="White" cal:Message.Attach="[Event MouseLeftButtonDown] = [Action DiagramClick($eventArgs,$source)]" >
-          
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <Canvas Width="2000" Height="1000" x:Name="diagram" Background="White" cal:Message.Attach="[Event MouseLeftButtonDown] = [Action DiagramClick($eventArgs,$source)]" >
+                <Canvas.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem> Add node1</MenuItem>
+                    </ContextMenu>
+                </Canvas.ContextMenu>
                 <!-- connectors-->
         <ItemsControl Background="Transparent" Name="Edges" >
             <ItemsControl.ItemTemplate>
@@ -58,5 +63,6 @@
         </ItemsControl>
 
         </Canvas>
+        </ScrollViewer>
     </Border>
 </UserControl>

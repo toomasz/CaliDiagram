@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace DiagramLib.Model
 {
+    /// <summary>
+    /// Base diagram model used for saving diagram
+    /// </summary>
     [DataContract]
     public class DiagramModel
     {

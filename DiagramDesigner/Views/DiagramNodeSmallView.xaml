@@ -7,7 +7,7 @@
     <Border BorderThickness="0" CornerRadius="6" MinWidth="30"  Background="SlateBlue">
 
         <TextBox Name="Name" Margin="20,6" Foreground="White" FontFamily="Verdana" 
-                 Background="Transparent" BorderThickness="0" BorderBrush="Transparent"
+                 Background="SlateBlue" IsEnabled="{Binding CanEditName}" BorderThickness="0" BorderBrush="Transparent"
                  FontWeight="Bold" HorizontalAlignment="Center" AcceptsReturn="True"></TextBox>
     </Border>
 </UserControl>

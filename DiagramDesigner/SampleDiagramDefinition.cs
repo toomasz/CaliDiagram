@@ -1,13 +1,9 @@
 ﻿using DiagramDesigner.Model;
+using DiagramDesigner.ViewModels;
 using DiagramLib;
 using DiagramLib.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DiagramDesigner.ViewModels
+namespace DiagramDesigner
 {
     public class SampleDiagramDefinition: DiagramDefinitionBase
     {
@@ -41,7 +37,9 @@ namespace DiagramDesigner.ViewModels
         public override ConnectionViewModel CreateConnection(NodeBaseViewModel from, NodeBaseViewModel to)
         {
             ConnectionViewModel connectionViewModel;
-
+            // No connection between same node
+            if (from == to)
+                return null;
             if (from is DiagramNodeBigViewModel && to is DiagramNodeBigViewModel)
             {
                 connectionViewModel = new ThickConnectionViewModel(from, to)

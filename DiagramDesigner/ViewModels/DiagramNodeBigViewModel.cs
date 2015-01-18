@@ -102,7 +102,7 @@ namespace DiagramDesigner.ViewModels
 
                 if(evt != null)
                     Console.Write(evt.ToString());
-                Dispatcher.CurrentDispatcher.Invoke(() => MessageReceived(null, evt));
+                MessageReceived(null, evt);
 
                 
             }
@@ -113,22 +113,10 @@ namespace DiagramDesigner.ViewModels
         void MessageReceived(ConnectionViewModel connection, object message)
         {
             Message m = message as Message;
-            if (m == null)
-            {
-                string objectMode = message as string;
-                if(objectMode == null)
-                    return;
-                if(objectMode == "timer1")
-                {
-                    RaftTimer.SetElapsed(2000);
-                  //  Console.Beep();
-                }
-                return;
-            }
 
             if (Clock >= m.Clock)
                 return;
-            RaftTimer.SetElapsed(1000);
+            RaftTimer.SetElapsed(3000);
 
             Clock = m.Clock;
             Console.WriteLine(Name + " set value to " + m.Clock.ToString());

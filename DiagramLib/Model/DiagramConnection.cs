@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace DiagramLib.Model
 {
+    /// <summary>
+    /// Diagram connection
+    /// </summary>
     [DataContract]
     public class DiagramConnection
     {

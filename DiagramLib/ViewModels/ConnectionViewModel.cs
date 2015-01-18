@@ -126,6 +126,10 @@ namespace DiagramLib.ViewModels
            // Console.WriteLine("UpdateConnection {0} -> {1}", From.Name, To.Name);
 
             var newOrSameSides = ParentDiagram.Definition.ConnectorSideStrategy.GetSidesForConnection(this);
+            if(AttachPointFrom == null)
+            {
+                Console.WriteLine("dsf");
+            }
 
             AttachPointFrom.Side = newOrSameSides.FromSide;
             AttachPointTo.Side = newOrSameSides.ToSide;

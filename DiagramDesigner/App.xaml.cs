@@ -16,8 +16,9 @@ namespace DiagramDesigner
         public App()
         {
             InitializeComponent();
-           // AppBootstrapper bootstrapper = new AppBootstrapper();
-        //    bootstrapper.Initialize();
+            AppBootstrapper bootstrapper = new AppBootstrapper();
+            bootstrapper.Initialize();
         }
+        
     }
 }

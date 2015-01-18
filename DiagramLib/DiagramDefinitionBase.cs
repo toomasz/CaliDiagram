@@ -36,6 +36,13 @@ namespace DiagramLib
   
     public abstract class DiagramDefinitionBase
     {
+        public DiagramDefinitionBase()
+        {
+            ConnectorSideStrategy = new VerticalFavourizedConnectionSrategy();
+        }
+        /// <summary>
+        /// Returns System.Type array of models used in diagram
+        /// </summary>
         public Type[] NodeTypes
         {
             get
@@ -44,6 +51,9 @@ namespace DiagramLib
             }
         }
 
+        /// <summary>
+        /// Returns true if node can be connected to itself
+        /// </summary>
         public virtual bool CanConnectNodeToItself
         {
             get
@@ -72,6 +82,11 @@ namespace DiagramLib
             });
         }
 
+        /// <summary>
+        /// Converts model to view model
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         internal NodeBaseViewModel ModelToViewModel(DiagramNodeBase model)
         {
             var ctx = nodeBehaviours.FirstOrDefault(b => b.Value.TypeModel == model.GetType());
@@ -82,6 +97,11 @@ namespace DiagramLib
             return ctx.Value.ConvertModelToViewModel(model);
             
         }
+        /// <summary>
+        /// Converts view model to model
+        /// </summary>
+        /// <param name="viewModel"></param>
+        /// <returns></returns>
         internal DiagramNodeBase ViewModelToModel(NodeBaseViewModel viewModel)
         {
             var ctx = nodeBehaviours.FirstOrDefault(b => b.Value.TypeViewModel == viewModel.GetType());
@@ -91,10 +111,12 @@ namespace DiagramLib
                 return null;
             return ctx.Value.ConvertViewModelToModel(viewModel);
         }
-        public DiagramDefinitionBase()
-        {
-            ConnectorSideStrategy = new VerticalFavourizedConnectionSrategy();
-        }
+        /// <summary>
+        /// Returns instance of connection view model that should be used for connection between from and to
+        /// </summary>
+        /// <param name="from">From node view model</param>
+        /// <param name="to">To node view model</param>
+        /// <returns>Connection view model or null if connection cannot be created</returns>
         public abstract ConnectionViewModel CreateConnection(NodeBaseViewModel from, NodeBaseViewModel to);
         public IConnectorSideStrategy ConnectorSideStrategy {get; set;}
     }

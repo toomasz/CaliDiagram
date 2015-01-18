@@ -22,6 +22,7 @@ namespace DiagramLib.ViewModels
             Edges = new ObservableCollection<ConnectionViewModel>();
             AttachDescriptors = new ObservableCollection<NodeBaseViewModel>();
             this.Definition = diagramDefinition;
+            CanEditNames = false;
         }
         public DiagramDefinitionBase Definition
         {
@@ -102,6 +103,24 @@ namespace DiagramLib.ViewModels
             }
         }
 
+        private bool _CanEditLabels;
+        public bool CanEditNames
+        {
+            get { return _CanEditLabels; }
+            set
+            {
+                if (_CanEditLabels != value)
+                {
+                    _CanEditLabels = value;
+                    foreach (var node in Nodes)
+                        node.CanEditName = value;
+                    foreach (var ad in AttachDescriptors)
+                        ad.CanEditName = value;
+                    NotifyOfPropertyChange(() => CanEditNames);
+                }
+            }
+        }
+        
         public void DiagramClick(MouseButtonEventArgs args, FrameworkElement el)
         {
             
@@ -163,11 +182,17 @@ namespace DiagramLib.ViewModels
         
         
         
-
+        /// <summary>
+        /// Creates connection between from and to according to Definition
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <returns>Returns null if connection cannot be created</returns>
         public ConnectionViewModel AddConnection(NodeBaseViewModel from, NodeBaseViewModel to)
         {
             var edge = Definition.CreateConnection(from, to);
-
+            if (edge == null)
+                return null;
             // prevent showing attach descriptors  when their position is not calculated yet
             // this can be possible not necessary if calculation their location was done before data binding of AttachDescriptors collection
             // but then we would not have size of attach descriptors and size is necessary for calculating position

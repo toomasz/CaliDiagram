@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace DiagramLib.ViewModels
 {
+    /// <summary>
+    /// Represents side pair used to determine connection attach points sides
+    /// </summary>
     public class AttachSides
     {
         public AttachSides(AttachDirection fromSide, AttachDirection toSide)

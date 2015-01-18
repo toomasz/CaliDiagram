@@ -21,7 +21,7 @@ namespace DiagramDesigner.ViewModels
             timer.Interval = new TimeSpan(0,0,1);
             timer.Tick += timer_Tick;
          //   timer.Start();
-            Type = EdgeLineType.Bezier;
+            Type = EdgeLineType.Line;
         }
 
         private int n = 0;

@@ -1,16 +1,14 @@
-using System.Linq;
-using System.Reflection;
-using DiagramDesigner.Views;
 using DiagramLib;
 using DiagramLib.ViewModels;
-using DiagramLib.Views;
+using System.Reflection;
 
 namespace DiagramDesigner
 {
+    using Caliburn.Metro;
+    using Caliburn.Micro;
+    using DiagramDesigner.ViewModels;
     using System;
     using System.Collections.Generic;
-    using Caliburn.Micro;
-    using System.Windows;
     using System.Diagnostics;
 
 
@@ -27,14 +25,13 @@ namespace DiagramDesigner
             Console.WriteLine(message);
         }
     }
-    public class AppBootstrapper : BootstrapperBase
+    public class AppBootstrapper : CaliburnMetroCompositionBootstrapper<AppViewModel>
     {
         
         private SimpleContainer container;
 
         public AppBootstrapper()
         {
-
             EnableTrace();
             Initialize();
         }

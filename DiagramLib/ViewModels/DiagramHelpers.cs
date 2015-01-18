@@ -54,8 +54,7 @@ namespace DiagramLib.ViewModels
 
         public static double DistanceBetweenPoints(Point a, Point b)
         {
-            double d = (Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2));
-            return d;
+            return (Math.Pow(a.X - b.X, 2) + Math.Pow(a.Y - b.Y, 2));
         }
         public static double GetAngleBetweenRects(Rect fromRect, Rect toRect)
         {
@@ -66,22 +65,6 @@ namespace DiagramLib.ViewModels
             if (angle < 0)
                 angle = 360 + angle;
             return angle;
-        }
-        public static AttachSides GetAttachmentSidesForConnectionOld(Rect fromRect, Rect toRect)
-        {
-            var attachPointsFrom = AttachPoints(fromRect);
-            var attachPointsTo = AttachPoints(toRect);
-
-            var results = new List<Tuple<Point, Point, double, int, int>>();
-            for (int i = 0; i < attachPointsFrom.Length; i++)
-            {
-                for (int j = 0; j < attachPointsTo.Length; j++)
-                    results.Add(Tuple.Create(attachPointsFrom[i], attachPointsTo[j], DistanceBetweenPoints(attachPointsFrom[i], attachPointsTo[j]), i, j));
-            }
-
-            var bestMatch = results.OrderBy(r => r.Item3).First();
-
-            return new AttachSides((AttachDirection)bestMatch.Item4, (AttachDirection)bestMatch.Item5);
         }
     }
 }

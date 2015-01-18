@@ -4,7 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:cal="http://www.caliburnproject.org" x:Class="DiagramDesigner.Views.DiagramNodeBigView" 
-             mc:Ignorable="d" BorderThickness="1" BorderBrush="DarkGray">
+             xmlns:dl="clr-namespace:DiagramLib.ViewModels;assembly=DiagramLib"
+             mc:Ignorable="d" BorderThickness="1" BorderBrush="DarkGray"
+    Width="200"
+    >
 
     <UserControl.Resources>
         
@@ -22,15 +25,16 @@
     <Grid Margin="4">
         <!--<Image Source="./server-icon.jpg" Width="200" RenderOptions.BitmapScalingMode="Fant"/>-->
         <TextBox Text="S1" x:Name="Name" Margin="20,6"  FontWeight="Bold" FontSize="20" FontFamily="Verdana" 
-			Background="Transparent" BorderThickness="0" BorderBrush="Transparent" TextAlignment="Center" VerticalAlignment="Center"
-			HorizontalAlignment="Center" AcceptsReturn="True" MinWidth="20">
+			Background="Transparent" Foreground="Black" BorderThickness="0" BorderBrush="Transparent" TextAlignment="Center" VerticalAlignment="Center"
+			HorizontalAlignment="Center" AcceptsReturn="True" MinWidth="20" 
+                 IsEnabled="{Binding CanEditName}">
         </TextBox>
         <Button Content="Send I" Name="Button1Click" HorizontalAlignment="Left" Margin="10,4,0,0"  VerticalAlignment="Top" Width="45"/>
         <TextBlock HorizontalAlignment="Left" Margin="0,29,0,0" TextWrapping="Wrap" Name="Clock" Text="clk"
                     FontWeight="Bold" VerticalAlignment="Top" FontSize="20" Padding="20,2"/>
-        <TextBox HorizontalAlignment="Left" Margin="116,-1,0,0" TextWrapping="Wrap" Name="State" Text="State"
+        <TextBox HorizontalAlignment="Right" TextWrapping="Wrap" Name="State" Text="State"
                    FontWeight="Bold"
-                    VerticalAlignment="Top" FontSize="15" Padding="20,2" Height="25" Width="84"/>
+                    VerticalAlignment="Top" FontSize="15" Width="70"/>
 
         <Rectangle Name="rectTimer" Width="10"  Fill="Green" VerticalAlignment="Bottom" HorizontalAlignment="Right"></Rectangle>
         

@@ -107,6 +107,22 @@ namespace DiagramLib.ViewModels
             AttachPlacement.UpdateAttachPoints();
         }
 
+        private bool _CanEditName;
+        public bool CanEditName
+        {
+            get { return _CanEditName; }
+            set
+            {
+                if (_CanEditName != value)
+                {
+                    _CanEditName = value;
+                    NotifyOfPropertyChange(() => CanEditName);
+                }
+            }
+        }
+        
+
+
         private string _Name;
         public string Name
         {
