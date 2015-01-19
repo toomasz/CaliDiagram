@@ -9,6 +9,7 @@ using System.Timers;
 using System.Windows;
 using System;
 using System.Threading;
+using DiagramDesigner.Raft;
 
 namespace DiagramDesigner.ViewModels
 {
@@ -23,16 +24,14 @@ namespace DiagramDesigner.ViewModels
     }
     public class NetworkNodeViewModel: NodeBaseViewModel
     {
-        public NetworkNodeViewModel()
-        {
-            InputQueue = new BlockingCollection<object>();
-            
-        }
-
-        public BlockingCollection<object> InputQueue
+        public NetworkNode NodeSoftware
         {
             get;
-            private set;
+            set;
+        }
+        public NetworkNodeViewModel()
+        {
+          
         }
 
         public int GetDelay(ConnectionViewModel connection)
@@ -40,14 +39,7 @@ namespace DiagramDesigner.ViewModels
             return 20;
         }
 
-        public void Broadcast(object message)
-        {
-            foreach (var conn in Connections)
-            {
-                SendMessage(conn, message, GetDelay(conn));
-            }
-        }
-        
+
         public event EventHandler<object> PacketSent;
 
 
@@ -57,49 +49,31 @@ namespace DiagramDesigner.ViewModels
             
         }
     
-        public void BroadcastExcept(object message, ConnectionViewModel except)
+
+        public void ButtonPressed(string name)
         {
-            foreach (var conn in Connections)
-            {
-                if (conn == except)
-                    continue;
-                SendMessage(conn, message, GetDelay(conn));
-            }
+            NodeSoftware.ApplyCommand(name);
         }
-        public async Task SendMessage(ConnectionViewModel connection, object message, int delay)
-        {
-           
-            DiagramNodeBigViewModel to = null;
-            if (connection.From == this)
-                to = (DiagramNodeBigViewModel)connection.To;
-            else if (connection.To == this)
-                to = (DiagramNodeBigViewModel)connection.From;
-            else
-                throw new ArgumentException();
-
-            PacketModel packet = new PacketModel() { Caption = message.ToString(), To = to };
-            if (PacketSent != null)
-                PacketSent(this, packet);
-
-            await Task.Delay(delay);
-            to.InputQueue.Add(message);
-           // to.OnMessageReceived(connection, message);
-        }
-
 
         protected override void OnNodeCreated()
         {
             Console.WriteLine(Name + " Created");
-            Console.WriteLine(Connections.Count.ToString());
+
+            foreach (var connection in Connections)
+            {
+                NodeSoftware.Channels.Add(new NodeChannel(connection, this));
+            }
+            NodeSoftware.Start();
         }
         protected override bool OnNodeDeleting()
         {
+            NodeSoftware.Stop();
             Console.WriteLine(Name + " removed");
             return true;
         }
         protected override void OnConnectionAdded(ConnectionViewModel connection)
         {
-           
+            NodeSoftware.Channels.Add(new NodeChannel(connection, this));
         }
         protected override void OnConnectionRemoved(ConnectionViewModel connection)
         {

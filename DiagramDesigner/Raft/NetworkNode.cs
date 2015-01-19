@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Caliburn.Micro;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,31 +9,45 @@ using System.Threading.Tasks;
 
 namespace DiagramDesigner.Raft
 {
-    public abstract class NetworkNode
+    public abstract class NetworkNode: PropertyChangedBase
     {
-        public NetworkNode()
+        ICommunication Communication
         {
-            Channels = new List<NodeChannel>();
+            get;
+            set;
+        }
+        public NetworkNode(ICommunication communication)
+        {
+            this.Communication = communication;
+            Channels = new List<INodeChannel>();
             InputQueue = new BlockingCollection<object>();
+       
         }
-        List<NodeChannel> Channels;
-        protected virtual void OnInitialized()
+        public List<INodeChannel> Channels
         {
-
+            get;
+            private set;
         }
+        protected abstract void OnInitialized();
+
         protected virtual void OnDestroyed()
         {
-
+            
         }
-        protected virtual void OnChannelCreated(NodeChannel channel)
+        protected virtual void OnChannelCreated(INodeChannel channel)
+        {
+            
+        }
+        protected virtual void OnChannelDestroyed(INodeChannel channel)
+        {
+            
+        }
+        protected abstract void OnMessageReceived(INodeChannel channel);
+
+        protected virtual void OnCommandReceived(string command)
         {
 
         }
-        protected virtual void OnChannelDestroyed(NodeChannel channel)
-        {
-
-        }
-        protected abstract void OnMessageReceived(NodeChannel channel);
         protected void RequestConnectionTo(string address)
         {
 
@@ -43,10 +58,12 @@ namespace DiagramDesigner.Raft
         /// <param name="channel"></param>
         /// <param name="message"></param>
         /// <returns></returns>
-        protected bool SendMessage(NodeChannel channel, object message)
+        protected bool SendMessage(INodeChannel channel, object message)
         {
+            channel.SendMessage(message);
             return false;
         }
+       
 
         /// <summary>
         /// Broadcasts message to all active channels
@@ -65,7 +82,7 @@ namespace DiagramDesigner.Raft
         /// <param name="message"></param>
         /// <param name="channel"></param>
         /// <returns></returns>
-        protected void BroadcastExcept(object message, NodeChannel except)
+        protected void BroadcastExcept(object message, INodeChannel except)
         {
             foreach (var channel in Channels)
             { 
@@ -84,6 +101,7 @@ namespace DiagramDesigner.Raft
 
         public void Stop()
         {
+            InputQueue.CompleteAdding();
             OnDestroyed();
         }
 
@@ -100,11 +118,20 @@ namespace DiagramDesigner.Raft
             t.Start();
         }
 
+
+        public void ApplyCommand(string command)
+        {
+            OnCommandReceived(command);
+        }
+
         void EventLoop()
         {
-            Console.Write("Started event queue worker");
+            Console.WriteLine("Started event queue worker");
             foreach (object evt in InputQueue.GetConsumingEnumerable())
             {
+                if (evt == null)
+                    continue;
+                Console.WriteLine("Received: " + evt.ToString());
                 // sttring event - timer elapsed name
                 string timerName = evt as string;
                 if (timerName != null)

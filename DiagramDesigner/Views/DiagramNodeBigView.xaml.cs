@@ -38,8 +38,8 @@ namespace DiagramDesigner.Views
             var vm = DataContext as DiagramNodeBigViewModel ;
             if (vm != null)
             {
-                vm.RaftTimer.TimerSet += vm_TimerSet;
-                vm.PacketSent += vm_PacketSent;
+               // vm.RaftTimer.TimerSet += vm_TimerSet;
+              //  vm.PacketSent += vm_PacketSent;
             }
         }
 

@@ -1,4 +1,5 @@
 ﻿using DiagramDesigner.Model;
+using DiagramDesigner.Raft;
 using DiagramDesigner.ViewModels;
 using DiagramLib;
 using DiagramLib.ViewModels;
@@ -18,7 +19,7 @@ namespace DiagramDesigner
             var random = new Random();
             return String.Format("{0:x6}", random.Next(0x1000000));
         }
-
+        ICommunication CommunitcationModel = new LocalCommunication();
         public SampleDiagramDefinition()
         {
             //Set custom connector placement strategy
@@ -37,9 +38,24 @@ namespace DiagramDesigner
             );
             AddModelFor<DiagramNodeBigViewModel, DiagramNodeBig>(
                 "node_big",
-                (p) => new DiagramNodeBigViewModel(string.Format("S{0}", serverNo++)) { Location = p },
+                (p) =>
+                    {
+                        //this looks nasty
+                        return new DiagramNodeBigViewModel(string.Format("S{0}", serverNo++)) 
+                        { 
+                            Location = p, 
+                            NodeSoftware = new RaftNode(CommunitcationModel) 
+                        };
+                    },
                 (vm) => new DiagramNodeBig() { Location = vm.Location, Name = vm.Name },
-                (m) => new DiagramNodeBigViewModel(m.Name) { Location = m.Location }
+                (m) =>
+                    {
+                        return new DiagramNodeBigViewModel(m.Name) 
+                        { 
+                            Location = m.Location, 
+                            NodeSoftware = new RaftNode(CommunitcationModel) 
+                        };
+                    }
             );
         }
         public override ConnectionViewModel CreateConnection(NodeBaseViewModel from, NodeBaseViewModel to)

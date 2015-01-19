@@ -77,8 +77,13 @@
     <Compile Include="Model\DiagramNodeBig.cs" />
     <Compile Include="Model\DiagramNodeBroker.cs" />
     <Compile Include="Model\DiagramNodeSmall.cs" />
+    <Compile Include="Raft\ICommunicationModel.cs" />
+    <Compile Include="Raft\LocalCommunication.cs" />
     <Compile Include="Raft\NetworkNode.cs" />
+    <Compile Include="Raft\INodeChannel.cs" />
     <Compile Include="Raft\NodeChannel.cs" />
+    <Compile Include="Raft\NodeTimer.cs" />
+    <Compile Include="Raft\NullSoftware.cs" />
     <Compile Include="Raft\RaftNode.cs" />
     <Compile Include="ViewModels\AttachDescriptorToViewModel.cs" />
     <Compile Include="ViewModels\AttachDescriptorFromViewModel.cs" />

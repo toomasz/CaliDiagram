@@ -6,7 +6,7 @@
              xmlns:v="clr-namespace:DiagramLib.Views"
              xmlns:cal="http://www.caliburnproject.org"
              mc:Ignorable="d" 
-             MinHeight="300" MinWidth="300"
+             MinHeight="400" MinWidth="600"
              xmlns:helpers="clr-namespace:DiagramLib.Helpers"
              >
     <Border BorderThickness="1" BorderBrush="LightSkyBlue" >

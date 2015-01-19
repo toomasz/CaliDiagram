@@ -29,8 +29,8 @@
 			HorizontalAlignment="Center" AcceptsReturn="True" MinWidth="20" 
                  IsHitTestVisible="{Binding CanEditName}">
         </TextBox>
-        <Button Content="Send I" Name="Button1Click" HorizontalAlignment="Left" Margin="10,4,0,0"  VerticalAlignment="Top" Width="45"/>
-        <TextBlock HorizontalAlignment="Left" Margin="0,29,0,0" TextWrapping="Wrap" Name="Clock" Text="clk"
+        <Button Content="Send I" cal:Message.Attach="[Event Click] = [Action ButtonPressed('send')]" HorizontalAlignment="Left" Margin="10,4,0,0"  VerticalAlignment="Top" Width="45"/>
+        <TextBlock HorizontalAlignment="Left" Margin="0,29,0,0" TextWrapping="Wrap" Name="Clock" Text="{Binding NodeSoftware.Clock}"
                     FontWeight="Bold" VerticalAlignment="Top" FontSize="20" Padding="20,2"/>
         <TextBox HorizontalAlignment="Right" TextWrapping="Wrap" Name="State" Text="State"
                    FontWeight="Bold"

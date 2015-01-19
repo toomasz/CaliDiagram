@@ -16,12 +16,12 @@ namespace DiagramDesigner.ViewModels
             base(from, to)
         {
             StrokeThickness = 6;
-            Stroke = Brushes.Red;
+            Stroke = Brushes.OrangeRed;
             DispatcherTimer timer = new DispatcherTimer();
             timer.Interval = new TimeSpan(0,0,1);
             timer.Tick += timer_Tick;
          //   timer.Start();
-            Type = EdgeLineType.Line;
+            Type = EdgeLineType.Bezier;
         }
 
         private int n = 0;
