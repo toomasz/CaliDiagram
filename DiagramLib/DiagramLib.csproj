@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DiagramLibHelpers.cs" />
+    <Compile Include="Helpers\DragAndDropHelper.cs" />
     <Compile Include="Model\DiagramConnection.cs" />
     <Compile Include="Model\DiagramModel.cs" />
     <Compile Include="Model\DiagramNodeBase.cs" />
@@ -130,7 +131,9 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="NewFolder1\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

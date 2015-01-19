@@ -29,8 +29,6 @@ namespace DiagramDesigner.ViewModels
             
         }
 
-       
-
         public BlockingCollection<object> InputQueue
         {
             get;
@@ -39,7 +37,7 @@ namespace DiagramDesigner.ViewModels
 
         public int GetDelay(ConnectionViewModel connection)
         {
-            return 600;
+            return 20;
         }
 
         public void Broadcast(object message)

@@ -27,7 +27,7 @@
         <TextBox Text="S1" x:Name="Name" Margin="20,6"  FontWeight="Bold" FontSize="20" FontFamily="Verdana" 
 			Background="Transparent" Foreground="Black" BorderThickness="0" BorderBrush="Transparent" TextAlignment="Center" VerticalAlignment="Center"
 			HorizontalAlignment="Center" AcceptsReturn="True" MinWidth="20" 
-                 IsEnabled="{Binding CanEditName}">
+                 IsHitTestVisible="{Binding CanEditName}">
         </TextBox>
         <Button Content="Send I" Name="Button1Click" HorizontalAlignment="Left" Margin="10,4,0,0"  VerticalAlignment="Top" Width="45"/>
         <TextBlock HorizontalAlignment="Left" Margin="0,29,0,0" TextWrapping="Wrap" Name="Clock" Text="clk"

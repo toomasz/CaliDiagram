@@ -6,8 +6,8 @@
              mc:Ignorable="d">
     <Border BorderThickness="0" CornerRadius="6" MinWidth="30"  Background="SlateBlue">
 
-        <TextBox Name="Name" Margin="20,6" Foreground="White" FontFamily="Verdana" 
-                 Background="SlateBlue" IsEnabled="{Binding CanEditName}" BorderThickness="0" BorderBrush="Transparent"
+        <TextBox Name="Name" Margin="20,6" Foreground="White" Text="3f231" FontFamily="Verdana" 
+                 Background="SlateBlue" IsHitTestVisible="{Binding CanEditName}" FontSize="10" TextAlignment="Center" BorderThickness="0" BorderBrush="Transparent"
                  FontWeight="Bold" HorizontalAlignment="Center" AcceptsReturn="True"></TextBox>
     </Border>
 </UserControl>

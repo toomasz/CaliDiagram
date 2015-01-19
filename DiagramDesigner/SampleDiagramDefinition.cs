@@ -2,6 +2,7 @@
 using DiagramDesigner.ViewModels;
 using DiagramLib;
 using DiagramLib.ViewModels;
+using System;
 
 namespace DiagramDesigner
 {
@@ -10,6 +11,13 @@ namespace DiagramDesigner
         int clientNo = 1;
         int serverNo = 1;
         int brokerNo = 1;
+
+
+        string GenerateRandomHex(int length)
+        {
+            var random = new Random();
+            return String.Format("{0:x6}", random.Next(0x1000000));
+        }
 
         public SampleDiagramDefinition()
         {
@@ -23,7 +31,7 @@ namespace DiagramDesigner
             );
             AddModelFor<DiagramNodeSmallViewModel, DiagramNodeSmall>(
                 "node_small",
-                (p) => new DiagramNodeSmallViewModel(string.Format("c{0}", clientNo++)) { Location = p },
+                (p) => new DiagramNodeSmallViewModel(string.Format("{0}", GenerateRandomHex(8))) { Location = p },
                 (vm) => new DiagramNodeSmall() { Location = vm.Location, Name = vm.Name },
                 (m) => new DiagramNodeSmallViewModel(m.Name) { Location = m.Location }
             );

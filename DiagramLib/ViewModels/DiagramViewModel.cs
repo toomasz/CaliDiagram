@@ -23,13 +23,32 @@ namespace DiagramLib.ViewModels
             AttachDescriptors = new ObservableCollection<NodeBaseViewModel>();
             this.Definition = diagramDefinition;
             CanEditNames = false;
+            HelpText = "Welcome to diagram designer ! You can drag each node and perfrom operations on it.";
         }
+
+        private string _HelpText;
+        public string HelpText
+        {
+            get { return _HelpText; }
+            set
+            {
+                if (_HelpText != value)
+                {
+                    _HelpText = value;
+                    NotifyOfPropertyChange(() => HelpText);
+                }
+            }
+        }
+        
+
         public DiagramDefinitionBase Definition
         {
             get;
             private set;
         }
-
+        /// <summary>
+        /// String of available 'commands', this is most likely stupid thing but it works
+        /// </summary>
         public List<string> Commands
         {
             get
@@ -43,11 +62,31 @@ namespace DiagramLib.ViewModels
                 return commands;
             }
         }
+        private string _SelectedCommand;
         public string SelectedCommand
         {
-            get;
-            set;
+            get { return _SelectedCommand; }
+            set
+            {
+                if (_SelectedCommand != value)
+                {
+                    _SelectedCommand = value;
+                    HandleCommandChanged(value);
+                    NotifyOfPropertyChange(() => SelectedCommand);
+                }
+            }
         }
+
+        void HandleCommandChanged(string selectedCommand)
+        {
+            if (selectedCommand == "remove")
+                HelpText = "Click any node or connection to remove them.";
+            if(selectedCommand == "add_connection")
+            {
+                HelpText = "Adding connection, mind clicking on start node ?";
+            }
+        }
+        
         public IList<NodeBaseViewModel> AttachDescriptors { get; private set; }
         public IList<NodeBaseViewModel> Nodes { get; private set; }
         public IList<ConnectionViewModel> Edges { get; private set; }
@@ -82,6 +121,31 @@ namespace DiagramLib.ViewModels
                 AddNode(vm, pos);
             }
         }
+        /// <summary>
+        /// Most important random generator in whole sofrware
+        /// </summary>
+        Random rndStr = new Random();
+
+        string RandomNextStr
+        {
+            get
+            {
+                return nextOneStr[rndStr.Next(nextOneStr.Length)];
+            }
+        }
+        string[] nextOneStr = 
+        {
+            "Want to add another one? Select start node again.",
+            "Wow, you are getting better at this",
+            "Another one?",
+            "One more?",
+            "Please select start node for connection",
+            "Do you think middleware will create real connection?",
+            "Well, i don't know, my layer cannot know this :(",
+            "More connections?",
+            "You are getting hungry!"
+
+        };
         private NodeBaseViewModel prevSelectedNode = null;
         void HandleSelectNodeCommand(NodeBaseViewModel node)
         {
@@ -91,15 +155,21 @@ namespace DiagramLib.ViewModels
                 {
                     AddConnection(prevSelectedNode, node);
                     prevSelectedNode = null;
+                    HelpText = RandomNextStr;
                 }
                 else
                 {
+                    HelpText = "Great ! Now select destination";
                     prevSelectedNode = node;
                 }
             }
-            if(SelectedCommand == "remove")
+            else if(SelectedCommand == "remove")
             {
                 RemoveNode(node);
+            }
+            else
+            {
+                HelpText = "";
             }
         }
 

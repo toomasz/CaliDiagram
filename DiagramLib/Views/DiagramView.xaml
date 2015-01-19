@@ -6,17 +6,21 @@
              xmlns:v="clr-namespace:DiagramLib.Views"
              xmlns:cal="http://www.caliburnproject.org"
              mc:Ignorable="d" 
-             MinHeight="300" MinWidth="300" >
+             MinHeight="300" MinWidth="300"
+             xmlns:helpers="clr-namespace:DiagramLib.Helpers"
+             >
     <Border BorderThickness="1" BorderBrush="LightSkyBlue" >
         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-        <Canvas Width="2000" Height="1000" x:Name="diagram" Background="White" cal:Message.Attach="[Event MouseLeftButtonDown] = [Action DiagramClick($eventArgs,$source)]" >
+        <Canvas helpers:DragDropExtension.ScrollOnDragDrop="True" Width="2000" Height="1000" x:Name="diagram" Background="White" cal:Message.Attach="[Event MouseLeftButtonDown] = [Action DiagramClick($eventArgs,$source)]" >
+                
                 <Canvas.ContextMenu>
                     <ContextMenu>
                         <MenuItem> Add node1</MenuItem>
                     </ContextMenu>
                 </Canvas.ContextMenu>
                 <!-- connectors-->
-        <ItemsControl Background="Transparent" Name="Edges" >
+                <Label Content="{Binding HelpText, FallbackValue='Help text here'}"></Label>
+                <ItemsControl Background="Transparent" Name="Edges" >
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
                         <Grid>

@@ -14,6 +14,23 @@ namespace DiagramLib.ViewModels
             switch (pos)
             {
                 case AttachDirection.Top:
+                    return new Point(fromPoint.X - control.Size.Width / 2, fromPoint.Y - control.Size.Height/2);
+                case AttachDirection.Right:
+                    return new Point(fromPoint.X - control.Size.Width / 2 , fromPoint.Y - (control.Size.Height / 2));
+                case AttachDirection.Bottom:
+                    return new Point(fromPoint.X - control.Size.Width / 2, fromPoint.Y - control.Size.Height / 2);
+                case AttachDirection.Left:
+                    return new Point(fromPoint.X - control.Size.Width/2, fromPoint.Y - control.Size.Height / 2);
+                default:
+                    throw new ArgumentException();
+            }
+
+        }
+        public static Point GetAttachmentLocationOld(NodeBaseViewModel control, Point fromPoint, AttachDirection pos)
+        {
+            switch (pos)
+            {
+                case AttachDirection.Top:
                     return new Point(fromPoint.X - control.Size.Width / 2, fromPoint.Y - control.Size.Height);
                 case AttachDirection.Right:
                     return new Point(fromPoint.X, fromPoint.Y - (control.Size.Height / 2));
