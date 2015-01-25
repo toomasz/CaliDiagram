@@ -20,6 +20,8 @@ namespace DiagramDesigner
           //      Diagram1.RemoveConnection(e);
           //  }
         }
+
+       
         
         public void SaveDiagram()
         {

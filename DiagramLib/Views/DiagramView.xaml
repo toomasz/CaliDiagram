@@ -8,6 +8,7 @@
              mc:Ignorable="d" 
              MinHeight="400" MinWidth="600"
              xmlns:helpers="clr-namespace:DiagramLib.Helpers"
+             
              >
     <Border BorderThickness="1" BorderBrush="LightSkyBlue" >
         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">

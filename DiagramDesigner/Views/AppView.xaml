@@ -4,6 +4,18 @@
 
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Sample diagram - raft algorithm" Height="500" Width="725" WindowStartupLocation="CenterScreen">
+    <Controls:MetroWindow.LeftWindowCommands>
+        <Controls:WindowCommands>
+            <Image Height="20" Width="20" Source="Assets/icon1.png"></Image>
+            <Button Content="as"></Button>
+            
+        </Controls:WindowCommands>
+    </Controls:MetroWindow.LeftWindowCommands>
+    <Controls:MetroWindow.RightWindowCommands>
+        <Controls:WindowCommands>            
+            <Button Content="about" Name="About" />
+        </Controls:WindowCommands>
+    </Controls:MetroWindow.RightWindowCommands>
     <DockPanel LastChildFill="True" >
         <StatusBar DockPanel.Dock="Bottom">
             <StatusBarItem>

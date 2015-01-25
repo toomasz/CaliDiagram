@@ -302,11 +302,13 @@ namespace DiagramLib.ViewModels
 
             
             
-            Edges.Add(edge);
+            
 
             var sides = Definition.ConnectorSideStrategy.GetSidesForConnection(edge);
             edge.AttachPointFrom = from.Attach(sides.FromSide, edge, edge.FromDescriptor);
             edge.AttachPointTo = to.Attach(sides.ToSide, edge, edge.ToDescriptor);
+
+            Edges.Add(edge);
 
             if (!IsInBatchMode)
                 edge.UpdateConnection();
