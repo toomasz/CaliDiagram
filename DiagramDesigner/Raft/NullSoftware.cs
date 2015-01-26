@@ -28,10 +28,9 @@ namespace DiagramDesigner.Raft
         {
             
         }
-
-        protected override void OnMessageReceived(INodeChannel channel)
+        protected override void OnMessageReceived(INodeChannel channel, object message)
         {
-           
+            
         }
     }
 }

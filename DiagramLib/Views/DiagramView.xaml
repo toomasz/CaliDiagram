@@ -32,6 +32,7 @@
                                 ToPoint="{Binding AttachPointTo.Location}"
                                 Stroke="{Binding Stroke}" 
                                 StrokeThickness="{Binding StrokeThickness}"
+                                Canvas.ZIndex="-3"
                                 >
                                
                             
@@ -42,8 +43,8 @@
             </ItemsControl.ItemTemplate>
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <Canvas Canvas.Top="0" Canvas.Left="0" Background="Tan"></Canvas>
-                </ItemsPanelTemplate>
+                            <Grid></Grid>
+                        </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ItemsControl>
 
@@ -53,7 +54,7 @@
        <ItemsControl Background="Transparent" Name="Nodes">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <Canvas></Canvas>
+                    <Grid></Grid>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ItemsControl>
@@ -62,7 +63,7 @@
         <ItemsControl Background="Transparent" Name="AttachDescriptors" >
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <Canvas></Canvas>
+                    <Grid></Grid>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ItemsControl>

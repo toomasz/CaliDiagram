@@ -64,9 +64,17 @@ namespace DiagramDesigner.ViewModels
                 NodeSoftware.Channels.Add(new NodeChannel(connection, this));
             }
             NodeSoftware.Start();
+            NodeSoftware.OnMessageSent += NodeSoftware_OnMessageSent;
+        }
+
+        void NodeSoftware_OnMessageSent(object sender, OutboundMessage e)
+        {
+            var connection = e.DestinationChannel.Socket as ConnectionViewModel;
+            connection.SendMessageFrom(this, e.Message);
         }
         protected override bool OnNodeDeleting()
         {
+            NodeSoftware.OnMessageSent -= NodeSoftware_OnMessageSent;
             NodeSoftware.Stop();
             Console.WriteLine(Name + " removed");
             return true;

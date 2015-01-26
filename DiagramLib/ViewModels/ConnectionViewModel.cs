@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Threading;
+using DiagramLib.Views;
 
 namespace DiagramLib.ViewModels
 {
@@ -17,7 +18,7 @@ namespace DiagramLib.ViewModels
 
     public enum EdgeLineType { Bezier, Line};
 
-    public class ConnectionViewModel : PropertyChangedBase, IDisposable
+    public class ConnectionViewModel : PropertyChangedBase, IDisposable, IViewAware
     {
         public ConnectionViewModel(NodeBaseViewModel from, NodeBaseViewModel to)
         {
@@ -30,6 +31,7 @@ namespace DiagramLib.ViewModels
             StrokeThickness = 2;
             Stroke = Brushes.DarkOliveGreen;
             Type = EdgeLineType.Bezier;
+            Latency = 700;
         }
 
         public DiagramViewModel ParentDiagram { get; internal set; }
@@ -62,7 +64,7 @@ namespace DiagramLib.ViewModels
             }
         }
 
-        public Geometry PathGeometry1
+        public PathGeometry PathGeometry1
         {
             get
             {
@@ -147,6 +149,19 @@ namespace DiagramLib.ViewModels
             set;
         }
 
+        public int Latency
+        {
+            get;
+            set;
+        }
+
+        public void SendMessageFrom(NodeBaseViewModel node, object message)
+        {
+            if (View == null)
+                return;
+            
+            View.SendPacket(node, message);
+        }
 
         private AttachPoint _AttachPointFrom;
         public AttachPoint AttachPointFrom
@@ -184,5 +199,18 @@ namespace DiagramLib.ViewModels
             From.Detach(AttachPointFrom);
             To.Detach(AttachPointTo);
         }
+
+        EdgeView View;
+        public void AttachView(object view, object context = null)
+        {
+            View = view as EdgeView;
+        }
+
+        public object GetView(object context = null)
+        {
+            return View;
+        }
+
+        public event EventHandler<ViewAttachedEventArgs> ViewAttached;
     }
 }

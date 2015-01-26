@@ -140,11 +140,7 @@ namespace DiagramLib.ViewModels
             "Another one?",
             "One more?",
             "Please select start node for connection",
-            "Do you think middleware will create real connection?",
-            "Well, i don't know, my layer cannot know this :(",
             "More connections?",
-            "You are getting hungry!"
-
         };
         private NodeBaseViewModel prevSelectedNode = null;
         void HandleSelectNodeCommand(NodeBaseViewModel node)

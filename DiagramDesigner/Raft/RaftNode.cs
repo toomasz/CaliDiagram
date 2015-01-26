@@ -15,10 +15,13 @@ namespace DiagramDesigner.Raft
             return string.Format("MSG: {0} {1}", Clock, Value);
         }
     }
-
+    class ResponseMessage
+    {
+        
+    }
     public class RaftNode : NetworkNode
     {
-        public RaftNode(ICommunication comm):base(comm)
+        public RaftNode(ICommunication communicationModel):base(communicationModel)
         {
             Clock = 0;
         }
@@ -53,7 +56,8 @@ namespace DiagramDesigner.Raft
 
         public void IncrementAndSend()
         {
-            BroadcastMessage(new Message() { Clock = ++Clock});            
+            Message message = new Message() { Clock = ++Clock };
+            BroadcastMessage(message);            
         }
         public void Button1Click()
         {
@@ -74,15 +78,26 @@ namespace DiagramDesigner.Raft
             
         }
 
-        protected override void OnMessageReceived(INodeChannel channel)
+        protected override void OnMessageReceived(INodeChannel channel, object message)
         {
-            IncrementAndSend();
+            Message msg = message as Message;
+            if (msg != null)
+            {
+                Clock += 1;
+                SendMessage(channel, new ResponseMessage());
+            }
+            ResponseMessage response = message as ResponseMessage;
+            if (response != null)
+            {
+                Clock += 2;
+            }
         }
 
         protected override void OnCommandReceived(string command)
         {
             if (command == "send")
                 IncrementAndSend();
+            
         }
         protected void OnTimerReset(NodeTimer timer)
         {

@@ -42,7 +42,10 @@ namespace DiagramDesigner.Raft
         {
             
         }
-        protected abstract void OnMessageReceived(INodeChannel channel);
+        protected virtual void OnMessageReceived(INodeChannel channel, object message)
+        {
+
+        }
 
         protected virtual void OnCommandReceived(string command)
         {
@@ -61,9 +64,13 @@ namespace DiagramDesigner.Raft
         protected bool SendMessage(INodeChannel channel, object message)
         {
             channel.SendMessage(message);
+            var onMessageSent = OnMessageSent;
+            if(OnMessageSent != null)
+                OnMessageSent(this, new OutboundMessage() { Message = message, DestinationChannel = channel });
             return false;
         }
-       
+
+        public event EventHandler<OutboundMessage> OnMessageSent;
 
         /// <summary>
         /// Broadcasts message to all active channels
@@ -144,11 +151,12 @@ namespace DiagramDesigner.Raft
                     continue;
                 }
 
-                if (evt != null)
-                    Console.Write(evt.ToString());
                // MessageReceived(null, evt);
-
-
+                InboundMessage message = evt as InboundMessage;
+                if (message != null)
+                {
+                    OnMessageReceived(message.SourceChannel, message.Message);
+                }
             }
 
             Console.Write("Worker finished");

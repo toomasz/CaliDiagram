@@ -38,8 +38,14 @@ namespace DiagramDesigner.Raft
            // if (PacketSent != null)
            //     PacketSent(this, packet);
 
-            await Task.Delay(delay);
-            to.NodeSoftware.InputQueue.Add(message);
+            await Task.Delay(connection.Latency);
+            INodeChannel messageChannel = to.NodeSoftware.Channels.FirstOrDefault(chann => chann.Socket == connection);
+            
+            if (messageChannel == null)
+                return;
+            InboundMessage messageObject = new InboundMessage() { Message = message, SourceChannel = messageChannel };
+
+            to.NodeSoftware.InputQueue.Add(messageObject);
             // to.OnMessageReceived(connection, message);
         }
 
