@@ -11,7 +11,7 @@ using System.Windows.Shapes;
 
 namespace DiagramLib
 {
-    internal class NodeBehaviour
+    internal class NodeTypeBehaviour
     {
         public string Name
         {
@@ -64,7 +64,7 @@ namespace DiagramLib
             }
         }
 
-        internal Dictionary<string, NodeBehaviour> nodeBehaviours = new Dictionary<string, NodeBehaviour>();
+        internal Dictionary<string, NodeTypeBehaviour> nodeBehaviours = new Dictionary<string, NodeTypeBehaviour>();
         
         public void AddModelFor<TViewModel, TModel>(string nodeTypeName,
             Func<Point, NodeBaseViewModel> createFunc,
@@ -73,7 +73,7 @@ namespace DiagramLib
             where TViewModel: NodeBaseViewModel
             where TModel: DiagramNodeBase
         {
-            nodeBehaviours.Add(nodeTypeName, new NodeBehaviour() {
+            nodeBehaviours.Add(nodeTypeName, new NodeTypeBehaviour() {
                 TypeViewModel = typeof(TViewModel), 
                 TypeModel = typeof(TModel),
                 Name = nodeTypeName, 

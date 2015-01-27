@@ -37,15 +37,6 @@ namespace DiagramDesigner
             Diagram1.ClearDiagram();
         }
 
-
-        public IEnumerable<string> ModeList
-        {
-            get
-            {
-                return Diagram1.Commands;
-            }
-        }
-
         public DiagramViewModel Diagram1 { get; set; }
 
         private bool _CanEditNames;

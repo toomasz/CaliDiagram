@@ -26,14 +26,21 @@
             </StatusBarItem>
         </StatusBar>
         <WrapPanel Margin="0,0,0,0" DockPanel.Dock="Top">
+         
             <ListBox Name="commands" ItemsSource="{Binding Diagram1.Commands}" SelectedItem="{Binding Diagram1.SelectedCommand}">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <StackPanel Orientation="Horizontal"></StackPanel>
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Description}" Margin="5,0,5,0"></TextBlock>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
                 <ListBox.BorderThickness>0</ListBox.BorderThickness>
             </ListBox>
+                      
             <Button Name="SaveDiagram" Style="{DynamicResource SquareButtonStyle}" Margin="3">Save diagram</Button>
             <Button Name="LoadDiagram" Style="{DynamicResource SquareButtonStyle}" Margin="3">Load diagram</Button>
             <Button Name="ClearDiagram" Style="{DynamicResource SquareButtonStyle}" Margin="3">Clear</Button>

@@ -198,7 +198,7 @@ namespace DiagramLib.ViewModels
         {
             get
             {
-                return 600 + rnd.Next(600);
+                return rnd.Next(200);
             }
         }
 

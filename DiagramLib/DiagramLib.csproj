@@ -59,6 +59,10 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\AddConnectionCommand.cs" />
+    <Compile Include="Commands\AddNodeCommand.cs" />
+    <Compile Include="Commands\MoveNodeCommand.cs" />
+    <Compile Include="Commands\RemoveNodeCommand.cs" />
     <Compile Include="DiagramLibHelpers.cs" />
     <Compile Include="Helpers\DragAndDropHelper.cs" />
     <Compile Include="Model\DiagramConnection.cs" />
@@ -83,6 +87,7 @@
     <Compile Include="VerticalFavourizedConnectionSrategy.cs" />
     <Compile Include="ViewModels\AttachSides.cs" />
     <Compile Include="ViewModels\DiagramBatchMode.cs" />
+    <Compile Include="Commands\DiagramCommand.cs" />
     <Compile Include="Views\DiagramPacketView.xaml.cs">
       <DependentUpon>DiagramPacketView.xaml</DependentUpon>
     </Compile>
@@ -132,9 +137,7 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="NewFolder1\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

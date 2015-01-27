@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:cal="http://www.caliburnproject.org" x:Class="DiagramDesigner.Views.DiagramNodeBigView" 
              xmlns:dl="clr-namespace:DiagramLib.ViewModels;assembly=DiagramLib"
-             mc:Ignorable="d" BorderThickness="1" BorderBrush="DarkGray"
+             mc:Ignorable="d"
     Width="200"
     >
 
@@ -16,13 +16,15 @@
         </Storyboard>
         
     </UserControl.Resources>
-    <UserControl.Background>
-        <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
-            <GradientStop Color="#FFEEEEEE" Offset="0"/>
-            <GradientStop Color="White" Offset="1"/>
-        </LinearGradientBrush>
-    </UserControl.Background>
-    <Grid Margin="4">
+   
+    <Border CornerRadius="3" BorderThickness="1" BorderBrush="Red">
+        <Border.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#FFEEEEEE" Offset="0"/>
+                <GradientStop Color="White" Offset="1"/>
+            </LinearGradientBrush>
+        </Border.Background>
+        <Grid Margin="4">
         <!--<Image Source="./server-icon.jpg" Width="200" RenderOptions.BitmapScalingMode="Fant"/>-->
         <TextBox Text="S1" x:Name="Name" Margin="20,6"  FontWeight="Bold" FontSize="20" FontFamily="Verdana" 
 			Background="Transparent" Foreground="Black" BorderThickness="0" BorderBrush="Transparent" TextAlignment="Center" VerticalAlignment="Center"
@@ -39,4 +41,5 @@
         <Rectangle Name="rectTimer" Width="10"  Fill="Green" VerticalAlignment="Bottom" HorizontalAlignment="Right"></Rectangle>
         
     </Grid>
+    </Border>
 </UserControl>

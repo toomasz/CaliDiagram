@@ -133,7 +133,7 @@ namespace DiagramDesigner.Raft
 
         public void RaiseChannelRemoved(INodeChannel channel)
         {
-            if (Channels.Remove(channel))
+            if (!Channels.Remove(channel))
                 throw new ArgumentException("Failed to remove channel");
 
             OnChannelDestroyed(channel);           

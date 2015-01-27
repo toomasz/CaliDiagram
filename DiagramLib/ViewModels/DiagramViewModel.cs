@@ -10,6 +10,7 @@ using Caliburn.Micro;
 using System.Windows.Input;
 using System.Windows;
 using System.Windows.Threading;
+using DiagramLib.Commands;
 
 namespace DiagramLib.ViewModels
 {
@@ -24,6 +25,15 @@ namespace DiagramLib.ViewModels
             this.Definition = diagramDefinition;
             CanEditNames = false;
             HelpText = "Welcome to diagram designer ! You can drag each node and perfrom operations on it.";
+            Commands = new List<DiagramCommand>();
+            Commands.Add(new MoveNodeCommand(this));
+            Commands.Add(new AddConnectionCommand(this));
+            Commands.Add(new RemoveNodeCommand(this, "Remove"));
+
+            foreach (var nodeBehaviour in diagramDefinition.nodeBehaviours)
+            {
+                Commands.Add(new AddNodeCommand(this, "Add " + nodeBehaviour.Key, nodeBehaviour.Value));
+            }
         }
 
         private string _HelpText;
@@ -46,24 +56,21 @@ namespace DiagramLib.ViewModels
             get;
             private set;
         }
-        /// <summary>
-        /// String of available 'commands', this is most likely stupid thing but it works
-        /// </summary>
-        public List<string> Commands
-        {
-            get
-            {
-                List<string> commands = new List<string>();
-                commands.Add("move");
-                commands.Add("add_connection");
-                commands.AddRange(Definition.nodeBehaviours.Select(nb => "add_" + nb.Key).ToList());
 
-                commands.Add("remove");
-                return commands;
-            }
+        /// <summary>
+        /// List of predefined actions for diagram lke 
+        /// </summary>
+        public List<DiagramCommand> Commands
+        {
+            get;
+            set;
         }
-        private string _SelectedCommand;
-        public string SelectedCommand
+
+        /// <summary>
+        /// Currentyly selected action
+        /// </summary>
+        private DiagramCommand _SelectedCommand;
+        public DiagramCommand SelectedCommand
         {
             get { return _SelectedCommand; }
             set
@@ -71,7 +78,7 @@ namespace DiagramLib.ViewModels
                 if (_SelectedCommand != value)
                 {
                     _SelectedCommand = value;
-                    HandleCommandChanged(value);
+                   // HandleCommandChanged(value);
                     NotifyOfPropertyChange(() => SelectedCommand);
                 }
             }
@@ -102,71 +109,33 @@ namespace DiagramLib.ViewModels
 
         void HandleClickCommand(Point pos)
         {
-            if (string.IsNullOrEmpty(SelectedCommand))
-                return;
+            if (SelectedCommand != null)
+                SelectedCommand.HandleDiagramClick(pos);
+            //if (string.IsNullOrEmpty(SelectedCommand))
+            //    return;
             
 
             
-            else if(SelectedCommand.StartsWith("add_"))
-            {
-                string nodeTag = SelectedCommand.Substring("add_".Length);
+            //else if(SelectedCommand.StartsWith("add_"))
+            //{
+            //    string nodeTag = SelectedCommand.Substring("add_".Length);
 
-                NodeBehaviour beh = null;
-                if(!Definition.nodeBehaviours.TryGetValue(nodeTag, out beh))
-                    return;
+            //    NodeBehaviour beh = null;
+            //    if(!Definition.nodeBehaviours.TryGetValue(nodeTag, out beh))
+            //        return;
 
-                var vm =  Definition.nodeBehaviours[nodeTag].CreateNode(pos);
-                if (vm == null)
-                    return;
-                AddNode(vm, pos);
-            }
+            //    var vm =  Definition.nodeBehaviours[nodeTag].CreateNode(pos);
+            //    if (vm == null)
+            //        return;
+            //    AddNode(vm, pos);
+            //}
         }
-        /// <summary>
-        /// Most important random generator in whole sofrware
-        /// </summary>
-        Random rndStr = new Random();
-
-        string RandomNextStr
-        {
-            get
-            {
-                return nextOneStr[rndStr.Next(nextOneStr.Length)];
-            }
-        }
-        string[] nextOneStr = 
-        {
-            "Want to add another one? Select start node again.",
-            "Wow, you are getting better at this",
-            "Another one?",
-            "One more?",
-            "Please select start node for connection",
-            "More connections?",
-        };
-        private NodeBaseViewModel prevSelectedNode = null;
+        
+        
         void HandleSelectNodeCommand(NodeBaseViewModel node)
         {
-            if(SelectedCommand == "add_connection")
-            {
-                if (prevSelectedNode != null)
-                {
-                    AddConnection(prevSelectedNode, node);
-                    prevSelectedNode = null;
-                    HelpText = RandomNextStr;
-                }
-                else
-                {
-                    HelpText = "Great ! Now select destination";
-                    prevSelectedNode = node;
-                }
-            }
-            else if(SelectedCommand == "remove")
-            {
-                RemoveNode(node);
-            }
-            else
-            {
-                HelpText = "";
-            }
+            if(SelectedCommand != null)
+                SelectedCommand.HandleNodeClick(node);
         }
 
         private bool _CanEditLabels;
@@ -215,6 +184,8 @@ namespace DiagramLib.ViewModels
 
         public void AddNode(NodeBaseViewModel node, Point location)
         {
+            if (node == null)
+                return;
             if (node.ParentDiagram != null)
                 throw new InvalidOperationException("Node is already added to diagram");
             node.ParentDiagram = this;
@@ -315,13 +286,14 @@ namespace DiagramLib.ViewModels
 
         public void SelectConnection(ConnectionViewModel edge)
         {
-            if (SelectedCommand == "remove")
-                RemoveConnection(edge);
-            else
-            {
-                if (ConnectionSelected != null)
-                    ConnectionSelected(this, edge);
-            }
+            SelectedCommand.HandleConnectionClick(edge);
+            //if (SelectedCommand == "remove")
+            //    RemoveConnection(edge);
+            //else
+            //{
+            //    if (ConnectionSelected != null)
+            //        ConnectionSelected(this, edge);
+            //}
         } 
 
         public void RemoveConnection(ConnectionViewModel edge)

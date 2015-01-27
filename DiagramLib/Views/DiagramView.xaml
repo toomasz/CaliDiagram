@@ -54,7 +54,7 @@
        <ItemsControl Background="Transparent" Name="Nodes">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <Grid></Grid>
+                    <Canvas></Canvas>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
         </ItemsControl>
