@@ -8,17 +8,18 @@ using System.Windows;
 
 namespace DiagramLib.Commands
 {
-    public abstract class DiagramCommand
+    public class DiagramCommand
     {
         protected readonly  DiagramViewModel Diagram;
         public DiagramCommand(DiagramViewModel diagram)
         {
             this.Diagram = diagram;
         }
-        public abstract string Description { get; set; }
+        public virtual string Description { get; set; }
 
-        public abstract void HandleNodeClick(NodeBaseViewModel node);
-        public abstract void HandleConnectionClick(ConnectionViewModel node);
-        public abstract void HandleDiagramClick(Point location);
+        public virtual void HandleNodeClick(NodeBaseViewModel node) { }
+        public virtual void HandleConnectionClick(ConnectionViewModel node) { }
+        public virtual void HandleDiagramClick(Point location) { }
+        public virtual void OnSelected() { }
     }
 }

@@ -27,19 +27,19 @@ namespace DiagramDesigner
             //Set custom connector placement strategy
             //ConnectorSideStrategy = new VerticalFavourizedConnectionSrategy();
             AddModelFor<DiagramNodeBrokerViewModel, DiagramNodeBroker>(
-                "node_broker",
+                "Broker",
                 (p) => new DiagramNodeBrokerViewModel(string.Format("Br{0}", brokerNo++)) { Location = p },
                 (vm) => new DiagramNodeBroker() { Location = vm.Location, Name = vm.Name },
                 (m) => new DiagramNodeBrokerViewModel(m.Name) { Location = m.Location }
             );
             AddModelFor<DiagramNodeSmallViewModel, DiagramNodeSmall>(
-                "node_small",
+                "Client",
                 (p) => new DiagramNodeSmallViewModel(string.Format("{0}", GenerateRandomHex(8))) { Location = p },
                 (vm) => new DiagramNodeSmall() { Location = vm.Location, Name = vm.Name },
                 (m) => new DiagramNodeSmallViewModel(m.Name) { Location = m.Location }
             );
             AddModelFor<DiagramNodeBigViewModel, DiagramNodeBig>(
-                "node_big",
+                "Server",
                 (p) =>
                     {
                         //this looks nasty

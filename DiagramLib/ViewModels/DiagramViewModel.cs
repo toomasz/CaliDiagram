@@ -25,6 +25,7 @@ namespace DiagramLib.ViewModels
             this.Definition = diagramDefinition;
             CanEditNames = false;
             HelpText = "Welcome to diagram designer ! You can drag each node and perfrom operations on it.";
+
             Commands = new List<DiagramCommand>();
             Commands.Add(new MoveNodeCommand(this));
             Commands.Add(new AddConnectionCommand(this));
@@ -72,25 +73,21 @@ namespace DiagramLib.ViewModels
         private DiagramCommand _SelectedCommand;
         public DiagramCommand SelectedCommand
         {
-            get { return _SelectedCommand; }
+            get 
+            {
+                var sc = _SelectedCommand;
+                if (sc == null)
+                    return new DiagramCommand(this);
+                return _SelectedCommand;
+            }
             set
             {
                 if (_SelectedCommand != value)
                 {
                     _SelectedCommand = value;
-                   // HandleCommandChanged(value);
+                    SelectedCommand.OnSelected();
                     NotifyOfPropertyChange(() => SelectedCommand);
                 }
-            }
-        }
-
-        void HandleCommandChanged(string selectedCommand)
-        {
-            if (selectedCommand == "remove")
-                HelpText = "Click any node or connection to remove them.";
-            if(selectedCommand == "add_connection")
-            {
-                HelpText = "Adding connection, mind clicking on start node ?";
             }
         }
         
@@ -111,24 +108,6 @@ namespace DiagramLib.ViewModels
         {
             if (SelectedCommand != null)
                 SelectedCommand.HandleDiagramClick(pos);
-            //if (string.IsNullOrEmpty(SelectedCommand))
-            //    return;
-            
-
-            
-            //else if(SelectedCommand.StartsWith("add_"))
-            //{
-            //    string nodeTag = SelectedCommand.Substring("add_".Length);
-
-            //    NodeBehaviour beh = null;
-            //    if(!Definition.nodeBehaviours.TryGetValue(nodeTag, out beh))
-            //        return;
-
-            //    var vm =  Definition.nodeBehaviours[nodeTag].CreateNode(pos);
-            //    if (vm == null)
-            //        return;
-            //    AddNode(vm, pos);
-            //}
         }
         
         
@@ -175,6 +154,7 @@ namespace DiagramLib.ViewModels
                 if (_SelectedNode != value)
                 {
                     _SelectedNode = value;
+                    
                     NotifyOfPropertyChange(() => SelectedNode);
                 }
             }
@@ -215,10 +195,6 @@ namespace DiagramLib.ViewModels
             node.Dispose();
         }
 
-        
-        
-        
-        
         /// <summary>
         /// Creates connection between from and to according to Definition
         /// </summary>
@@ -287,13 +263,8 @@ namespace DiagramLib.ViewModels
         public void SelectConnection(ConnectionViewModel edge)
         {
             SelectedCommand.HandleConnectionClick(edge);
-            //if (SelectedCommand == "remove")
-            //    RemoveConnection(edge);
-            //else
-            //{
-            //    if (ConnectionSelected != null)
-            //        ConnectionSelected(this, edge);
-            //}
+            if (ConnectionSelected != null)
+                ConnectionSelected(this, edge);           
         } 
 
         public void RemoveConnection(ConnectionViewModel edge)

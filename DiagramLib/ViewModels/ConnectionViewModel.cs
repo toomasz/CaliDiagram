@@ -108,29 +108,6 @@ namespace DiagramLib.ViewModels
             return new List<Point>() { FromPoint, pt2, pt3, ToPoint };
         }
 
-        public PathGeometry PathGeometry1
-        {
-            get
-            {
-                PathGeometry animationPath = new PathGeometry();
-                PathFigure pFigure = new PathFigure();
-                pFigure.StartPoint = AttachPointFrom.Location;
-
-                LineSegment seg = new LineSegment(AttachPointTo.Location, true);
-        
-               
-                pFigure.Segments.Add(seg);
-                animationPath.Figures.Add(pFigure);
-
-                // Freeze the PathGeometry for performance benefits.
-             //   animationPath.Freeze();
-            
-                return animationPath;
-
-            }
-        }
-        
-
         private Brush _Stroke;
         public Brush Stroke 
         {
@@ -145,17 +122,14 @@ namespace DiagramLib.ViewModels
             }
         }
 
-
         private void To_LocationChanged(object sender, EventArgs e)
         {
             UpdateConnection();
-            NotifyOfPropertyChange(() => PathGeometry1);
         }
 
         private void From_LocationChanged(object sender, EventArgs e)
         {
             UpdateConnection();
-            NotifyOfPropertyChange(() => PathGeometry1);
         }
 
         public NodeBaseViewModel FromDescriptor { get; set; }
@@ -198,7 +172,7 @@ namespace DiagramLib.ViewModels
         {
             get
             {
-                return rnd.Next(200);
+                return 600 +rnd.Next(400);
             }
         }
 

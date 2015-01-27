@@ -15,21 +15,13 @@ namespace DiagramLib.Commands
         {
             this.Description = description;
         }
-        public override string Description
-        {
-            get;
-            set;
-        }
+      
 
         public override void HandleNodeClick(NodeBaseViewModel node)
         {
             Diagram.RemoveNode(node);
         }
 
-        public override void HandleDiagramClick(System.Windows.Point location)
-        {
-
-        }
         public override void HandleConnectionClick(ConnectionViewModel connection)
         {
             Diagram.RemoveConnection(connection);

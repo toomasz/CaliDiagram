@@ -22,19 +22,9 @@ namespace DiagramLib.Commands
             set;
         }
 
-        public override void HandleNodeClick(NodeBaseViewModel node)
-        {
-            
-        }
-
         public override void HandleDiagramClick(Point location)
         {
             Diagram.AddNode(nodeBehaviour.CreateNode(location), location);
-        }
-
-        public override void HandleConnectionClick(ConnectionViewModel node)
-        {
-            
         }
     }
 }

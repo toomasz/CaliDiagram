@@ -14,10 +14,10 @@ namespace DiagramLib.Commands
         {
             Description = "Add connection";
         }
-        public override string Description
+        public override void OnSelected()
         {
-            get;
-            set;
+            Diagram.HelpText = "Select start node for connection";
+            prevSelectedNode = null;
         }
 
         /// <summary>
@@ -57,16 +57,6 @@ namespace DiagramLib.Commands
                 Diagram.HelpText = "Great ! Now select destination";
                 prevSelectedNode = node;
             }
-            
-        }
-
-        public override void HandleConnectionClick(ConnectionViewModel node)
-        {
-            
-        }
-
-        public override void HandleDiagramClick(System.Windows.Point location)
-        {
             
         }
     }

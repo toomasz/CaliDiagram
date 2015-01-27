@@ -13,25 +13,5 @@ namespace DiagramLib.Commands
         {
             Description = "Move";
         }
-        public override string Description
-        {
-            get;
-            set;
-        }
-
-        public override void HandleNodeClick(NodeBaseViewModel node)
-        {
-            
-        }
-
-        public override void HandleConnectionClick(ConnectionViewModel node)
-        {
-            
-        }
-
-        public override void HandleDiagramClick(System.Windows.Point location)
-        {
-            
-        }
     }
 }

@@ -124,49 +124,6 @@ namespace DiagramLib.Views
             }
         }
 
-
-        List<Point> GetBezierPoints()
-        {
-            double weirdDiff = ToPoint.Y - FromPoint.X;
-
-            Point pt2 = new Point(FromPoint.X + (weirdDiff / 3.0), FromPoint.Y);
-            Point pt3 = new Point(ToPoint.X - (weirdDiff / 3.0), ToPoint.Y);
-
-
-
-
-            double xDiff = Math.Abs(FromPoint.X - ToPoint.X);
-            double yDiff = Math.Abs(FromPoint.Y - ToPoint.Y);
-
-
-            double dist = Math.Sqrt(xDiff * xDiff + yDiff * yDiff);
-
-            double xOffset = dist / 2;
-            double yOffset = dist / 2;
-            if (vm.AttachPointFrom.Side == AttachDirection.Top)
-                pt2 = new Point(vm.AttachPointFrom.Location.X, vm.AttachPointFrom.Location.Y - yOffset);
-            if (vm.AttachPointFrom.Side == AttachDirection.Right)
-                pt2 = new Point(vm.AttachPointFrom.Location.X + xOffset, vm.AttachPointFrom.Location.Y);
-            if (vm.AttachPointFrom.Side == AttachDirection.Bottom)
-                pt2 = new Point(vm.AttachPointFrom.Location.X, vm.AttachPointFrom.Location.Y + yOffset);
-            if (vm.AttachPointFrom.Side == AttachDirection.Left)
-                pt2 = new Point(vm.AttachPointFrom.Location.X - xOffset, vm.AttachPointFrom.Location.Y);
-
-
-            if (vm.AttachPointTo.Side == AttachDirection.Top)
-                pt3 = new Point(vm.AttachPointTo.Location.X, vm.AttachPointTo.Location.Y - yOffset);
-            if (vm.AttachPointTo.Side == AttachDirection.Right)
-                pt3 = new Point(vm.AttachPointTo.Location.X + xOffset, vm.AttachPointTo.Location.Y);
-            if (vm.AttachPointTo.Side == AttachDirection.Bottom)
-                pt3 = new Point(vm.AttachPointTo.Location.X, vm.AttachPointTo.Location.Y + yOffset);
-            if (vm.AttachPointTo.Side == AttachDirection.Left)
-                pt3 = new Point(vm.AttachPointTo.Location.X - xOffset, vm.AttachPointTo.Location.Y);
-
-
-            return new List<Point>() { FromPoint, pt2, pt3, ToPoint };
-        }
-
-
         /// <span class="code-SummaryComment"><summary></span>
         /// Draws an Arrow
         /// <span class="code-SummaryComment"></summary></span>
@@ -184,7 +141,7 @@ namespace DiagramLib.Views
             }
             else if (vm.Type == EdgeLineType.Bezier)
             {
-                var bezierPoints =  GetBezierPoints();
+                var bezierPoints = vm.GetBezierPoints();
 
                 context.BeginFigure(bezierPoints[0], false, false);
                 context.BezierTo(bezierPoints[1], bezierPoints[2], bezierPoints[3], true, true);
