@@ -10,7 +10,8 @@ namespace DiagramDesigner.Raft
 {
     public class NodeChannel : INodeChannel
     {
-        ConnectionViewModel connection;
+        readonly ConnectionViewModel connection;
+
         public NodeChannel(ConnectionViewModel connection, NodeBaseViewModel from)
         {
             this.Socket = connection;

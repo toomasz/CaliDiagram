@@ -37,29 +37,30 @@ namespace DiagramLib.Views
         }
 
 
-        UIElement CreateVisualForPacket(object packet)
+        FrameworkElement CreateVisualForPacket(object packet)
         {
-            Rectangle aRectangle = new Rectangle();
-            aRectangle.Width = 10;
-            aRectangle.Height = 10;
-            aRectangle.Fill = Brushes.Red;
-            aRectangle.Stroke = Brushes.Black;
-            aRectangle.StrokeThickness = 2;
-            return aRectangle;
+            return vm.ParentDiagram.Definition.CreateVisualForPacket(packet);           
         }
 
         public void SendPacket(NodeBaseViewModel from, object message)
         {
-            if (Dispatcher.CheckAccess())
+            try
             {
-                SendPacketInternal(from, message);
+                if (Dispatcher.CheckAccess())
+                {
+                    SendPacketInternal(from, message);
+                }
+                else
+                    Dispatcher.Invoke(() => SendPacketInternal(from, message));
             }
-            else
-                Dispatcher.Invoke(() => SendPacketInternal(from, message));
+            catch(TaskCanceledException ex)
+            {
+
+            }
         }
         public void SendPacketInternal(NodeBaseViewModel from, object message)
         {
-            UIElement vis = CreateVisualForPacket(message);
+            FrameworkElement vis = CreateVisualForPacket(message);
             if (vis == null)
                 return;
 
@@ -85,141 +86,7 @@ namespace DiagramLib.Views
             }
             return canvas;
         }
-        List<Rectangle> packetViews = new List<Rectangle>();
- 
-        public void SendPacketInternal_Old(NodeBaseViewModel from, object message)
-        {
-
-            NameScope.SetNameScope(this, new NameScope());
-
-            // Create a rectangle.
-            Rectangle aRectangle = new Rectangle();
-            aRectangle.Width = 10;
-            aRectangle.Height = 10;
-            aRectangle.Fill = Brushes.Red;
-            aRectangle.Stroke = Brushes.Black;
-            aRectangle.StrokeThickness = 2;
-            packetViews.Add(aRectangle);
-
-            Canvas.SetZIndex(aRectangle, 0);
-           
-            // Create a transform. This transform 
-            // will be used to move the rectangle.
-            TranslateTransform animatedTranslateTransform =
-                new TranslateTransform();
-            Canvas canvas = parentCanvas(this);
-            canvas.Children.Add(aRectangle);
-
-
-            // Register the transform's name with the page 
-            // so that they it be targeted by a Storyboard. 
-            this.RegisterName("AnimatedTranslateTransform", animatedTranslateTransform);
-
-            aRectangle.RenderTransform = animatedTranslateTransform;
-
-
-            // Create the animation path.
-            PathGeometry animationPath = new PathGeometry();
-
-            PathFigure pFigure = new PathFigure();
-            var points = GetBezierPoints();
-            
-            PolyBezierSegment pBezierSegment = new PolyBezierSegment();
-
-            if (from == vm.From)
-            {
-                pFigure.StartPoint = points[0];
-                pBezierSegment.Points.Add(points[1]);
-                pBezierSegment.Points.Add(points[2]);
-                pBezierSegment.Points.Add(points[3]);
-
-                pFigure.Segments.Add(pBezierSegment);
-            }
-            else if (from == vm.To)
-            {
-                pFigure.StartPoint = points[3];
-                pBezierSegment.Points.Add(points[2]);
-                pBezierSegment.Points.Add(points[1]);
-                pBezierSegment.Points.Add(points[0]);
-
-                pFigure.Segments.Add(pBezierSegment);
-            }
-            animationPath.Figures.Add(pFigure);
-
-            // Freeze the PathGeometry for performance benefits.
-            animationPath.Freeze();
-
-            // Create a DoubleAnimationUsingPath to move the 
-            // rectangle horizontally along the path by animating  
-            // its TranslateTransform.
-            DoubleAnimationUsingPath translateXAnimation =
-                new DoubleAnimationUsingPath();
-            translateXAnimation.PathGeometry = animationPath;
-            translateXAnimation.Duration = TimeSpan.FromMilliseconds(vm.Latency);
-
-            // Set the Source property to X. This makes 
-            // the animation generate horizontal offset values from 
-            // the path information. 
-            translateXAnimation.Source = PathAnimationSource.X;
-            translateXAnimation.RepeatBehavior = new RepeatBehavior(TimeSpan.FromMilliseconds(vm.Latency));
-            // Set the animation to target the X property 
-            // of the TranslateTransform named "AnimatedTranslateTransform".
-            Storyboard.SetTargetName(translateXAnimation, "AnimatedTranslateTransform");
-            Storyboard.SetTargetProperty(translateXAnimation,
-                new PropertyPath(TranslateTransform.XProperty));
-
-            // Create a DoubleAnimationUsingPath to move the 
-            // rectangle vertically along the path by animating  
-            // its TranslateTransform.
-            DoubleAnimationUsingPath translateYAnimation =
-                new DoubleAnimationUsingPath();
-            translateYAnimation.PathGeometry = animationPath;
-            translateYAnimation.Duration = TimeSpan.FromMilliseconds(vm.Latency);
-            translateYAnimation.RepeatBehavior = new RepeatBehavior(TimeSpan.FromMilliseconds(vm.Latency));
-
-
-            // Set the Source property to Y. This makes 
-            // the animation generate vertical offset values from 
-            // the path information. 
-            translateYAnimation.Source = PathAnimationSource.Y;
-
-            // Set the animation to target the Y property 
-            // of the TranslateTransform named "AnimatedTranslateTransform".
-            Storyboard.SetTargetName(translateYAnimation, "AnimatedTranslateTransform");
-            Storyboard.SetTargetProperty(translateYAnimation,
-                new PropertyPath(TranslateTransform.YProperty));
-
-            // Create a Storyboard to contain and apply the animations.
-            Storyboard pathAnimationStoryboard = new Storyboard();
-            pathAnimationStoryboard.RepeatBehavior = new RepeatBehavior(1);
-            pathAnimationStoryboard.Children.Add(translateXAnimation);
-            pathAnimationStoryboard.Children.Add(translateYAnimation);
-            aRectangle.Tag = pathAnimationStoryboard;
-            // Start the animations when the rectangle is loaded.
-            aRectangle.Loaded += delegate(object sender, RoutedEventArgs e)
-            {
-                // Start the storyboard.
-                pathAnimationStoryboard.Completed += pathAnimationStoryboard_Completed;
-              
-                pathAnimationStoryboard.Begin(this);
-                
-            };
-           
-        }
-
-        void pathAnimationStoryboard_Completed(object sender, EventArgs e)
-        {
-            ClockGroup cg = sender as ClockGroup;
-            Storyboard sb = cg.Timeline as Storyboard;
-            Rectangle rect = packetViews.FirstOrDefault(pv => pv.Tag == sb);
-            if(rect != null)
-            {
-                Canvas canvas = parentCanvas(this);
-                canvas.Children.Remove(rect);
-                packetViews.Remove(rect);
-            }
-        }
-
+   
         public Point FromPoint
         {
             get { return (Point)GetValue(FromPointProperty); }

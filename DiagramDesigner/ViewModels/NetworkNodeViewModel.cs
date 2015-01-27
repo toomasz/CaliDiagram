@@ -24,31 +24,15 @@ namespace DiagramDesigner.ViewModels
     }
     public class NetworkNodeViewModel: NodeBaseViewModel
     {
-        public NetworkNode NodeSoftware
+        public NetworkSoftwareBase NodeSoftware
         {
             get;
             set;
         }
         public NetworkNodeViewModel()
         {
-          
+         
         }
-
-        public int GetDelay(ConnectionViewModel connection)
-        {
-            return 20;
-        }
-
-
-        public event EventHandler<object> PacketSent;
-
-
-
-        void ClockElapsed()
-        {
-            
-        }
-    
 
         public void ButtonPressed(string name)
         {
@@ -70,7 +54,7 @@ namespace DiagramDesigner.ViewModels
         void NodeSoftware_OnMessageSent(object sender, OutboundMessage e)
         {
             var connection = e.DestinationChannel.Socket as ConnectionViewModel;
-            connection.SendMessageFrom(this, e.Message);
+            connection.StartMessageAnimationFrom(this, e.Message);
         }
         protected override bool OnNodeDeleting()
         {
@@ -81,11 +65,17 @@ namespace DiagramDesigner.ViewModels
         }
         protected override void OnConnectionAdded(ConnectionViewModel connection)
         {
-            NodeSoftware.Channels.Add(new NodeChannel(connection, this));
+            var nodeChannel = new NodeChannel(connection, this);
+            NodeSoftware.RaiseChannelAdded(nodeChannel);          
         }
         protected override void OnConnectionRemoved(ConnectionViewModel connection)
         {
-            
+            var channelToRemove = NodeSoftware.Channels.FirstOrDefault(channel => channel.Socket == connection);
+            if(channelToRemove == null)
+            {
+                return;
+            }
+            NodeSoftware.RaiseChannelRemoved(channelToRemove);
         }
     }
 }

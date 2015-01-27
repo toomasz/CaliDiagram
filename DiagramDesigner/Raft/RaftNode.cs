@@ -6,20 +6,20 @@ using System.Threading.Tasks;
 
 namespace DiagramDesigner.Raft
 {
-    class Message
+    public class Message
     {
         public int Clock { get; set; }
-        public string Value { get; set; }
+        public string State { get; set; }
         public override string ToString()
         {
-            return string.Format("MSG: {0} {1}", Clock, Value);
+            return string.Format("MSG: {0} {1}", Clock, State);
         }
     }
-    class ResponseMessage
+    public class ResponseMessage
     {
         
     }
-    public class RaftNode : NetworkNode
+    public class RaftNode : NetworkSoftwareBase
     {
         public RaftNode(ICommunication communicationModel):base(communicationModel)
         {
@@ -39,6 +39,20 @@ namespace DiagramDesigner.Raft
             }
         }
 
+        private string _State;
+        public string State
+        {
+            get { return _State; }
+            set
+            {
+                if (_State != value)
+                {
+                    _State = value;
+                    NotifyOfPropertyChange(() => State);
+                }
+            }
+        }
+        
         private int _Clock;
         public int Clock
         {
@@ -56,7 +70,7 @@ namespace DiagramDesigner.Raft
 
         public void IncrementAndSend()
         {
-            Message message = new Message() { Clock = ++Clock };
+            Message message = new Message() { Clock = ++Clock, State = this.State };
             BroadcastMessage(message);            
         }
         public void Button1Click()
@@ -82,15 +96,19 @@ namespace DiagramDesigner.Raft
         {
             Message msg = message as Message;
             if (msg != null)
-            {
-                Clock += 1;
+            {           
                 SendMessage(channel, new ResponseMessage());
+                if (this.Clock >= msg.Clock)
+                    return;
+                this.Clock = msg.Clock;
+                this.State = msg.State;
+                BroadcastExcept(msg, channel);
             }
-            ResponseMessage response = message as ResponseMessage;
+         /*   ResponseMessage response = message as ResponseMessage;
             if (response != null)
             {
                 Clock += 2;
-            }
+            }*/
         }
 
         protected override void OnCommandReceived(string command)

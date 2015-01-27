@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace DiagramLib
 {
@@ -119,5 +121,18 @@ namespace DiagramLib
         /// <returns>Connection view model or null if connection cannot be created</returns>
         public abstract ConnectionViewModel CreateConnection(NodeBaseViewModel from, NodeBaseViewModel to);
         public IConnectorSideStrategy ConnectorSideStrategy {get; set;}
+
+        public virtual FrameworkElement CreateVisualForPacket(object packet)
+        {          
+
+            Rectangle aRectangle = new Rectangle();
+            aRectangle.Width = 10;
+            aRectangle.Height = 10;
+            aRectangle.Fill = Brushes.Red;
+            aRectangle.Stroke = Brushes.Black;
+            aRectangle.StrokeThickness = 2;
+            return aRectangle;
+           
+        }
     }
 }

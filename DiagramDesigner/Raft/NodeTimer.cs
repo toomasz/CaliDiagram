@@ -8,7 +8,7 @@ namespace DiagramDesigner.Raft
 {
     public class NodeTimer
     {
-        public NodeTimer(NetworkNode node)
+        public NodeTimer(NetworkSoftwareBase node)
         {
 
         }

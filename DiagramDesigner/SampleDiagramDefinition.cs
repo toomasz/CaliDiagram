@@ -4,6 +4,8 @@ using DiagramDesigner.ViewModels;
 using DiagramLib;
 using DiagramLib.ViewModels;
 using System;
+using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace DiagramDesigner
 {
@@ -82,6 +84,34 @@ namespace DiagramDesigner
             }
             
             return connectionViewModel;
+        }
+        public override System.Windows.FrameworkElement CreateVisualForPacket(object packet)
+        {
+            if (packet is ResponseMessage)
+            {
+                Ellipse ell = new Ellipse()
+                {
+                    Width = 10,
+                    Height = 10,
+                    Fill = Brushes.Blue,
+                    Stroke = Brushes.Green,
+                    StrokeThickness = 3
+                };
+                return ell;
+            }
+            else
+            {
+
+                Rectangle aRectangle = new Rectangle();
+                aRectangle.Width = 10;
+                aRectangle.Height = 10;
+                aRectangle.Fill = Brushes.Red;
+                aRectangle.Stroke = Brushes.Black;
+                aRectangle.StrokeThickness = 2;
+                return aRectangle;
+            }
+           
+        
         }
     }
 }

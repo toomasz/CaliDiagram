@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DiagramDesigner.Raft
 {
-    public class NullSoftware : NetworkNode
+    public class NullSoftware : NetworkSoftwareBase
     {
         public NullSoftware():base(null)
         {

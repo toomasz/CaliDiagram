@@ -60,7 +60,7 @@
         </ItemsControl>
             
         <!-- attach descriptors -->
-        <ItemsControl Background="Transparent" Name="AttachDescriptors" >
+        <ItemsControl Background="Transparent" Name="AttachDescriptors" Panel.ZIndex="3" >
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Grid></Grid>

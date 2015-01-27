@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,9 +16,9 @@ namespace DiagramLib.Views
     public class PacketView
     {
 
-        public PacketView(UIElement vis, ConnectionViewModel connection, NodeBaseViewModel from, Canvas canvas)
+        public PacketView(FrameworkElement view, ConnectionViewModel connection, NodeBaseViewModel from, Canvas canvas)
         {
-            this.Visual = vis;
+            this.View = view;
             this.Canvas = canvas;
             this.From = from;
             this.Connection = connection;
@@ -32,7 +33,7 @@ namespace DiagramLib.Views
             get;
             private set;
         }
-        public UIElement Visual
+        public FrameworkElement View
         {
             get;
             private set;
@@ -42,38 +43,97 @@ namespace DiagramLib.Views
             get;
             private set;
         }
-
+        static int i = 0;
         // this is always called from ui thread
         public void Send()
         {
-            Canvas.Children.Add(Visual);
-            Visual.RenderTransform = new MatrixTransform(new Matrix());
 
-            Visual.RenderTransformOrigin = new Point(0, 0);
-            
+            i++;
+          //  Canvas.SetLeft(Visual, -100);
+           // Canvas.SetTop(Visual, -100);
+            Canvas.Children.Add(View);
+            View.Visibility = Visibility.Hidden;
+            Connection.ParentDiagram.ForceRedraw();
+            NameScope.SetNameScope(Canvas, new NameScope());
 
-            MatrixAnimationUsingPath anim = new MatrixAnimationUsingPath();
-            anim.Duration = TimeSpan.FromMilliseconds(Connection.Latency);
-            anim.DoesRotateWithTangent = true;
-            anim.RepeatBehavior = new RepeatBehavior(1);
-            anim.PathGeometry = Connection.PathGeometry1;
+            MatrixTransform buttonMatrixTransform = new MatrixTransform();
+            View.RenderTransform = buttonMatrixTransform;
+            buttonMatrixTransform.Matrix = new Matrix();
+            buttonMatrixTransform.Matrix.Translate(-100, -100);
 
-            Storyboard.SetTarget(anim, Visual.RenderTransform);
-            Storyboard.SetTargetProperty(anim, new PropertyPath("Matrix"));
-           
-            Storyboard sb = new Storyboard();
-            sb.RepeatBehavior = new RepeatBehavior(1);
-            sb.Children.Add(anim);
+            string transformName = string.Format("ButtonMatrixTransform");
 
-            sb.Begin();
-            sb.Completed += sb_Completed;
-          
+
+            Canvas.RegisterName(transformName, buttonMatrixTransform);
+
+            MatrixAnimationUsingPath matrixAnimation = new MatrixAnimationUsingPath();
+            matrixAnimation.PathGeometry = GetAnimationPathGeometry();
+            matrixAnimation.DoesRotateWithTangent = true;
+
+  
+            matrixAnimation.IsOffsetCumulative = true;
+            matrixAnimation.Duration = TimeSpan.FromMilliseconds(Connection.Latency);
+            matrixAnimation.RepeatBehavior = new RepeatBehavior(1);
+
+            // Set the animation to target the Matrix property
+            // of the MatrixTransform named "ButtonMatrixTransform".
+            Storyboard.SetTargetName(matrixAnimation, transformName);
+         
+            Storyboard.SetTargetProperty(matrixAnimation,
+                new PropertyPath(MatrixTransform.MatrixProperty));
+
+            // Create a Storyboard to contain and apply the animation.
+            Storyboard pathAnimationStoryboard = new Storyboard();
+            pathAnimationStoryboard.Children.Add(matrixAnimation);
+
+        
+            pathAnimationStoryboard.Completed += pathAnimationStoryboard_Completed;
+            pathAnimationStoryboard.Begin(Canvas);
+            View.Visibility = Visibility.Visible;
         }
 
-        void sb_Completed(object sender, EventArgs e)
+        PathGeometry GetAnimationPathGeometry()
         {
-           
+            PathGeometry animationPath = new PathGeometry();
+
+            PathFigure pFigure = new PathFigure();
+            var points = Connection.GetBezierPoints();
+
+            PolyBezierSegment pBezierSegment = new PolyBezierSegment();
+
+            if (From == Connection.From)
+            {
+                pFigure.StartPoint = points[0];
+                pBezierSegment.Points.Add(points[1]);
+                pBezierSegment.Points.Add(points[2]);
+                pBezierSegment.Points.Add(points[3]);
+
+                pFigure.Segments.Add(pBezierSegment);
+            }
+            else if (From == Connection.To)
+            {
+                pFigure.StartPoint = points[3];
+                pBezierSegment.Points.Add(points[2]);
+                pBezierSegment.Points.Add(points[1]);
+                pBezierSegment.Points.Add(points[0]);
+
+                pFigure.Segments.Add(pBezierSegment);
+            }
+            animationPath.Figures.Add(pFigure);
+
+            // Freeze the PathGeometry for performance benefits.
+            animationPath.Freeze();
+            
+            return animationPath;
         }
+
+        void pathAnimationStoryboard_Completed(object sender, EventArgs e)
+        {
+            Canvas.Children.Remove(View);
+            
+        }
+
+     
         public void Pause()
         {
 

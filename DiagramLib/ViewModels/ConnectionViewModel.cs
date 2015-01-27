@@ -31,7 +31,7 @@ namespace DiagramLib.ViewModels
             StrokeThickness = 2;
             Stroke = Brushes.DarkOliveGreen;
             Type = EdgeLineType.Bezier;
-            Latency = 700;
+         
         }
 
         public DiagramViewModel ParentDiagram { get; internal set; }
@@ -62,6 +62,50 @@ namespace DiagramLib.ViewModels
                     NotifyOfPropertyChange(() => StrokeThickness);
                 }
             }
+        }
+
+        public List<Point> GetBezierPoints()
+        {
+            Point FromPoint = AttachPointFrom.Location;
+            Point ToPoint = AttachPointTo.Location;
+
+            double weirdDiff = ToPoint.Y - FromPoint.X;
+
+            Point pt2 = new Point(FromPoint.X + (weirdDiff / 3.0), FromPoint.Y);
+            Point pt3 = new Point(ToPoint.X - (weirdDiff / 3.0), ToPoint.Y);
+
+
+
+
+            double xDiff = Math.Abs(FromPoint.X - ToPoint.X);
+            double yDiff = Math.Abs(FromPoint.Y - ToPoint.Y);
+
+
+            double dist = Math.Sqrt(xDiff * xDiff + yDiff * yDiff);
+
+            double xOffset = dist / 2;
+            double yOffset = dist / 2;
+            if (AttachPointFrom.Side == AttachDirection.Top)
+                pt2 = new Point(AttachPointFrom.Location.X, AttachPointFrom.Location.Y - yOffset);
+            if (AttachPointFrom.Side == AttachDirection.Right)
+                pt2 = new Point(AttachPointFrom.Location.X + xOffset, AttachPointFrom.Location.Y);
+            if (AttachPointFrom.Side == AttachDirection.Bottom)
+                pt2 = new Point(AttachPointFrom.Location.X, AttachPointFrom.Location.Y + yOffset);
+            if (AttachPointFrom.Side == AttachDirection.Left)
+                pt2 = new Point(AttachPointFrom.Location.X - xOffset, AttachPointFrom.Location.Y);
+
+
+            if (AttachPointTo.Side == AttachDirection.Top)
+                pt3 = new Point(AttachPointTo.Location.X, AttachPointTo.Location.Y - yOffset);
+            if (AttachPointTo.Side == AttachDirection.Right)
+                pt3 = new Point(AttachPointTo.Location.X + xOffset, AttachPointTo.Location.Y);
+            if (AttachPointTo.Side == AttachDirection.Bottom)
+                pt3 = new Point(AttachPointTo.Location.X, AttachPointTo.Location.Y + yOffset);
+            if (AttachPointTo.Side == AttachDirection.Left)
+                pt3 = new Point(AttachPointTo.Location.X - xOffset, AttachPointTo.Location.Y);
+
+
+            return new List<Point>() { FromPoint, pt2, pt3, ToPoint };
         }
 
         public PathGeometry PathGeometry1
@@ -149,13 +193,16 @@ namespace DiagramLib.ViewModels
             set;
         }
 
+        Random rnd = new Random();
         public int Latency
         {
-            get;
-            set;
+            get
+            {
+                return 600 + rnd.Next(600);
+            }
         }
 
-        public void SendMessageFrom(NodeBaseViewModel node, object message)
+        public void StartMessageAnimationFrom(NodeBaseViewModel node, object message)
         {
             if (View == null)
                 return;

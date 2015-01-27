@@ -80,7 +80,7 @@
     <Compile Include="Raft\ICommunicationModel.cs" />
     <Compile Include="Raft\LocalCommunication.cs" />
     <Compile Include="Raft\InboundMessage.cs" />
-    <Compile Include="Raft\NetworkNode.cs" />
+    <Compile Include="Raft\NodeSoftwareBase.cs" />
     <Compile Include="Raft\INodeChannel.cs" />
     <Compile Include="Raft\NodeChannel.cs" />
     <Compile Include="Raft\NodeTimer.cs" />
