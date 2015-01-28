@@ -11,10 +11,13 @@ using System.Windows.Input;
 using System.Windows;
 using System.Windows.Threading;
 using DiagramLib.Commands;
+using System.Windows.Controls;
+using System.Windows.Media;
+using DiagramLib.Views;
 
 namespace DiagramLib.ViewModels
 {
-    public class DiagramViewModel: PropertyChangedBase
+    public class DiagramViewModel: PropertyChangedBase, IViewAware
     {
         
         public DiagramViewModel(DiagramDefinitionBase diagramDefinition)
@@ -186,13 +189,14 @@ namespace DiagramLib.ViewModels
         {
             node.ParentDiagram = null;
             Nodes.Remove(node);
-            
+            node.Dispose();
+
             var edgesToRemove = Edges.Where(edge => edge.From == node || edge.To == node).ToList();
             foreach (var edge in edgesToRemove)
             {
                 RemoveConnection(edge);           
             }
-            node.Dispose();
+            
         }
 
         /// <summary>
@@ -290,6 +294,39 @@ namespace DiagramLib.ViewModels
             AttachDescriptors.Clear();
             Nodes.Clear();
         }
+
+        /// <summary>
+        /// this probably shouldn't be in view model but its still good solution
+        /// </summary>
+        public Canvas Canvas
+        {
+            get;
+            set;
+        }
+        public void AttachView(object view, object context = null)
+        {
+            var dpView = view as DiagramView;
+            Canvas = dpView.diagram;
+        }
+        Canvas parentCanvas(DependencyObject parent)
+        {
+            Canvas canvas = parent as Canvas;
+            if (canvas == null || canvas.Name != "diagram")
+            {
+                UIElement element = parent as UIElement;
+                if (element == null)
+                    return null;
+
+                return parentCanvas(VisualTreeHelper.GetParent(parent));
+            }
+            return canvas;
+        }
+        public object GetView(object context = null)
+        {
+            return null;
+        }
+
+        public event EventHandler<ViewAttachedEventArgs> ViewAttached;
     }
 
 }

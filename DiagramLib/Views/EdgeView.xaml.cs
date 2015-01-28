@@ -35,57 +35,6 @@ namespace DiagramLib.Views
                vm.UpdateConnection();
 
         }
-
-
-        FrameworkElement CreateVisualForPacket(object packet)
-        {
-            return vm.ParentDiagram.Definition.CreateVisualForPacket(packet);           
-        }
-
-        public void SendPacket(NodeBaseViewModel from, object message)
-        {
-            try
-            {
-                if (Dispatcher.CheckAccess())
-                {
-                    SendPacketInternal(from, message);
-                }
-                else
-                    Dispatcher.Invoke(() => SendPacketInternal(from, message));
-            }
-            catch(TaskCanceledException ex)
-            {
-
-            }
-        }
-        public void SendPacketInternal(NodeBaseViewModel from, object message)
-        {
-            FrameworkElement vis = CreateVisualForPacket(message);
-            if (vis == null)
-                return;
-
-            Canvas canvas = parentCanvas(this);
-            if (canvas != null && vm != null)
-            {
-                PacketView packet = new PacketView(vis, vm, from, canvas);
-
-                packet.Send();
-            }
-        }
-
-        Canvas parentCanvas(DependencyObject parent)
-        {
-            Canvas canvas = parent as Canvas;
-            if(canvas == null || canvas.Name != "diagram")
-            {
-                UIElement element = parent as UIElement;
-                if(element == null)
-                    return null;
-
-                return parentCanvas(VisualTreeHelper.GetParent(parent));
-            }
-            return canvas;
-        }
    
         public Point FromPoint
         {

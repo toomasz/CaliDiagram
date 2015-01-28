@@ -24,19 +24,19 @@ namespace DiagramDesigner.Raft
         public RaftNode(ICommunication communicationModel):base(communicationModel)
         {
             Clock = 0;
+            RaftTimer = new TimeoutTimer(this);
         }
 
         Random rnd = new Random();
-        NodeTimer raftTimer;
+        public TimeoutTimer RaftTimer
+        {
+            get;
+            private set;
+        }
 
         protected override void OnInitialized()
-        {
-            raftTimer = new NodeTimer(this);
-            raftTimer.SetElapseIn(1000);
-            foreach(var c in Channels)
-            {
-
-            }
+        {            
+            RaftTimer.SetTimeout(1000 + rnd.Next(2000));
         }
 
         private string _State;
@@ -76,27 +76,29 @@ namespace DiagramDesigner.Raft
         public void Button1Click()
         {
             IncrementAndSend();
-            raftTimer.SetElapseIn(1000 + rnd.Next(1666));
+            RaftTimer.SetTimeout(1000 + rnd.Next(1666));
         }
 
         protected override void OnDestroyed()
         {
-          //  Console.Beep();
+         
         }
         protected override void OnChannelCreated(INodeChannel channel)
         {
-            SendMessage(channel, "Hello you !");
+            IncrementAndSend();
         }
         protected override void OnChannelDestroyed(INodeChannel channel)
         {
-            
+            IncrementAndSend();
         }
 
         protected override void OnMessageReceived(INodeChannel channel, object message)
         {
             Message msg = message as Message;
+            RaftTimer.SetTimeout(1000 + rnd.Next(400));
             if (msg != null)
-            {           
+            {
+                
                 SendMessage(channel, new ResponseMessage());
                 if (this.Clock >= msg.Clock)
                     return;
@@ -104,11 +106,6 @@ namespace DiagramDesigner.Raft
                 this.State = msg.State;
                 BroadcastExcept(msg, channel);
             }
-         /*   ResponseMessage response = message as ResponseMessage;
-            if (response != null)
-            {
-                Clock += 2;
-            }*/
         }
 
         protected override void OnCommandReceived(string command)
@@ -117,9 +114,10 @@ namespace DiagramDesigner.Raft
                 IncrementAndSend();
             
         }
-        protected void OnTimerReset(NodeTimer timer)
+        public override void OnTimerElapsed(TimeoutTimer timer)
         {
-            
+            if(timer == RaftTimer)
+                IncrementAndSend();
         }
         public override string ToString()
         {

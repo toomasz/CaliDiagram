@@ -10,6 +10,8 @@ namespace DiagramDesigner
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Net.Http;
+    using System.Threading.Tasks;
 
 
     class TextListener : TraceListener
@@ -27,7 +29,6 @@ namespace DiagramDesigner
     }
     public class AppBootstrapper : CaliburnMetroCompositionBootstrapper<AppViewModel>
     {
-        
         private SimpleContainer container;
 
         public AppBootstrapper()
@@ -56,7 +57,7 @@ namespace DiagramDesigner
         protected override void Configure()
         {
             container = new SimpleContainer();
-
+       
             container.Singleton<IWindowManager, WindowManager>();
             container.Singleton<IEventAggregator, EventAggregator>();
             container.PerRequest<IShell, AppViewModel>();

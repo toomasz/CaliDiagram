@@ -52,6 +52,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.0.1-ALPHA027\lib\net45\System.Windows.Interactivity.dll</HintPath>
@@ -83,7 +84,7 @@
     <Compile Include="Raft\NodeSoftwareBase.cs" />
     <Compile Include="Raft\INodeChannel.cs" />
     <Compile Include="Raft\NodeChannel.cs" />
-    <Compile Include="Raft\NodeTimer.cs" />
+    <Compile Include="Raft\TimeoutTimer.cs" />
     <Compile Include="Raft\NullSoftware.cs" />
     <Compile Include="Raft\OutboundMessage.cs" />
     <Compile Include="Raft\RaftNode.cs" />

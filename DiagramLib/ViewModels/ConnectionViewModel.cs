@@ -9,6 +9,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Threading;
 using DiagramLib.Views;
+using System.Windows.Controls;
 
 namespace DiagramLib.ViewModels
 {
@@ -175,13 +176,41 @@ namespace DiagramLib.ViewModels
                 return 600 +rnd.Next(400);
             }
         }
+        public void SendPacket(NodeBaseViewModel from, object message)
+        {
+            try
+            {
+                if (ParentDiagram.Canvas.Dispatcher.CheckAccess())
+                {
+                    SendPacketInternal(from, message);
+                }
+                else
+                    ParentDiagram.Canvas.Dispatcher.Invoke(() => SendPacketInternal(from, message));
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        public void SendPacketInternal(NodeBaseViewModel from, object message)
+        {
+            // packet view is created in definition
+            FrameworkElement vis = ParentDiagram.Definition.CreateVisualForPacket(message);
+            if (vis == null)
+                return;
+
+            Canvas canvas = ParentDiagram.Canvas;
+            if (canvas != null)
+            {
+                PacketView packet = new PacketView(vis, this, from, canvas);
+
+                packet.Send();
+            }
+        }
 
         public void StartMessageAnimationFrom(NodeBaseViewModel node, object message)
         {
-            if (View == null)
-                return;
-            
-            View.SendPacket(node, message);
+            SendPacket(node, message);
         }
 
         private AttachPoint _AttachPointFrom;

@@ -63,11 +63,14 @@ namespace DiagramDesigner.Raft
         /// <returns></returns>
         protected bool SendMessage(INodeChannel channel, object message)
         {
+            if (!IsStarted)
+                return false;
+
             channel.SendMessage(message);
             var onMessageSent = OnMessageSent;
             if(OnMessageSent != null)
                 OnMessageSent(this, new OutboundMessage() { Message = message, DestinationChannel = channel });
-            return false;
+            return true;
         }
 
         public event EventHandler<OutboundMessage> OnMessageSent;
@@ -99,15 +102,32 @@ namespace DiagramDesigner.Raft
             }
         }
 
-
+        public bool IsStarted
+        {
+            get;
+            private set;
+        }
+        readonly object isStartedLock = new object();
         public void Start()
         {
+            lock (isStartedLock)
+            {
+                if (IsStarted)
+                    return;
+                IsStarted = true;
+            }
             OnInitialized();
             StartEventLoop();
         }
 
         public void Stop()
         {
+            lock (isStartedLock)
+            {
+                if (IsStarted == false)
+                    return;
+                IsStarted = false;
+            }
             InputQueue.CompleteAdding();
             OnDestroyed();
         }
@@ -144,6 +164,10 @@ namespace DiagramDesigner.Raft
             OnCommandReceived(command);
         }
 
+        public virtual void OnTimerElapsed(TimeoutTimer timer)
+        {
+            
+        }
         void EventLoop()
         {
             Console.WriteLine("Started event queue worker");
@@ -151,18 +175,12 @@ namespace DiagramDesigner.Raft
             {
                 if (evt == null)
                     continue;
-                Console.WriteLine("Received: " + evt.ToString());
-                // sttring event - timer elapsed name
-                string timerName = evt as string;
-                if (timerName != null)
-                {
-                    if (timerName == "timer1")
-                    {
-                        // Console.Beep();
-                       // RaftTimer.SetElapsed(2000);
-                    }
-                    continue;
-                }
+
+                TimeoutTimer timer = evt as TimeoutTimer;
+                if (timer != null)
+                    OnTimerElapsed(timer);
+
+               // Console.WriteLine("Received: " + evt.ToString());
 
                // MessageReceived(null, evt);
                 InboundMessage message = evt as InboundMessage;

@@ -3,6 +3,7 @@ using DiagramLib.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,9 +22,14 @@ namespace DiagramDesigner.Raft
         NodeBaseViewModel from;
         public void SendMessage(object message)
         {
-            SendMessage(message, 440);
+            SendMessageAsync(message);
         }
-        public async Task SendMessage(object message, int delay)
+
+        
+
+
+
+        public async Task SendMessageAsync(object message)
         {
 
             NetworkNodeViewModel to = null;
@@ -35,11 +41,10 @@ namespace DiagramDesigner.Raft
             else
                 throw new ArgumentException();
 
-            //PacketModel packet = new PacketModel() { Caption = message.ToString(), To = to };
-           // if (PacketSent != null)
-           //     PacketSent(this, packet);
-
+            // this part should happen on network link
             await Task.Delay(connection.Latency);
+
+            // data arrived and is assembled into packet
             INodeChannel messageChannel = to.NodeSoftware.Channels.FirstOrDefault(chann => chann.Socket == connection);
             
             if (messageChannel == null)
@@ -47,7 +52,6 @@ namespace DiagramDesigner.Raft
             InboundMessage messageObject = new InboundMessage() { Message = message, SourceChannel = messageChannel };
 
             to.NodeSoftware.InputQueue.Add(messageObject);
-            // to.OnMessageReceived(connection, message);
         }
 
         public object Socket
