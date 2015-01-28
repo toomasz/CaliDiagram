@@ -12,25 +12,5 @@ namespace DiagramDesigner.Raft
         {
 
         }
-        protected override void OnInitialized()
-        {
-            
-        }
-        protected override void OnDestroyed()
-        {
-            
-        }
-        protected override void OnChannelCreated(INodeChannel channel)
-        {
-            
-        }
-        protected override void OnChannelDestroyed(INodeChannel channel)
-        {
-            
-        }
-        protected override void OnMessageReceived(INodeChannel channel, object message)
-        {
-            
-        }
     }
 }

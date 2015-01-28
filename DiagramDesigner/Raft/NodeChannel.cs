@@ -45,7 +45,7 @@ namespace DiagramDesigner.Raft
             await Task.Delay(connection.Latency);
 
             // data arrived and is assembled into packet
-            INodeChannel messageChannel = to.NodeSoftware.Channels.FirstOrDefault(chann => chann.Socket == connection);
+            INodeChannel messageChannel = to.NodeSoftware.GetChannelBySocket(connection);
             
             if (messageChannel == null)
                 return;

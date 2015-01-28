@@ -88,9 +88,6 @@
     <Compile Include="ViewModels\AttachSides.cs" />
     <Compile Include="ViewModels\DiagramBatchMode.cs" />
     <Compile Include="Commands\DiagramCommand.cs" />
-    <Compile Include="Views\DiagramPacketView.xaml.cs">
-      <DependentUpon>DiagramPacketView.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Serialization\XmlSettings.cs" />
     <Compile Include="ViewModels\AttachDescriptorPlacement.cs" />
     <Compile Include="ViewModels\AttachPoint.cs" />
@@ -121,10 +118,6 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="Views\NodeBaseView.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\DiagramPacketView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

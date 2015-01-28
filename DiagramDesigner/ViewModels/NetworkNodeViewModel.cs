@@ -36,7 +36,7 @@ namespace DiagramDesigner.ViewModels
 
         public void ButtonPressed(string name)
         {
-            NodeSoftware.ApplyCommand(name);
+            NodeSoftware.RaiseCommandReceived(name);
         }
 
         protected override void OnNodeCreated()
@@ -45,7 +45,7 @@ namespace DiagramDesigner.ViewModels
 
             foreach (var connection in Connections)
             {
-                NodeSoftware.Channels.Add(new NodeChannel(connection, this));
+                NodeSoftware.RaiseChannelAdded(new NodeChannel(connection, this));
             }
             NodeSoftware.Start();
             NodeSoftware.OnMessageSent += NodeSoftware_OnMessageSent;
@@ -63,6 +63,8 @@ namespace DiagramDesigner.ViewModels
             Console.WriteLine(Name + " removed");
             return true;
         }
+
+        
         protected override void OnConnectionAdded(ConnectionViewModel connection)
         {
             var nodeChannel = new NodeChannel(connection, this);
@@ -70,12 +72,7 @@ namespace DiagramDesigner.ViewModels
         }
         protected override void OnConnectionRemoved(ConnectionViewModel connection)
         {
-            var channelToRemove = NodeSoftware.Channels.FirstOrDefault(channel => channel.Socket == connection);
-            if(channelToRemove == null)
-            {
-                return;
-            }
-            NodeSoftware.RaiseChannelRemoved(channelToRemove);
+            NodeSoftware.RaiseSocketDead(connection);
         }
     }
 }

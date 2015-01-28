@@ -36,7 +36,7 @@ namespace DiagramDesigner.Raft
 
         protected override void OnInitialized()
         {            
-            RaftTimer.SetTimeout(1000 + rnd.Next(2000));
+            RaftTimer.SetTimeout(2000);
         }
 
         private string _State;
@@ -81,7 +81,7 @@ namespace DiagramDesigner.Raft
 
         protected override void OnDestroyed()
         {
-         
+            RaftTimer.Dispose();
         }
         protected override void OnChannelCreated(INodeChannel channel)
         {
@@ -95,7 +95,7 @@ namespace DiagramDesigner.Raft
         protected override void OnMessageReceived(INodeChannel channel, object message)
         {
             Message msg = message as Message;
-            RaftTimer.SetTimeout(1000 + rnd.Next(400));
+            RaftTimer.SetTimeout(800);
             if (msg != null)
             {
                 
@@ -108,20 +108,16 @@ namespace DiagramDesigner.Raft
             }
         }
 
-        protected override void OnCommandReceived(string command)
+        protected override void OnCommandReceived(string command) // Queue processing thread
         {
             if (command == "send")
                 IncrementAndSend();
             
         }
-        public override void OnTimerElapsed(TimeoutTimer timer)
+        protected override void OnTimerElapsed(TimeoutTimer timer) // Queue processing thread
         {
             if(timer == RaftTimer)
                 IncrementAndSend();
-        }
-        public override string ToString()
-        {
-            return "Raft software";
-        }
+        }        
     }
 }

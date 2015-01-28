@@ -51,9 +51,11 @@ namespace DiagramLib.Views
             i++;
           //  Canvas.SetLeft(Visual, -100);
            // Canvas.SetTop(Visual, -100);
+
             Canvas.Children.Add(View);
+
             View.Visibility = Visibility.Hidden;
-            Connection.ParentDiagram.ForceRedraw();
+           // Connection.ParentDiagram.ForceRedraw();
             NameScope.SetNameScope(Canvas, new NameScope());
 
             MatrixTransform buttonMatrixTransform = new MatrixTransform();
@@ -74,6 +76,7 @@ namespace DiagramLib.Views
             matrixAnimation.IsOffsetCumulative = true;
             matrixAnimation.Duration = TimeSpan.FromMilliseconds(Connection.Latency);
             matrixAnimation.RepeatBehavior = new RepeatBehavior(1);
+        
 
             // Set the animation to target the Matrix property
             // of the MatrixTransform named "ButtonMatrixTransform".
@@ -82,13 +85,19 @@ namespace DiagramLib.Views
             Storyboard.SetTargetProperty(matrixAnimation,
                 new PropertyPath(MatrixTransform.MatrixProperty));
 
+
             // Create a Storyboard to contain and apply the animation.
             Storyboard pathAnimationStoryboard = new Storyboard();
+            
             pathAnimationStoryboard.Children.Add(matrixAnimation);
 
         
             pathAnimationStoryboard.Completed += pathAnimationStoryboard_Completed;
             pathAnimationStoryboard.Begin(Canvas);
+
+            pathAnimationStoryboard.Freeze();
+            matrixAnimation.Freeze();
+
             View.Visibility = Visibility.Visible;
         }
 

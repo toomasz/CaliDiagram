@@ -23,38 +23,21 @@ namespace DiagramDesigner.Raft
             InputQueue = new BlockingCollection<object>();
        
         }
-        public List<INodeChannel> Channels
+        List<INodeChannel> Channels
         {
             get;
-            private set;
+            set;
         }
-        protected abstract void OnInitialized();
+        protected virtual void OnInitialized() { }
+        protected virtual void OnDestroyed()  {}
+        protected virtual void OnChannelCreated(INodeChannel channel){}
+        protected virtual void OnChannelDestroyed(INodeChannel channel){}
+        protected virtual void OnMessageReceived(INodeChannel channel, object message){} 
+        protected virtual void OnCommandReceived(string command){}
 
-        protected virtual void OnDestroyed()
-        {
-            
-        }
-        protected virtual void OnChannelCreated(INodeChannel channel)
-        {
-            
-        }
-        protected virtual void OnChannelDestroyed(INodeChannel channel)
-        {
-            
-        }
-        protected virtual void OnMessageReceived(INodeChannel channel, object message)
-        {
+        protected virtual void OnTimerElapsed(TimeoutTimer timer) { }
 
-        }
 
-        protected virtual void OnCommandReceived(string command)
-        {
-
-        }
-        protected void RequestConnectionTo(string address)
-        {
-
-        }
         /// <summary>
         /// Queues message to be sent via channel
         /// </summary>
@@ -75,6 +58,21 @@ namespace DiagramDesigner.Raft
 
         public event EventHandler<OutboundMessage> OnMessageSent;
 
+        
+
+        INodeChannel[] ThreadSafeChannels
+        {
+            get
+            {
+                INodeChannel[] channelsClonned = null;
+                lock (Channels)
+                {
+                    channelsClonned = new INodeChannel[Channels.Count];
+                    Channels.CopyTo(channelsClonned);
+                }
+                return channelsClonned;
+            }
+        }
         /// <summary>
         /// Broadcasts message to all active channels
         /// </summary>
@@ -82,7 +80,7 @@ namespace DiagramDesigner.Raft
         /// <returns></returns>
         protected void BroadcastMessage(object message)
         {
-            foreach (var channel in Channels)
+            foreach (var channel in ThreadSafeChannels)
                 SendMessage(channel, message);
         }
 
@@ -94,12 +92,12 @@ namespace DiagramDesigner.Raft
         /// <returns></returns>
         protected void BroadcastExcept(object message, INodeChannel except)
         {
-            foreach (var channel in Channels)
-            { 
-                if(channel == except)
+            foreach (var channel in ThreadSafeChannels)
+            {
+                if (channel == except)
                     continue;
                 SendMessage(channel, message);
-            }
+            }            
         }
 
         public bool IsStarted
@@ -108,6 +106,7 @@ namespace DiagramDesigner.Raft
             private set;
         }
         readonly object isStartedLock = new object();
+
         public void Start()
         {
             lock (isStartedLock)
@@ -145,29 +144,6 @@ namespace DiagramDesigner.Raft
             t.Start();
         }
 
-        public void RaiseChannelAdded(INodeChannel channel)
-        {
-            Channels.Add(channel);
-            OnChannelCreated(channel);
-        }
-
-        public void RaiseChannelRemoved(INodeChannel channel)
-        {
-            if (!Channels.Remove(channel))
-                throw new ArgumentException("Failed to remove channel");
-
-            OnChannelDestroyed(channel);           
-        }
-
-        public void ApplyCommand(string command)
-        {
-            OnCommandReceived(command);
-        }
-
-        public virtual void OnTimerElapsed(TimeoutTimer timer)
-        {
-            
-        }
         void EventLoop()
         {
             Console.WriteLine("Started event queue worker");
@@ -176,11 +152,27 @@ namespace DiagramDesigner.Raft
                 if (evt == null)
                     continue;
 
+                /// timers are TimeoutTimer
                 TimeoutTimer timer = evt as TimeoutTimer;
                 if (timer != null)
                     OnTimerElapsed(timer);
+                // strings are commands
+                string command = evt as string;
+                if (command != null)
+                    OnCommandReceived(command);
 
-               // Console.WriteLine("Received: " + evt.ToString());
+               // channels as tuples
+                var channelEvent = evt as Tuple<INodeChannel, bool>;
+                if(channelEvent != null)
+                {
+                    if (IsStarted)
+                    {
+                        if (channelEvent.Item2 == false) // channel removing = false
+                            OnChannelCreated(channelEvent.Item1);
+                        else
+                            OnChannelDestroyed(channelEvent.Item1);
+                    }
+                }
 
                // MessageReceived(null, evt);
                 InboundMessage message = evt as InboundMessage;
@@ -191,6 +183,58 @@ namespace DiagramDesigner.Raft
             }
 
             Console.Write("Worker finished");
+        }
+        /// <summary>
+        /// Raise text command to node algorithm
+        /// </summary>
+        /// <param name="command"></param>
+        public void RaiseCommandReceived(string command)
+        {
+            InputQueue.Add(command);
+        }
+
+        /// <summary>
+        /// should be called when underlying protocol detects that new connection is established
+        /// </summary>
+        /// <param name="connection"></param>
+        public void RaiseChannelAdded(INodeChannel channel)
+        {
+           
+            lock(Channels)
+                Channels.Add(channel);
+
+            if(IsStarted)
+                InputQueue.Add(new Tuple<INodeChannel, bool>(channel, false));
+        }
+        /// <summary>
+        /// Should be called when underlying protocol detects connection close or failure
+        /// </summary>
+        /// <param name="channel"></param>
+        /// <param name="reason"></param>
+        public void RaiseSocketDead(object socket, object reason = null)
+        {
+            var channelToRemove = GetChannelBySocket(socket);
+            if (channelToRemove == null)
+            {
+                return;
+            }
+
+            if (!Channels.Remove(channelToRemove))
+                throw new ArgumentException("Failed to remove channel");
+
+            if (IsStarted)
+                InputQueue.Add(new Tuple<INodeChannel, bool>(channelToRemove, true));
+        }
+
+        /// <summary>
+        /// Gets channel by underlying socket
+        /// </summary>
+        /// <param name="socket"></param>
+        /// <returns></returns>
+        public INodeChannel GetChannelBySocket(object socket)
+        {
+            lock(Channels)
+                return Channels.FirstOrDefault(channel => channel.Socket == socket);
         }
     }
 }

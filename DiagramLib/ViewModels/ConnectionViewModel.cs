@@ -185,7 +185,7 @@ namespace DiagramLib.ViewModels
                     SendPacketInternal(from, message);
                 }
                 else
-                    ParentDiagram.Canvas.Dispatcher.Invoke(() => SendPacketInternal(from, message));
+                    ParentDiagram.Canvas.Dispatcher.BeginInvoke(new System.Action(() => SendPacketInternal(from, message)));
             }
             catch (Exception ex)
             {
@@ -203,7 +203,6 @@ namespace DiagramLib.ViewModels
             if (canvas != null)
             {
                 PacketView packet = new PacketView(vis, this, from, canvas);
-
                 packet.Send();
             }
         }

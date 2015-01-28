@@ -247,10 +247,6 @@ namespace DiagramLib.ViewModels
             if (!IsInBatchMode)
                 ForceRedraw();
 
-            
-            
-            
-
             var sides = Definition.ConnectorSideStrategy.GetSidesForConnection(edge);
             edge.AttachPointFrom = from.Attach(sides.FromSide, edge, edge.FromDescriptor);
             edge.AttachPointTo = to.Attach(sides.ToSide, edge, edge.ToDescriptor);

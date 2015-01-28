@@ -85,6 +85,13 @@ namespace DiagramDesigner
             
             return connectionViewModel;
         }
+
+        static Brush fill1 = Brushes.Blue;
+        static Brush fille2 = Brushes.Red;
+
+        static Brush border1 = Brushes.Green;
+        static Brush border2 = Brushes.Black;
+    
         public override System.Windows.FrameworkElement CreateVisualForPacket(object packet)
         {
             if (packet is ResponseMessage)
@@ -93,10 +100,11 @@ namespace DiagramDesigner
                 {
                     Width = 10,
                     Height = 10,
-                    Fill = Brushes.Blue,
-                    Stroke = Brushes.Green,
+                    Fill = fill1,
+                    Stroke = fille2,
                     StrokeThickness = 3
                 };
+            
                 return ell;
             }
             else
@@ -105,9 +113,10 @@ namespace DiagramDesigner
                 Rectangle aRectangle = new Rectangle();
                 aRectangle.Width = 10;
                 aRectangle.Height = 10;
-                aRectangle.Fill = Brushes.Red;
-                aRectangle.Stroke = Brushes.Black;
+                aRectangle.Fill = fille2;
+                aRectangle.Stroke = border2;
                 aRectangle.StrokeThickness = 2;
+                
                 return aRectangle;
             }
            

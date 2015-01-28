@@ -90,7 +90,6 @@
     <Compile Include="Raft\RaftNode.cs" />
     <Compile Include="ViewModels\AttachDescriptorToViewModel.cs" />
     <Compile Include="ViewModels\AttachDescriptorFromViewModel.cs" />
-    <Compile Include="ViewModels\DelayTimer.cs" />
     <Compile Include="ViewModels\DiagramNodeBrokerViewModel.cs" />
     <Compile Include="SampleDiagramDefinition.cs" />
     <Compile Include="ViewModels\NetworkNodeViewModel.cs" />

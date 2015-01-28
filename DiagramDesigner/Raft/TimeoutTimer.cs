@@ -8,7 +8,7 @@ using System.Windows;
 
 namespace DiagramDesigner.Raft
 {
-    public class TimeoutTimer
+    public class TimeoutTimer: IDisposable
     {
         NetworkSoftwareBase software;
         public TimeoutTimer(NetworkSoftwareBase software)
@@ -22,6 +22,8 @@ namespace DiagramDesigner.Raft
         /// </summary>
         public void SetTimeout(int ms)
         {
+            if (isDisposed)
+                return;
             timer.Interval = ms;
             timer.Elapsed -= timer_Elapsed;
             timer.Elapsed += timer_Elapsed;
@@ -30,16 +32,18 @@ namespace DiagramDesigner.Raft
             if (Application.Current == null)
                 return;
             // update gui
-            Application.Current.Dispatcher.Invoke(() =>
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
                 if (TimerSet != null)
                     TimerSet(this, ms);
-            });
+            }));
 
         }
 
         void timer_Elapsed(object sender, ElapsedEventArgs e)
         {
+            if (isDisposed)
+                return;
             timer.Stop();
             software.InputQueue.Add(this);
             if (Elapsed != null)
@@ -47,5 +51,13 @@ namespace DiagramDesigner.Raft
         }
         public event EventHandler<int> TimerSet;
         public event EventHandler<EventArgs> Elapsed;
+
+
+        bool isDisposed = false;
+        public void Dispose()
+        {
+            isDisposed = true;
+            timer.Dispose();
+        }
     }
 }
