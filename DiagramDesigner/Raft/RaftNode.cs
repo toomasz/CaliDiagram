@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DiagramDesigner.Raft.Messages;
+using DiagramDesigner.Raft.State;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,14 +21,17 @@ namespace DiagramDesigner.Raft
     {
         
     }
+    public enum RaftNodeState { Follower, Candidate, Leader};
+
     public class RaftNode : NetworkSoftwareBase
     {
         public RaftNode(ICommunication communicationModel):base(communicationModel)
         {
-            Clock = 0;
+            CurrentTerm = 0;
             RaftTimer = new TimeoutTimer(this);
         }
 
+       
         Random rnd = new Random();
         public TimeoutTimer RaftTimer
         {
@@ -34,13 +39,36 @@ namespace DiagramDesigner.Raft
             private set;
         }
 
-        protected override void OnInitialized()
-        {            
-            RaftTimer.SetTimeout(2000);
+        public void TranslateToState(RaftNodeState newState)
+        {
+            RaftStateBase newStateObject = null;
+
+            if (newState == RaftNodeState.Candidate)
+                newStateObject = new Candicate(this);
+            else if (newState == RaftNodeState.Follower)
+                newStateObject = new Follower(this);
+            else if (newState == RaftNodeState.Leader)
+                newStateObject = new Leader(this);
+            else
+                throw new ArgumentException();
+
+            var state = State;
+            if(state != null)
+            {
+                state.ExitState();
+            }
+            State = newStateObject;
+            State.EnterState();            
         }
 
-        private string _State;
-        public string State
+        protected override void OnInitialized()
+        {
+           // RaftTimer.SetTimeout(2000);
+            TranslateToState(RaftNodeState.Follower);
+        }
+
+        private RaftStateBase _State;
+        public RaftStateBase State
         {
             get { return _State; }
             set
@@ -54,7 +82,7 @@ namespace DiagramDesigner.Raft
         }
         
         private int _Clock;
-        public int Clock
+        public int CurrentTerm
         {
             get { return _Clock; }
             set
@@ -62,7 +90,7 @@ namespace DiagramDesigner.Raft
                 if (_Clock != value)
                 {
                     _Clock = value;
-                    NotifyOfPropertyChange(() => Clock);
+                    NotifyOfPropertyChange(() => CurrentTerm);
                 }
             }
         }
@@ -70,7 +98,7 @@ namespace DiagramDesigner.Raft
 
         public void IncrementAndSend()
         {
-            Message message = new Message() { Clock = ++Clock, State = this.State };
+            Message message = new Message() { Clock = ++CurrentTerm};
             BroadcastMessage(message);            
         }
         public void Button1Click()
@@ -85,27 +113,32 @@ namespace DiagramDesigner.Raft
         }
         protected override void OnChannelCreated(INodeChannel channel)
         {
-            IncrementAndSend();
+          //  IncrementAndSend();
         }
         protected override void OnChannelDestroyed(INodeChannel channel)
         {
-            IncrementAndSend();
+         //   IncrementAndSend();
         }
 
         protected override void OnMessageReceived(INodeChannel channel, object message)
         {
-            Message msg = message as Message;
-            RaftTimer.SetTimeout(800);
-            if (msg != null)
+            RaftMessageBase raftMessage = message as RaftMessageBase;
+
+            if (raftMessage != null)
             {
-                
-                SendMessage(channel, new ResponseMessage());
-                if (this.Clock >= msg.Clock)
-                    return;
-                this.Clock = msg.Clock;
-                this.State = msg.State;
-                BroadcastExcept(msg, channel);
+                State.ReceiveMessage(raftMessage, channel);
             }
+            //RaftTimer.SetTimeout(800);
+            //if (msg != null)
+            //{
+                
+            //    SendMessage(channel, new ResponseMessage());
+            //    if (this.Clock >= msg.Clock)
+            //        return;
+            //    this.Clock = msg.Clock;
+            //  //  this.State = msg.State;
+            //    BroadcastExcept(msg, channel);
+            //}
         }
 
         protected override void OnCommandReceived(string command) // Queue processing thread
@@ -116,8 +149,11 @@ namespace DiagramDesigner.Raft
         }
         protected override void OnTimerElapsed(TimeoutTimer timer) // Queue processing thread
         {
-            if(timer == RaftTimer)
-                IncrementAndSend();
+            if (timer == RaftTimer)
+            {
+                if(State != null)
+                    State.OnTimeout();
+            }
         }        
     }
 }

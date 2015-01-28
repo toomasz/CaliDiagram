@@ -11,6 +11,11 @@ namespace DiagramDesigner.Raft
 {
     public abstract class NetworkSoftwareBase: PropertyChangedBase
     {
+        public string Id
+        {
+            get;
+            set;
+        }
         ICommunication Communication
         {
             get;
@@ -44,7 +49,7 @@ namespace DiagramDesigner.Raft
         /// <param name="channel"></param>
         /// <param name="message"></param>
         /// <returns></returns>
-        protected bool SendMessage(INodeChannel channel, object message)
+        public bool SendMessage(INodeChannel channel, object message)
         {
             if (!IsStarted)
                 return false;
@@ -78,7 +83,7 @@ namespace DiagramDesigner.Raft
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
-        protected void BroadcastMessage(object message)
+        public void BroadcastMessage(object message)
         {
             foreach (var channel in ThreadSafeChannels)
                 SendMessage(channel, message);
@@ -90,7 +95,7 @@ namespace DiagramDesigner.Raft
         /// <param name="message"></param>
         /// <param name="channel"></param>
         /// <returns></returns>
-        protected void BroadcastExcept(object message, INodeChannel except)
+        public void BroadcastExcept(object message, INodeChannel except)
         {
             foreach (var channel in ThreadSafeChannels)
             {

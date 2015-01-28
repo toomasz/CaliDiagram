@@ -70,7 +70,7 @@ namespace DiagramLib.Views
 
             MatrixAnimationUsingPath matrixAnimation = new MatrixAnimationUsingPath();
             matrixAnimation.PathGeometry = GetAnimationPathGeometry();
-            matrixAnimation.DoesRotateWithTangent = true;
+            matrixAnimation.DoesRotateWithTangent = false;
 
   
             matrixAnimation.IsOffsetCumulative = true;

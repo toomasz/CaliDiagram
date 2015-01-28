@@ -1,9 +1,12 @@
 ﻿using DiagramDesigner.Model;
 using DiagramDesigner.Raft;
+using DiagramDesigner.Raft.Messages;
 using DiagramDesigner.ViewModels;
 using DiagramLib;
 using DiagramLib.ViewModels;
 using System;
+using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -94,6 +97,18 @@ namespace DiagramDesigner
     
         public override System.Windows.FrameworkElement CreateVisualForPacket(object packet)
         {
+            if(packet is RaftMessageBase)
+            {
+                TextBlock text = new TextBlock();
+                text.Text = packet.ToString();
+                text.FontSize = 12;
+                text.Margin = new Thickness(1);
+                text.FontWeight = FontWeights.Bold;
+                text.Background = Brushes.Black;
+                text.Foreground = Brushes.White;
+
+                return text;
+            }
             if (packet is ResponseMessage)
             {
                 Ellipse ell = new Ellipse()
