@@ -21,6 +21,11 @@ namespace DiagramDesigner.Raft.State
         public abstract void EnterState();
         public abstract void ExitState();
         public virtual void OnTimeout() {  }
+
+      //  public abstract void ReceiveRequestVote(RequestVote requestVote);
+    //    public abstract void ReceiveRequestVoteAck(RequestVote requestVoteAck);
+     //   public abstract void 
+
         public virtual void ReceiveMessage(RaftMessageBase message, INodeChannel channel) { }
     }
 }

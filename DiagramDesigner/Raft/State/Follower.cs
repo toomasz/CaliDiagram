@@ -36,8 +36,11 @@ namespace DiagramDesigner.Raft.State
             }
             if (message is RequestVote)
             {
-                Node.TranslateToState(RaftNodeState.Follower);
-                Node.SendMessage(channel, new RequestVoteResult() { VoteGranted = true });
+                var requestVote = message as RequestVote;
+                bool voteGranted = true;
+                if (requestVote.CandidateTerm < Node.CurrentTerm)
+                    voteGranted = false;
+                Node.SendMessage(channel, new RequestVoteResult() { VoteGranted = voteGranted, CurrentTerm = Node.CurrentTerm });
             }
         }
         public override void OnTimeout()

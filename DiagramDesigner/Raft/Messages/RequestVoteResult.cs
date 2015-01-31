@@ -9,6 +9,7 @@ namespace DiagramDesigner.Raft.Messages
     public class RequestVoteResult : RaftMessageBase
     {
         public bool VoteGranted { get; set; }
+        public int CurrentTerm { get; set; }
         public override string ToString()
         {
             if (VoteGranted)

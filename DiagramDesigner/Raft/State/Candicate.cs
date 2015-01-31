@@ -24,7 +24,7 @@ namespace DiagramDesigner.Raft.State
         static Random rnd = new Random();
         public override void EnterState()
         {
-            Node.BroadcastMessage(new RequestVote() { CandidateId = Node.Id, CandidateTerm = Node.CurrentTerm });
+            
             StartNewElection();
         }
 
@@ -33,6 +33,7 @@ namespace DiagramDesigner.Raft.State
             VoteCount = 1;
             Node.CurrentTerm++;
             Node.RaftTimer.SetTimeout(1000 + rnd.Next(2700));
+            Node.BroadcastMessage(new RequestVote() { CandidateId = Node.Id, CandidateTerm = Node.CurrentTerm });
         }
 
         int VoteCount = 1;
@@ -42,17 +43,20 @@ namespace DiagramDesigner.Raft.State
             {
                 RequestVoteResult result = message as RequestVoteResult;
                 if (result.VoteGranted)
+                {
                     VoteCount++;
+                    Node.CurrentTerm = result.CurrentTerm;
+                }
                 if (VoteCount > NodeCount / 2)
                     Node.TranslateToState( RaftNodeState.Leader);
             }
             if (message is RequestVote)
             {
-                var requestVote = message as RequestVote;
-                bool voteGranted = true;
-                if (requestVote.CandidateTerm < Node.CurrentTerm)
-                    voteGranted = false;
-                Node.SendMessage(channel, new RequestVoteResult() { VoteGranted = voteGranted });
+                //var requestVote = message as RequestVote;
+                //bool voteGranted = true;
+                //if (requestVote.CandidateTerm < Node.CurrentTerm)
+                //    voteGranted = false;
+                //Node.SendMessage(channel, new RequestVoteResult() { VoteGranted = voteGranted, CurrentTerm = Node.CurrentTerm });
             }
 
             if (message is AppendEntries)
