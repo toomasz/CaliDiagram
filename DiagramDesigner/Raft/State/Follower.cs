@@ -28,24 +28,33 @@ namespace DiagramDesigner.Raft.State
         {
 
         }
-        public override void ReceiveMessage(RaftMessageBase message, INodeChannel channel)
-        {
-            if (message is AppendEntries)
-            {
-                Node.TranslateToState(RaftNodeState.Follower);
-            }
-            if (message is RequestVote)
-            {
-                var requestVote = message as RequestVote;
-                bool voteGranted = true;
-                if (requestVote.CandidateTerm < Node.CurrentTerm)
-                    voteGranted = false;
-                Node.SendMessage(channel, new RequestVoteResult() { VoteGranted = voteGranted, CurrentTerm = Node.CurrentTerm });
-            }
-        }
+
         public override void OnTimeout()
         {
             Node.TranslateToState(RaftNodeState.Candidate);
+        }
+
+        public override void ReceiveRequestVote(RequestVote requestVote, INodeChannel channel)
+        {
+            bool voteGranted = true;
+            if (requestVote.CandidateTerm < Node.CurrentTerm)
+                voteGranted = false;
+            Node.SendMessage(channel, new RequestVoteResponse() { VoteGranted = voteGranted, CurrentTerm = Node.CurrentTerm });
+        }
+
+        public override void ReceiveRequestVoteResponse(RequestVoteResponse requestVoteResponse)
+        {
+
+        }
+
+        public override void ReceiveAppendEntries(AppendEntries appendEntries)
+        {
+            Node.TranslateToState(RaftNodeState.Follower);
+        }
+
+        public override void ReceiveAppendEntriesResponse(AppendEntriesResponse appendEntriesResponse)
+        {
+
         }
     }
 }

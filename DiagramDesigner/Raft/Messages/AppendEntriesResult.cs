@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DiagramDesigner.Raft.Messages
 {
-    public class AppendEntriesResult : RaftMessageBase
+    public class AppendEntriesResponse : RaftMessageBase
     {
         public override string ToString()
         {

@@ -43,70 +43,70 @@ namespace DiagramLib.Views
             get;
             private set;
         }
-        static int i = 0;
+
         // this is always called from ui thread
         public void Send()
         {
-
-            i++;
-          //  Canvas.SetLeft(Visual, -100);
-           // Canvas.SetTop(Visual, -100);
-
             Canvas.Children.Add(View);
-
+            View.Loaded += View_Loaded;
             View.Visibility = Visibility.Hidden;
-           // Connection.ParentDiagram.ForceRedraw();
+            View.InvalidateMeasure();
+            View.InvalidateVisual();
+
             NameScope.SetNameScope(Canvas, new NameScope());
 
-            MatrixTransform buttonMatrixTransform = new MatrixTransform();
-            View.RenderTransform = buttonMatrixTransform;
-            buttonMatrixTransform.Matrix = new Matrix();
-            buttonMatrixTransform.Matrix.Translate(-100, -100);
+            MatrixTransform buttonMatrixTransform = new MatrixTransform();         
+            View.RenderTransform = buttonMatrixTransform;           
 
-            string transformName = string.Format("ButtonMatrixTransform");
-
+            string transformName = "ButtonMatrixTransform";
 
             Canvas.RegisterName(transformName, buttonMatrixTransform);
 
-            MatrixAnimationUsingPath matrixAnimation = new MatrixAnimationUsingPath();
-            matrixAnimation.PathGeometry = GetAnimationPathGeometry();
-            matrixAnimation.DoesRotateWithTangent = false;
-
-  
-            matrixAnimation.IsOffsetCumulative = true;
-            matrixAnimation.Duration = TimeSpan.FromMilliseconds(Connection.Latency);
-            matrixAnimation.RepeatBehavior = new RepeatBehavior(1);
-        
-
-            // Set the animation to target the Matrix property
-            // of the MatrixTransform named "ButtonMatrixTransform".
-            Storyboard.SetTargetName(matrixAnimation, transformName);
-         
-            Storyboard.SetTargetProperty(matrixAnimation,
-                new PropertyPath(MatrixTransform.MatrixProperty));
-
-
-            // Create a Storyboard to contain and apply the animation.
-            Storyboard pathAnimationStoryboard = new Storyboard();
+            MatrixAnimationUsingPath matrixAnimation = new MatrixAnimationUsingPath()
+            {
+                PathGeometry = GetAnimationPathGeometry(new Point(-View.Width/2,-View.Height/2)),
+                DoesRotateWithTangent = false,
+                IsOffsetCumulative = true,
+                IsAdditive = true,
+                Duration = TimeSpan.FromMilliseconds(Connection.Latency),
+                RepeatBehavior = new RepeatBehavior(1)
+            };
             
-            pathAnimationStoryboard.Children.Add(matrixAnimation);
+            Storyboard.SetTargetName(matrixAnimation, transformName);         
+            Storyboard.SetTargetProperty(matrixAnimation, new PropertyPath(MatrixTransform.MatrixProperty));
+
+            Storyboard packetAnimationStoryboard = new Storyboard();
+            
+            packetAnimationStoryboard.Children.Add(matrixAnimation);
 
         
-            pathAnimationStoryboard.Completed += pathAnimationStoryboard_Completed;
-            pathAnimationStoryboard.Begin(Canvas);
+            packetAnimationStoryboard.Completed += pathAnimationStoryboard_Completed;
+            packetAnimationStoryboard.Begin(Canvas);
 
-            pathAnimationStoryboard.Freeze();
+            packetAnimationStoryboard.Freeze();
             matrixAnimation.Freeze();
 
             View.Visibility = Visibility.Visible;
         }
 
-        PathGeometry GetAnimationPathGeometry()
+        void View_Loaded(object sender, RoutedEventArgs e)
+        {
+            
+        }
+        
+        PathGeometry GetAnimationPathGeometry(Point offset)
         {
             PathGeometry animationPath = new PathGeometry();
 
             PathFigure pFigure = new PathFigure();
             var points = Connection.GetBezierPoints();
+
+            for (int i = 0; i < points.Count; i++)
+            {
+                Point p = points[i];
+                p.Offset(offset.X, offset.Y);
+                points[i] = p;
+            }
 
             PolyBezierSegment pBezierSegment = new PolyBezierSegment();
 
@@ -116,18 +116,18 @@ namespace DiagramLib.Views
                 pBezierSegment.Points.Add(points[1]);
                 pBezierSegment.Points.Add(points[2]);
                 pBezierSegment.Points.Add(points[3]);
-
-                pFigure.Segments.Add(pBezierSegment);
             }
             else if (From == Connection.To)
             {
                 pFigure.StartPoint = points[3];
                 pBezierSegment.Points.Add(points[2]);
                 pBezierSegment.Points.Add(points[1]);
-                pBezierSegment.Points.Add(points[0]);
-
-                pFigure.Segments.Add(pBezierSegment);
+                pBezierSegment.Points.Add(points[0]);                
             }
+            foreach (Point p in pBezierSegment.Points)
+                p.Offset(4, 4);
+
+            pFigure.Segments.Add(pBezierSegment);
             animationPath.Figures.Add(pFigure);
 
             // Freeze the PathGeometry for performance benefits.
@@ -138,8 +138,7 @@ namespace DiagramLib.Views
 
         void pathAnimationStoryboard_Completed(object sender, EventArgs e)
         {
-            Canvas.Children.Remove(View);
-            
+            Canvas.Children.Remove(View);            
         }
 
      

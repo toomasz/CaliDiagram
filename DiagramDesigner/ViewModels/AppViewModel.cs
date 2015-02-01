@@ -9,7 +9,7 @@ namespace DiagramDesigner
     {
         public AppViewModel(IWindowManager wm)
         {
-            Diagram1 = new DiagramViewModel(new SampleDiagramDefinition());
+            Diagram1 = new DiagramViewModel(new RaftDiagramDefinition());
             modelLoader = new DiagramXmlSerializer(Diagram1);            
         }
         DiagramXmlSerializer modelLoader;

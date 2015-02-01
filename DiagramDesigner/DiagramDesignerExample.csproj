@@ -100,7 +100,7 @@
     <Compile Include="ViewModels\AttachDescriptorToViewModel.cs" />
     <Compile Include="ViewModels\AttachDescriptorFromViewModel.cs" />
     <Compile Include="ViewModels\DiagramNodeBrokerViewModel.cs" />
-    <Compile Include="SampleDiagramDefinition.cs" />
+    <Compile Include="RaftDiagramDefinition.cs" />
     <Compile Include="ViewModels\NetworkNodeViewModel.cs" />
     <Compile Include="ViewModels\SlimConnectionViewModel.cs" />
     <Compile Include="ViewModels\DiagramNodeSmallViewModel.cs" />

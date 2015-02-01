@@ -126,7 +126,19 @@ namespace DiagramDesigner.Raft
 
             if (raftMessage != null)
             {
-                State.ReceiveMessage(raftMessage, channel);
+                var appEntries = raftMessage as AppendEntries;
+                var appEntriesResponse = raftMessage as AppendEntriesResponse;
+                var requestVote = raftMessage as RequestVote;
+                var requestVoteResponse = raftMessage as RequestVoteResponse;
+
+                if (appEntries != null)
+                    State.ReceiveAppendEntries(appEntries);
+                else if (appEntriesResponse != null)
+                    State.ReceiveAppendEntriesResponse(appEntriesResponse);
+                else if (requestVote != null)
+                    State.ReceiveRequestVote(requestVote, channel);
+                else if (requestVoteResponse != null)
+                    State.ReceiveRequestVoteResponse(requestVoteResponse);
             }
             //RaftTimer.SetTimeout(800);
             //if (msg != null)

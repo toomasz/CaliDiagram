@@ -31,5 +31,25 @@ namespace DiagramDesigner.Raft.State
         {
 
         }
+
+        public override void ReceiveRequestVote(RequestVote requestVote, INodeChannel channel)
+        {
+            
+        }
+
+        public override void ReceiveRequestVoteResponse(RequestVoteResponse requestVoteResponse)
+        {
+            
+        }
+
+        public override void ReceiveAppendEntries(AppendEntries appendEntries)
+        {
+            
+        }
+
+        public override void ReceiveAppendEntriesResponse(AppendEntriesResponse appendEntriesResponse)
+        {
+            
+        }
     }
 }

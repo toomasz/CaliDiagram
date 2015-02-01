@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DiagramDesigner.Raft.Messages
 {
-    public class RequestVoteResult : RaftMessageBase
+    public class RequestVoteResponse : RaftMessageBase
     {
         public bool VoteGranted { get; set; }
         public int CurrentTerm { get; set; }

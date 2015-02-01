@@ -17,10 +17,6 @@ namespace DiagramLib
         {
             get;set;
         }
-        public string Caption
-        {
-            get;set;
-        }
         public Func<NodeBaseViewModel, DiagramNodeBase> ConvertViewModelToModel;
         public Func<DiagramNodeBase, NodeBaseViewModel> ConvertModelToViewModel;
         public Func<Point, NodeBaseViewModel> CreateNode;
@@ -76,8 +72,7 @@ namespace DiagramLib
             nodeBehaviours.Add(nodeTypeName, new NodeTypeBehaviour() {
                 TypeViewModel = typeof(TViewModel), 
                 TypeModel = typeof(TModel),
-                Name = nodeTypeName, 
-                Caption = "to do",
+                Name = nodeTypeName,
                 CreateNode = createFunc,
                 ConvertViewModelToModel = vmToM,
                 ConvertModelToViewModel = modelToVm
@@ -122,17 +117,20 @@ namespace DiagramLib
         public abstract ConnectionViewModel CreateConnection(NodeBaseViewModel from, NodeBaseViewModel to);
         public IConnectorSideStrategy ConnectorSideStrategy {get; set;}
 
+        /// <summary>
+        /// Override this method to create custom packet visualization
+        /// </summary>
+        /// <param name="packet"></param>
+        /// <returns></returns>
         public virtual FrameworkElement CreateVisualForPacket(object packet)
-        {          
-
-            Rectangle aRectangle = new Rectangle();
-            aRectangle.Width = 10;
-            aRectangle.Height = 10;
-            aRectangle.Fill = Brushes.Red;
-            aRectangle.Stroke = Brushes.Black;
-            aRectangle.StrokeThickness = 2;
-            return aRectangle;
-           
+        {
+            Rectangle rectangle = new Rectangle();
+            rectangle.Width = 10;
+            rectangle.Height = 10;
+            rectangle.Fill = Brushes.Red;
+            rectangle.Stroke = Brushes.Black;
+            rectangle.StrokeThickness = 2;
+            return rectangle;           
         }
     }
 }

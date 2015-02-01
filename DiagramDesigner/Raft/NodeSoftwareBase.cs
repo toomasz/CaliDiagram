@@ -146,6 +146,7 @@ namespace DiagramDesigner.Raft
         {
             Thread t = new Thread(EventLoop);
             t.IsBackground = true;
+            t.Name = string.Format("Event loop {0}", Id);
             t.Start();
         }
 

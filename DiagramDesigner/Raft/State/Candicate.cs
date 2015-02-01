@@ -37,31 +37,7 @@ namespace DiagramDesigner.Raft.State
         }
 
         int VoteCount = 1;
-        public override void ReceiveMessage(RaftMessageBase message, INodeChannel channel)
-        {
-            if(message is RequestVoteResult)
-            {
-                RequestVoteResult result = message as RequestVoteResult;
-                if (result.VoteGranted)
-                {
-                    VoteCount++;
-                    Node.CurrentTerm = result.CurrentTerm;
-                }
-                if (VoteCount > NodeCount / 2)
-                    Node.TranslateToState( RaftNodeState.Leader);
-            }
-            if (message is RequestVote)
-            {
-                //var requestVote = message as RequestVote;
-                //bool voteGranted = true;
-                //if (requestVote.CandidateTerm < Node.CurrentTerm)
-                //    voteGranted = false;
-                //Node.SendMessage(channel, new RequestVoteResult() { VoteGranted = voteGranted, CurrentTerm = Node.CurrentTerm });
-            }
 
-            if (message is AppendEntries)
-                Node.TranslateToState(RaftNodeState.Follower);
-        }
         public override void OnTimeout()
         {
             StartNewElection();
@@ -69,6 +45,35 @@ namespace DiagramDesigner.Raft.State
         public override void ExitState()
         {
 
+        }
+
+        public override void ReceiveRequestVote(RequestVote requestVote, INodeChannel channel)
+        {
+            bool voteGranted = true;
+            if (requestVote.CandidateTerm < Node.CurrentTerm)
+                voteGranted = false;
+            Node.SendMessage(channel, new RequestVoteResponse() { VoteGranted = voteGranted, CurrentTerm = Node.CurrentTerm });
+        }
+
+        public override void ReceiveRequestVoteResponse(RequestVoteResponse requestVoteResponse)
+        {
+            if (requestVoteResponse.VoteGranted)
+            {
+                VoteCount++;
+                Node.CurrentTerm = requestVoteResponse.CurrentTerm;
+            }
+            if (VoteCount > NodeCount / 2)
+                Node.TranslateToState(RaftNodeState.Leader);
+        }
+
+        public override void ReceiveAppendEntries(AppendEntries appendEntries)
+        {
+
+        }
+
+        public override void ReceiveAppendEntriesResponse(AppendEntriesResponse appendEntriesResponse)
+        {
+            Node.TranslateToState(RaftNodeState.Follower);
         }
     }
 }
