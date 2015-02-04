@@ -11,6 +11,7 @@ using System.Collections.Concurrent;
 using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
+using System.Windows.Media;
 
 namespace DiagramDesigner.ViewModels
 {
@@ -23,14 +24,23 @@ namespace DiagramDesigner.ViewModels
     {
         public DiagramNodeBigViewModel(string name):base()
         {
-            this.Name = name;    
-           
+            this.Name = name;
+            RaftStateColor = Brushes.DarkBlue;
         }
-       
-   
-    
 
-  
+        private Brush _RaftStateColor;
+        public Brush RaftStateColor
+        {
+            get { return _RaftStateColor; }
+            set
+            {
+                if (_RaftStateColor != value)
+                {
+                    _RaftStateColor = value;
+                    NotifyOfPropertyChange(() => RaftStateColor);
+                }
+            }
+        }
         
 
         

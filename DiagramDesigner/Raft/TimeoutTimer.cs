@@ -20,28 +20,48 @@ namespace DiagramDesigner.Raft
         /// Timer not started - actiong will be executed on T+ms
         /// Timer started - stop previous timer - actiong will be executed on T+ms
         /// </summary>
-        public void SetTimeout(int ms)
+        void SetTimeout(int ms)
         {
             if (isDisposed)
                 return;
+            timer.Stop();
             timer.Interval = ms;
             timer.Elapsed -= timer_Elapsed;
             timer.Elapsed += timer_Elapsed;
-            timer.Stop();
+            
             timer.Start();
             if (Application.Current == null)
                 return;
             // update gui
             Application.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
+                if (Application.Current == null)
+                    return;
                 if (TimerSet != null)
                     TimerSet(this, ms);
             }));
 
         }
+        static Random rnd = new Random();
+
+        /// <summary>
+        /// Sets time to timeout in random time between T+msFrom and T+msTo
+        /// </summary>
+        /// <param name="msFrom">Milliseconds from</param>
+        /// <param name="msTo">Milliseconds to</param>
+        public void SetRandomTimeout(int msFrom, int msTo)
+        {
+            if (msFrom > msTo)
+                throw new ArgumentException("Invalid timer range");
+            int randomPart = rnd.Next(msTo - msFrom);
+            int timeout = msFrom + randomPart;
+            SetTimeout(timeout);
+        }
 
         void timer_Elapsed(object sender, ElapsedEventArgs e)
         {
+            if (Application.Current == null)
+                return;
             if (isDisposed)
                 return;
             timer.Stop();

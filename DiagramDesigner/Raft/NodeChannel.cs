@@ -49,9 +49,8 @@ namespace DiagramDesigner.Raft
             
             if (messageChannel == null)
                 return;
-            InboundMessage messageObject = new InboundMessage() { Message = message, SourceChannel = messageChannel };
 
-            to.NodeSoftware.InputQueue.Add(messageObject);
+            to.NodeSoftware.RaisePacketReceived(message, messageChannel);
         }
 
         public object Socket

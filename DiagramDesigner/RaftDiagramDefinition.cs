@@ -45,8 +45,9 @@ namespace DiagramDesigner
                 "Server",
                 (p) =>
                     {
+                        
                         //this looks nasty
-                        return new DiagramNodeBigViewModel(string.Format("S{0}", serverNo++)) 
+                        return new DiagramNodeBigViewModel(string.Format("{0}", GenerateRandomHex(4))) 
                         { 
                             Location = p, 
                             NodeSoftware = new RaftNode(CommunitcationModel) 

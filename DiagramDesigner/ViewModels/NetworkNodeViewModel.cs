@@ -38,7 +38,11 @@ namespace DiagramDesigner.ViewModels
         {
             NodeSoftware.RaiseCommandReceived(name);
         }
-
+        protected override void OnNameChanged(string newName)
+        {
+            if(NodeSoftware != null)
+                NodeSoftware.Id = newName;
+        }
         protected override void OnNodeCreated()
         {
             Console.WriteLine(Name + " Created");
@@ -49,6 +53,7 @@ namespace DiagramDesigner.ViewModels
             }
             NodeSoftware.Start();
             NodeSoftware.OnMessageSent += NodeSoftware_OnMessageSent;
+            NodeSoftware.Id = Name;
         }
 
         void NodeSoftware_OnMessageSent(object sender, OutboundMessage e)

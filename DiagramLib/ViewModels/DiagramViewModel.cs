@@ -17,7 +17,7 @@ using DiagramLib.Views;
 
 namespace DiagramLib.ViewModels
 {
-    public class DiagramViewModel: PropertyChangedBase, IViewAware
+    public class DiagramViewModel: PropertyChangedBase, IViewAware, IDisposable
     {
         
         public DiagramViewModel(DiagramDefinitionBase diagramDefinition)
@@ -323,6 +323,11 @@ namespace DiagramLib.ViewModels
         }
 
         public event EventHandler<ViewAttachedEventArgs> ViewAttached;
+
+        public void Dispose()
+        {
+            ClearDiagram();
+        }
     }
 
 }

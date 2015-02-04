@@ -62,9 +62,9 @@ namespace DiagramLib.Serialization
                     NodeBaseViewModel nodeViewModel =  diagramViewModel.Definition.ModelToViewModel(node);
                     if (nodeViewModel == null)
                         continue;
-                    
-                    nodeViewModel.ParentDiagram = diagramViewModel;
-                    diagramViewModel.Nodes.Add(nodeViewModel);
+                   
+                    diagramViewModel.AddNode(nodeViewModel, node.Location);
+
                     nodeDictionary.Add(node, nodeViewModel);
                     
                 }

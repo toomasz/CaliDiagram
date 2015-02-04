@@ -53,8 +53,13 @@ namespace DiagramDesigner
                 }
             }
         }
-        
-    
+
+
+
+        public void Close()
+        {
+            Diagram1.Dispose();
+        }
     }
 
  

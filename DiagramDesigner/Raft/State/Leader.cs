@@ -20,36 +20,58 @@ namespace DiagramDesigner.Raft.State
         Random rnd = new Random();
         public override void EnterState()
         {
-            Node.RaftTimer.SetTimeout(700 + rnd.Next(100) );
+            BroadcastAppendEntries();
         }
+
+        void BroadcastAppendEntries()
+        {
+            Node.BroadcastMessage(new AppendEntries(Node.CurrentTerm, Node.Id));
+            Node.RaftTimer.SetRandomTimeout(1000,1000);
+        }
+
         public override void OnTimeout()
         {
-            Node.BroadcastMessage(new AppendEntries());
-            Node.RaftTimer.SetTimeout(700 + rnd.Next(100));
+            BroadcastAppendEntries();   
         }
         public override void ExitState()
         {
 
         }
 
-        public override void ReceiveRequestVote(RequestVote requestVote, INodeChannel channel)
+        public override void ReceiveRequestVote(RequestVote requestVote, INodeChannel sourceChannel)
         {
-            
+            if(requestVote.CandidateTerm > CurrentTerm)
+            {
+                Node.TranslateToState(RaftNodeState.Follower);
+                Node.RaisePacketReceived(requestVote, sourceChannel);
+                return;
+            }
+
+            Node.SendMessage(sourceChannel, DenyVote);
         }
 
-        public override void ReceiveRequestVoteResponse(RequestVoteResponse requestVoteResponse)
+        public override void ReceiveRequestVoteResponse(RequestVoteResponse requestVoteResponse, INodeChannel sourceChannel)
         {
-            
+            // got vote but we dont care because we are leader already
         }
 
-        public override void ReceiveAppendEntries(AppendEntries appendEntries)
+        public override void ReceiveAppendEntries(AppendEntries appendEntries, INodeChannel sourceChannel)
         {
-            
+            if (appendEntries.LeaderTerm > CurrentTerm)
+            {
+                Node.TranslateToState(RaftNodeState.Follower);
+                Node.RaisePacketReceived(appendEntries, sourceChannel);
+                return;
+            }
         }
 
-        public override void ReceiveAppendEntriesResponse(AppendEntriesResponse appendEntriesResponse)
+        public override void ReceiveAppendEntriesResponse(AppendEntriesResponse appendEntriesResponse, INodeChannel sourceChannel)
         {
-            
+            if (appendEntriesResponse.FollowerTerm > CurrentTerm)
+            {
+                Node.TranslateToState(RaftNodeState.Follower);
+                return;
+            }
         }
     }
 }

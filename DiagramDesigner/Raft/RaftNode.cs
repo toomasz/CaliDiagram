@@ -30,14 +30,12 @@ namespace DiagramDesigner.Raft
             CurrentTerm = 0;
             RaftTimer = new TimeoutTimer(this);
         }
-
        
-        Random rnd = new Random();
         public TimeoutTimer RaftTimer
         {
             get;
             private set;
-        }
+        }       
 
         public void TranslateToState(RaftNodeState newState)
         {
@@ -51,7 +49,7 @@ namespace DiagramDesigner.Raft
                 newStateObject = new Leader(this);
             else
                 throw new ArgumentException();
-
+           
             var state = State;
             if(state != null)
             {
@@ -63,7 +61,6 @@ namespace DiagramDesigner.Raft
 
         protected override void OnInitialized()
         {
-           // RaftTimer.SetTimeout(2000);
             TranslateToState(RaftNodeState.Follower);
         }
 
@@ -81,19 +78,38 @@ namespace DiagramDesigner.Raft
             }
         }
         
-        private int _Clock;
+        private int _CurrentTerm;
         public int CurrentTerm
         {
-            get { return _Clock; }
+            get { return _CurrentTerm; }
             set
             {
-                if (_Clock != value)
+                if (_CurrentTerm != value)
                 {
-                    _Clock = value;
+                    _CurrentTerm = value;
+                    VotedFor = null;
                     NotifyOfPropertyChange(() => CurrentTerm);
                 }
             }
         }
+
+        /// <summary>
+        /// Candiate Id that received vote in current term
+        /// </summary>
+        private string _VotedFor;
+        public string VotedFor
+        {
+            get { return _VotedFor; }
+            set
+            {
+                if (_VotedFor != value)
+                {
+                    _VotedFor = value;
+                    NotifyOfPropertyChange(() => VotedFor);
+                }
+            }
+        }
+        
         
 
         public void IncrementAndSend()
@@ -104,7 +120,6 @@ namespace DiagramDesigner.Raft
         public void Button1Click()
         {
             IncrementAndSend();
-            RaftTimer.SetTimeout(1000 + rnd.Next(1666));
         }
 
         protected override void OnDestroyed()
@@ -113,17 +128,16 @@ namespace DiagramDesigner.Raft
         }
         protected override void OnChannelCreated(INodeChannel channel)
         {
-          //  IncrementAndSend();
+          
         }
         protected override void OnChannelDestroyed(INodeChannel channel)
         {
-         //   IncrementAndSend();
+         
         }
 
         protected override void OnMessageReceived(INodeChannel channel, object message)
         {
             RaftMessageBase raftMessage = message as RaftMessageBase;
-
             if (raftMessage != null)
             {
                 var appEntries = raftMessage as AppendEntries;
@@ -132,32 +146,20 @@ namespace DiagramDesigner.Raft
                 var requestVoteResponse = raftMessage as RequestVoteResponse;
 
                 if (appEntries != null)
-                    State.ReceiveAppendEntries(appEntries);
+                    State.ReceiveAppendEntries(appEntries,channel);
                 else if (appEntriesResponse != null)
-                    State.ReceiveAppendEntriesResponse(appEntriesResponse);
+                    State.ReceiveAppendEntriesResponse(appEntriesResponse, channel);
                 else if (requestVote != null)
                     State.ReceiveRequestVote(requestVote, channel);
                 else if (requestVoteResponse != null)
-                    State.ReceiveRequestVoteResponse(requestVoteResponse);
+                    State.ReceiveRequestVoteResponse(requestVoteResponse, channel);
             }
-            //RaftTimer.SetTimeout(800);
-            //if (msg != null)
-            //{
-                
-            //    SendMessage(channel, new ResponseMessage());
-            //    if (this.Clock >= msg.Clock)
-            //        return;
-            //    this.Clock = msg.Clock;
-            //  //  this.State = msg.State;
-            //    BroadcastExcept(msg, channel);
-            //}
         }
 
         protected override void OnCommandReceived(string command) // Queue processing thread
         {
             if (command == "send")
-                IncrementAndSend();
-            
+                IncrementAndSend();            
         }
         protected override void OnTimerElapsed(TimeoutTimer timer) // Queue processing thread
         {

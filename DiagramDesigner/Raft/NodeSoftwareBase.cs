@@ -229,9 +229,19 @@ namespace DiagramDesigner.Raft
                 throw new ArgumentException("Failed to remove channel");
 
             if (IsStarted)
-                InputQueue.Add(new Tuple<INodeChannel, bool>(channelToRemove, true));
+            {
+                if (!InputQueue.IsAddingCompleted)
+                    InputQueue.Add(new Tuple<INodeChannel, bool>(channelToRemove, true));
+            }
         }
 
+        public void RaisePacketReceived(object packet, INodeChannel channel)
+        {
+
+            InboundMessage messageObject = new InboundMessage() { Message = packet, SourceChannel = channel };
+            if(!InputQueue.IsAddingCompleted)
+                InputQueue.Add(messageObject);
+        }
         /// <summary>
         /// Gets channel by underlying socket
         /// </summary>

@@ -21,22 +21,26 @@ namespace DiagramDesigner.Raft.State
         {
             return "Candidate";
         }
-        static Random rnd = new Random();
+
         public override void EnterState()
-        {
-            
+        {            
             StartNewElection();
         }
-
+        int VoteCount = 1;
         void StartNewElection()
         {
-            VoteCount = 1;
+            // increment current term
             Node.CurrentTerm++;
-            Node.RaftTimer.SetTimeout(1000 + rnd.Next(2700));
+            // vote for self
+            VoteCount = 1;
+            Node.VotedFor = Node.Id;
+            // start random election timer
+            Node.RaftTimer.SetRandomTimeout(300, 600);
+            // send request votes to all servers
             Node.BroadcastMessage(new RequestVote() { CandidateId = Node.Id, CandidateTerm = Node.CurrentTerm });
         }
 
-        int VoteCount = 1;
+        
 
         public override void OnTimeout()
         {
@@ -47,31 +51,57 @@ namespace DiagramDesigner.Raft.State
 
         }
 
-        public override void ReceiveRequestVote(RequestVote requestVote, INodeChannel channel)
+        public override void ReceiveRequestVote(RequestVote requestVote, INodeChannel sourceChannel)
         {
-            bool voteGranted = true;
-            if (requestVote.CandidateTerm < Node.CurrentTerm)
-                voteGranted = false;
-            Node.SendMessage(channel, new RequestVoteResponse() { VoteGranted = voteGranted, CurrentTerm = Node.CurrentTerm });
+            if (requestVote.CandidateId == Node.Id)
+                return;
+
+        
+            bool voteGranted = false;
+            if (requestVote.CandidateTerm >= CurrentTerm)
+            {
+              //  Node.CurrentTerm = requestVote.CandidateTerm;
+                Node.TranslateToState(RaftNodeState.Follower);
+                Node.RaisePacketReceived(requestVote, sourceChannel);
+                return;
+            }
+            Node.SendMessage(sourceChannel, DenyVote);
         }
 
-        public override void ReceiveRequestVoteResponse(RequestVoteResponse requestVoteResponse)
-        {
+        public override void ReceiveRequestVoteResponse(RequestVoteResponse requestVoteResponse, INodeChannel sourceChannel)
+        {      
+            if(requestVoteResponse.CurrentTerm > CurrentTerm)
+            {
+                
+                Node.TranslateToState(RaftNodeState.Follower);
+                Node.RaisePacketReceived(requestVoteResponse, sourceChannel);
+                return;
+            }
+
+
             if (requestVoteResponse.VoteGranted)
             {
                 VoteCount++;
-                Node.CurrentTerm = requestVoteResponse.CurrentTerm;
             }
-            if (VoteCount > NodeCount / 2)
+
+            int majority = (NodeCount / 2) + 1;
+            if (VoteCount >= majority)
+            {               
                 Node.TranslateToState(RaftNodeState.Leader);
+            }
         }
 
-        public override void ReceiveAppendEntries(AppendEntries appendEntries)
+        public override void ReceiveAppendEntries(AppendEntries appendEntries, INodeChannel sourceChannel)
         {
+            if (appendEntries.LeaderTerm >= Node.CurrentTerm)
+            {
+                Node.TranslateToState(RaftNodeState.Follower);
+                Node.RaisePacketReceived(appendEntries, sourceChannel);
+            }
 
         }
 
-        public override void ReceiveAppendEntriesResponse(AppendEntriesResponse appendEntriesResponse)
+        public override void ReceiveAppendEntriesResponse(AppendEntriesResponse appendEntriesResponse, INodeChannel sourceChannel)
         {
             Node.TranslateToState(RaftNodeState.Follower);
         }

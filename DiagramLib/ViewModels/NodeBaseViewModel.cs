@@ -45,6 +45,10 @@ namespace DiagramLib.ViewModels
         {
 
         }
+        protected virtual void OnNameChanged(string newName)
+        {
+
+        }
         internal void RaiseConnectionAdded(ConnectionViewModel connection)
         {
             Connections.Add(connection);
@@ -132,6 +136,7 @@ namespace DiagramLib.ViewModels
                 if (_Name != value)
                 {
                     _Name = value;
+                    OnNameChanged(value);
                     NotifyOfPropertyChange(() => Name);
                 }
             }
@@ -195,6 +200,7 @@ namespace DiagramLib.ViewModels
             get;
             private set;
         }
+
         public void Dispose()
         {
             IsDisposed = true;
