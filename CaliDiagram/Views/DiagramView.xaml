@@ -1,0 +1,74 @@
+﻿<UserControl x:Class="CaliDiagram.Views.DiagramView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:v="clr-namespace:CaliDiagram.Views"
+             xmlns:cal="http://www.caliburnproject.org"
+             mc:Ignorable="d" 
+             MinHeight="400" MinWidth="600"
+             xmlns:helpers="clr-namespace:CaliDiagram.Helpers"
+             
+             >
+    <Border BorderThickness="1" BorderBrush="LightSkyBlue" >
+        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <Canvas helpers:DragDropExtension.ScrollOnDragDrop="True" Width="2000" Height="1000" x:Name="diagram" Background="White" cal:Message.Attach="[Event MouseLeftButtonDown] = [Action DiagramClick($eventArgs,$source)]" >
+                
+                <Canvas.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem> Add node1</MenuItem>
+                    </ContextMenu>
+                </Canvas.ContextMenu>
+                <!-- connectors-->
+                <Label Content="{Binding HelpText, FallbackValue='Help text here'}"></Label>
+                <ItemsControl Background="Transparent" Name="Edges" >
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                        <Grid>
+                            <v:EdgeView 
+                                cal:Bind.Model="{Binding}"  
+                                cal:Message.Attach="[Event MouseLeftButtonDown] = [Action SelectConnection($dataContext)]"
+                                FromPoint="{Binding AttachPointFrom.Location}" 
+                                ToPoint="{Binding AttachPointTo.Location}"
+                                Stroke="{Binding Stroke}" 
+                                StrokeThickness="{Binding StrokeThickness}"
+                                Canvas.ZIndex="-3"
+                                >
+                               
+                            
+                            </v:EdgeView>
+                            <!--<v:DiagramPacketView></v:DiagramPacketView>-->
+                        </Grid>
+                    </DataTemplate>
+            </ItemsControl.ItemTemplate>
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                            <Grid></Grid>
+                        </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+
+
+      
+        <!-- Dev node entities-->
+       <ItemsControl Background="Transparent" Name="Nodes">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Canvas></Canvas>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+            
+        <!-- attach descriptors -->
+        <ItemsControl Background="Transparent" Name="AttachDescriptors" Panel.ZIndex="3" >
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid></Grid>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+        </ItemsControl>
+
+        </Canvas>
+        </ScrollViewer>
+    </Border>
+</UserControl>

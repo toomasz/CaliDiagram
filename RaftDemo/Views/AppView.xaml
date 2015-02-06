@@ -1,0 +1,64 @@
+﻿<Controls:MetroWindow 
+    x:Class="RaftDemo.AppView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="raft consensus demo" 
+    Height="700" 
+    Width="925"
+    WindowStartupLocation="CenterScreen"
+    EnableDWMDropShadow="True"
+    WindowTransitionsEnabled="True"
+
+    ResizeMode="CanResizeWithGrip"
+    >
+    <Controls:MetroWindow.LeftWindowCommands>
+        <Controls:WindowCommands>
+            <Grid Width="20" Height="20" Margin="5,0,0,0">
+                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="Bold" Foreground="Red"  Text="R"></TextBlock>
+                <Rectangle Width="20" Height="20" StrokeThickness="1" StrokeDashCap="Round" Stroke="Red">                
+                
+                </Rectangle>
+            </Grid>
+        </Controls:WindowCommands>
+    </Controls:MetroWindow.LeftWindowCommands>
+    <Controls:MetroWindow.RightWindowCommands>
+        <Controls:WindowCommands>            
+            <Button Content="about" Name="About" />
+        </Controls:WindowCommands>
+    </Controls:MetroWindow.RightWindowCommands>
+    <DockPanel LastChildFill="True" >
+        <StatusBar DockPanel.Dock="Bottom">
+            <StatusBarItem>
+                <TextBlock Text="{Binding SystemTreeTab.DeviceTree.SelectedNode.Path}" />
+            </StatusBarItem>
+            <StatusBarItem>
+                <TextBlock Text="{Binding SystemTreeTab.DeviceTree.SelectedNode.Value}"/>
+            </StatusBarItem>
+        </StatusBar>
+        <WrapPanel DockPanel.Dock="Top">
+         
+            <ListBox Name="commands" ItemsSource="{Binding Diagram1.Commands}" SelectedItem="{Binding Diagram1.SelectedCommand}">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <StackPanel Orientation="Horizontal"></StackPanel>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Description}" Margin="5,0,5,0"></TextBlock>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+                <ListBox.BorderThickness>0</ListBox.BorderThickness>
+            </ListBox>
+                      
+            <Button Name="SaveDiagram" Style="{DynamicResource SquareButtonStyle}" Margin="3">Save diagram</Button>
+            <Button Name="LoadDiagram" Style="{DynamicResource SquareButtonStyle}" Margin="3">Load diagram</Button>
+            <Button Name="ClearDiagram" Style="{DynamicResource SquareButtonStyle}" Margin="3">Clear</Button>
+            <CheckBox Name="CanEditNames">Edit labels</CheckBox>
+        </WrapPanel>
+       <ContentControl DockPanel.Dock="Bottom" Name="Diagram1"></ContentControl>
+
+        
+    </DockPanel>
+</Controls:MetroWindow>
