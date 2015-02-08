@@ -56,7 +56,7 @@ namespace RaftDemo.Raft
         /// <param name="msTo">Milliseconds to</param>
         public void SetRandomTimeout(int msFrom, int msTo)
         {
-            double factor = 0.3;
+            double factor = 1;
             msFrom = Convert.ToInt32( factor * msFrom);
             msTo = Convert.ToInt32( factor * msTo);
 

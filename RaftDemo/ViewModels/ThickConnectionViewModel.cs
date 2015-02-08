@@ -15,7 +15,7 @@ namespace RaftDemo.ViewModels
         public ThickConnectionViewModel(NodeBaseViewModel from, NodeBaseViewModel to) :
             base(from, to)
         {
-            StrokeThickness = 6;
+            StrokeThickness = 5;
             Stroke = Brushes.OrangeRed;
             DispatcherTimer timer = new DispatcherTimer();
             timer.Interval = new TimeSpan(0,0,1);

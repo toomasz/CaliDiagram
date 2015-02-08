@@ -173,7 +173,7 @@ namespace CaliDiagram.ViewModels
         {
             get
             {
-                return 600 +rnd.Next(400);
+                return 800 +rnd.Next(20);
             }
         }
         public void SendPacket(NodeBaseViewModel from, object message)

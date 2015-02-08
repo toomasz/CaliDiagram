@@ -1,11 +1,16 @@
 using Caliburn.Micro;
 using CaliDiagram.Serialization;
 using CaliDiagram.ViewModels;
+using MahApps.Metro.Controls;
 using System.Collections.Generic;
+using MahApps.Metro.Controls.Dialogs;
+using System.Windows.Controls;
+using System.Windows.Media;
+using RaftDemo.Views;
 
 namespace RaftDemo
 {
-    public class AppViewModel : PropertyChangedBase, IShell
+    public class AppViewModel : PropertyChangedBase, IShell, IViewAware
     {
         public AppViewModel(IWindowManager wm)
         {
@@ -14,12 +19,11 @@ namespace RaftDemo
         }
         DiagramXmlSerializer modelLoader;
 
-        public void About()
+        public async void About()
         {
-
+            await window.ShowMessageAsync("Raft algorithm visualization", "Copyright Tomasz Œcis³owicz(toomasz@gmail.com)");
         }
        
-        
         public void SaveDiagram()
         {
             modelLoader.SaveDiagram("RaftModel.xml");
@@ -57,6 +61,18 @@ namespace RaftDemo
         {
             Diagram1.Dispose();
         }
+        MetroWindow window;
+        public void AttachView(object view, object context = null)
+        {
+            window = view as MetroWindow;
+        }
+
+        public object GetView(object context = null)
+        {
+            return window;
+        }
+
+        public event System.EventHandler<ViewAttachedEventArgs> ViewAttached;
     }
 
  

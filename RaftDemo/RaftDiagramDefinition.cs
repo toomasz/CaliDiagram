@@ -27,8 +27,6 @@ namespace RaftDemo
         ICommunication CommunitcationModel = new LocalCommunication();
         public RaftDiagramDefinition()
         {
-            //Set custom connector placement strategy
-            //ConnectorSideStrategy = new VerticalFavourizedConnectionSrategy();
             AddModelFor<DiagramNodeBrokerViewModel, DiagramNodeBroker>(
                 "Broker",
                 (p) => new DiagramNodeBrokerViewModel(string.Format("Br{0}", brokerNo++)) { Location = p },
@@ -41,13 +39,13 @@ namespace RaftDemo
                 (vm) => new DiagramNodeSmall() { Location = vm.Location, Name = vm.Name },
                 (m) => new DiagramNodeSmallViewModel(m.Name) { Location = m.Location }
             );
-            AddModelFor<DiagramNodeBigViewModel, DiagramNodeBig>(
+            AddModelFor<DiagramNodeServerViewModel, DiagramNodeBig>(
                 "Server",
                 (p) =>
                     {
                         
                         //this looks nasty
-                        return new DiagramNodeBigViewModel(string.Format("{0}", GenerateRandomHex(4))) 
+                        return new DiagramNodeServerViewModel(string.Format("{0}", GenerateRandomHex(4))) 
                         { 
                             Location = p, 
                             NodeSoftware = new RaftNode(CommunitcationModel) 
@@ -56,7 +54,7 @@ namespace RaftDemo
                 (vm) => new DiagramNodeBig() { Location = vm.Location, Name = vm.Name },
                 (m) =>
                     {
-                        return new DiagramNodeBigViewModel(m.Name) 
+                        return new DiagramNodeServerViewModel(m.Name) 
                         { 
                             Location = m.Location, 
                             NodeSoftware = new RaftNode(CommunitcationModel) 
@@ -70,7 +68,7 @@ namespace RaftDemo
             // No connection between same node
             if (from == to)
                 return null;
-            if (from is DiagramNodeBigViewModel && to is DiagramNodeBigViewModel)
+            if (from is DiagramNodeServerViewModel && to is DiagramNodeServerViewModel)
             {
                 connectionViewModel = new ThickConnectionViewModel(from, to)
                 {

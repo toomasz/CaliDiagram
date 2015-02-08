@@ -15,7 +15,38 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
 
                 <ResourceDictionary Source="Styles/BlueButton.xaml"></ResourceDictionary>
+                
             </ResourceDictionary.MergedDictionaries>
+            <Style TargetType="Border" x:Key="CandidateStyle">
+                <Setter Property="BorderThickness" Value="2"></Setter>
+                <Setter Property="BorderBrush">
+                    <Setter.Value>
+                        <DrawingBrush Viewport="0,0,8,8" ViewportUnits="Absolute" TileMode="Tile">
+                            <DrawingBrush.Drawing>
+                                <DrawingGroup>
+                                    <GeometryDrawing Brush="Black">
+                                        <GeometryDrawing.Geometry>
+                                            <GeometryGroup>
+                                                <RectangleGeometry Rect="0,0,50,50" />
+                                                <RectangleGeometry Rect="50,50,50,50" />
+                                            </GeometryGroup>
+                                        </GeometryDrawing.Geometry>
+                                    </GeometryDrawing>
+                                </DrawingGroup>
+                            </DrawingBrush.Drawing>
+                        </DrawingBrush>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <Style TargetType="Border" x:Key="LeaderStyle">
+                <Setter Property="BorderBrush"  Value="Red"></Setter>
+                <Setter Property="BorderThickness" Value="2"></Setter>
+            </Style>
+            <Style TargetType="Border" x:Key="FollowerStyle">
+                <Setter Property="BorderBrush"  Value="Black"></Setter>
+                <Setter Property="BorderThickness" Value="1"></Setter>
+            </Style>
         </ResourceDictionary>
+        
     </Application.Resources>
 </Application>

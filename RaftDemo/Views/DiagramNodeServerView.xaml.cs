@@ -21,9 +21,9 @@ namespace RaftDemo.Views
     /// <summary>
     /// Interaction logic for DiagramNodeBigView.xaml
     /// </summary>
-    public partial class DiagramNodeBigView : UserControl
+    public partial class DiagramNodeServerView : UserControl
     {
-        public DiagramNodeBigView()
+        public DiagramNodeServerView()
         {
             InitializeComponent();
             DataContextChanged += DiagramNodeBigView_DataContextChanged;
@@ -36,7 +36,7 @@ namespace RaftDemo.Views
 
         void DiagramNodeBigView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            var vm = DataContext as DiagramNodeBigViewModel ;
+            var vm = DataContext as DiagramNodeServerViewModel ;
             if (vm != null)
             {
                 RaftNode raftNode = vm.NodeSoftware as RaftNode;

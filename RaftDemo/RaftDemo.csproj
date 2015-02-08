@@ -75,6 +75,8 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="AppBootstrapper.cs" />
+    <Compile Include="Converters\BooleanToOpacityConverter.cs" />
+    <Compile Include="Converters\RaftStateToStyle.cs" />
     <Compile Include="Converters\RaftStateToColorConverter.cs" />
     <Compile Include="Model\DiagramNodeBig.cs" />
     <Compile Include="Model\DiagramNodeBroker.cs" />
@@ -105,7 +107,7 @@
     <Compile Include="ViewModels\NetworkNodeViewModel.cs" />
     <Compile Include="ViewModels\SlimConnectionViewModel.cs" />
     <Compile Include="ViewModels\DiagramNodeSmallViewModel.cs" />
-    <Compile Include="ViewModels\DiagramNodeBigViewModel.cs" />
+    <Compile Include="ViewModels\DiagramNodeServerViewModel.cs" />
     <Compile Include="ViewModels\IShell.cs" />
     <Compile Include="ViewModels\AppViewModel.cs" />
     <Compile Include="ViewModels\ThickConnectionViewModel.cs" />
@@ -121,8 +123,8 @@
     <Compile Include="Views\DiagramNodeSmallView.xaml.cs">
       <DependentUpon>DiagramNodeSmallView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\DiagramNodeBigView.xaml.cs">
-      <DependentUpon>DiagramNodeBigView.xaml</DependentUpon>
+    <Compile Include="Views\DiagramNodeServerView.xaml.cs">
+      <DependentUpon>DiagramNodeServerView.xaml</DependentUpon>
     </Compile>
     <Page Include="Resources\Icons.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -168,7 +170,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\DiagramNodeBigView.xaml">
+    <Page Include="Views\DiagramNodeServerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

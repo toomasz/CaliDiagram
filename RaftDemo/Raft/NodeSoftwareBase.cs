@@ -103,11 +103,20 @@ namespace RaftDemo.Raft
             }            
         }
 
+        private bool _IsStarted;
         public bool IsStarted
         {
-            get;
-            private set;
+            get { return _IsStarted; }
+            set
+            {
+                if (_IsStarted != value)
+                {
+                    _IsStarted = value;
+                    NotifyOfPropertyChange(() => IsStarted);
+                }
+            }
         }
+        
         readonly object isStartedLock = new object();
 
         public void Start()

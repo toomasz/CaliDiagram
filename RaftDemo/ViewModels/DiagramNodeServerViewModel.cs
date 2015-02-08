@@ -20,9 +20,9 @@ namespace RaftDemo.ViewModels
         public int Clock { get; set; }
         public string Value { get; set; }
     }
-    class DiagramNodeBigViewModel : NetworkNodeViewModel
+    class DiagramNodeServerViewModel : NetworkNodeViewModel
     {
-        public DiagramNodeBigViewModel(string name):base()
+        public DiagramNodeServerViewModel(string name):base()
         {
             this.Name = name;
             RaftStateColor = Brushes.DarkBlue;
