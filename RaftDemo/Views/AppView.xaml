@@ -13,6 +13,7 @@
 
     ResizeMode="CanResizeWithGrip"
     >
+   
     <Controls:MetroWindow.LeftWindowCommands>
         <Controls:WindowCommands>
             <Grid Width="20" Height="20" Margin="5,0,0,0">
@@ -29,7 +30,9 @@
         </Controls:WindowCommands>
     </Controls:MetroWindow.RightWindowCommands>
     <DockPanel LastChildFill="True" >
+        
         <StatusBar DockPanel.Dock="Bottom">
+            
             <StatusBarItem>
                 <TextBlock Text="{Binding SystemTreeTab.DeviceTree.SelectedNode.Path}" />
             </StatusBarItem>
@@ -57,9 +60,11 @@
             <Button Name="LoadDiagram" Style="{DynamicResource SquareButtonStyle}" Margin="3">Load diagram</Button>
             <Button Name="ClearDiagram" Style="{DynamicResource SquareButtonStyle}" Margin="3">Clear</Button>
             <CheckBox Name="CanEditNames">Edit labels</CheckBox>
+            <Button Name="WorldSettings" HorizontalAlignment="Right" Style="{DynamicResource SquareButtonStyle}" Margin="3">World settings</Button>
         </WrapPanel>
+        <ContentControl Name="RightPanel" DockPanel.Dock="Right"></ContentControl>
        <ContentControl DockPanel.Dock="Bottom" Name="Diagram1"></ContentControl>
-
+      
         
     </DockPanel>
 </Controls:MetroWindow>

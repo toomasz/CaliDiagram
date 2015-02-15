@@ -111,6 +111,7 @@
     <Compile Include="ViewModels\IShell.cs" />
     <Compile Include="ViewModels\AppViewModel.cs" />
     <Compile Include="ViewModels\ThickConnectionViewModel.cs" />
+    <Compile Include="ViewModels\WorldSettingsViewModel.cs" />
     <Compile Include="Views\AttachDescriptorToView.xaml.cs">
       <DependentUpon>AttachDescriptorToView.xaml</DependentUpon>
     </Compile>
@@ -125,6 +126,9 @@
     </Compile>
     <Compile Include="Views\DiagramNodeServerView.xaml.cs">
       <DependentUpon>DiagramNodeServerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WorldSettingsView.xaml.cs">
+      <DependentUpon>WorldSettingsView.xaml</DependentUpon>
     </Compile>
     <Page Include="Resources\Icons.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -171,6 +175,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\DiagramNodeServerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\WorldSettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

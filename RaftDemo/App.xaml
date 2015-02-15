@@ -17,6 +17,7 @@
                 <ResourceDictionary Source="Styles/BlueButton.xaml"></ResourceDictionary>
                 
             </ResourceDictionary.MergedDictionaries>
+        
             <Style TargetType="Border" x:Key="CandidateStyle">
                 <Setter Property="BorderThickness" Value="2"></Setter>
                 <Setter Property="BorderBrush">

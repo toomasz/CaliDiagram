@@ -7,6 +7,7 @@ using MahApps.Metro.Controls.Dialogs;
 using System.Windows.Controls;
 using System.Windows.Media;
 using RaftDemo.Views;
+using RaftDemo.ViewModels;
 
 namespace RaftDemo
 {
@@ -15,7 +16,8 @@ namespace RaftDemo
         public AppViewModel(IWindowManager wm)
         {
             Diagram1 = new DiagramViewModel(new RaftDiagramDefinition());
-            modelLoader = new DiagramXmlSerializer(Diagram1);            
+            modelLoader = new DiagramXmlSerializer(Diagram1);
+            RightPanel = new WorldSettingsViewModel(this);
         }
         DiagramXmlSerializer modelLoader;
 
@@ -71,7 +73,23 @@ namespace RaftDemo
         {
             return window;
         }
-
+        private PropertyChangedBase _RightPanel;
+        public PropertyChangedBase RightPanel
+        {
+            get { return _RightPanel; }
+            set
+            {
+                if (_RightPanel != value)
+                {
+                    _RightPanel = value;
+                    NotifyOfPropertyChange(() => RightPanel);
+                }
+            }
+        }
+        public void WorldSettings()
+        {
+            RightPanel = new WorldSettingsViewModel(this);
+        }
         public event System.EventHandler<ViewAttachedEventArgs> ViewAttached;
     }
 
