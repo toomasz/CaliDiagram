@@ -24,9 +24,10 @@ namespace RaftDemo
             var random = new Random();
             return String.Format("{0:x6}", random.Next(0x1000000));
         }
-        ICommunication CommunitcationModel = new LocalCommunication();
-        public RaftDiagramDefinition()
+        IWorldModel worldModel;
+        public RaftDiagramDefinition(RaftWorldModel worldModel)
         {
+            this.worldModel = worldModel;
             AddModelFor<DiagramNodeBrokerViewModel, DiagramNodeBroker>(
                 "Broker",
                 (p) => new DiagramNodeBrokerViewModel(string.Format("Br{0}", brokerNo++)) { Location = p },
@@ -48,7 +49,7 @@ namespace RaftDemo
                         return new DiagramNodeServerViewModel(string.Format("{0}", GenerateRandomHex(4))) 
                         { 
                             Location = p, 
-                            NodeSoftware = new RaftNode(CommunitcationModel) 
+                            NodeSoftware = new RaftNode(worldModel) 
                         };
                     },
                 (vm) => new DiagramNodeBig() { Location = vm.Location, Name = vm.Name },
@@ -57,7 +58,7 @@ namespace RaftDemo
                         return new DiagramNodeServerViewModel(m.Name) 
                         { 
                             Location = m.Location, 
-                            NodeSoftware = new RaftNode(CommunitcationModel) 
+                            NodeSoftware = new RaftNode(worldModel) 
                         };
                     }
             );

@@ -30,7 +30,7 @@ namespace RaftDemo.Raft.State
         void StartNewElection()
         {
             VoteTable.Clear();
-            Console.Beep(1000, 5);
+            Node.RaftWorld.OnElectionStarted();
             // increment current term
             Node.CurrentTerm++;
             // vote for self

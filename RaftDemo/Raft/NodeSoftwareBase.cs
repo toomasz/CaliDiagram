@@ -14,17 +14,10 @@ namespace RaftDemo.Raft
             get;
             set;
         }
-        ICommunication Communication
+
+        public NetworkSoftwareBase()
         {
-            get;
-            set;
-        }
-        public NetworkSoftwareBase(ICommunication communication)
-        {
-            this.Communication = communication;
             Channels = new List<INodeChannel>();
-            
-       
         }
         List<INodeChannel> Channels
         {

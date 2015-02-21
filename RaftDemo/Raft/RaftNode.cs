@@ -1,6 +1,7 @@
 ﻿using RaftDemo.Raft.Messages;
 using RaftDemo.Raft.State;
 using System;
+using System.Collections.Generic;
 
 
 /*
@@ -10,27 +11,30 @@ using System;
 
 namespace RaftDemo.Raft
 {
-    public class Message
-    {
-        public int Clock { get; set; }
-        public string State { get; set; }
-        public override string ToString()
-        {
-            return string.Format("MSG: {0} {1}", Clock, State);
-        }
-    }
-    public class ResponseMessage
-    {
-        
-    }
-    public enum RaftNodeState { Follower, Candidate, Leader};
-    
     public class RaftNode : NetworkSoftwareBase
     {
-        public RaftNode(ICommunication communicationModel):base(communicationModel)
+        public RaftNode(IWorldModel raftWorld)
         {
+            if (raftWorld == null)
+                throw new ArgumentNullException("raftWorld");
+            RaftWorld = raftWorld;
+
             CurrentTerm = 0;
             RaftTimer = new TimeoutTimer(this);
+            LogEntries = new List<LogEntry>();
+            LogEntries.Add(new LogEntry() { Data = "A=2", CommitIndex = 1, Term = 1 });
+            LogEntries.Add(new LogEntry() { Data = "C=1", CommitIndex = 2, Term = 1 });
+        }
+        public IWorldModel RaftWorld
+        {
+            get;
+            private set;
+        }
+
+        public List<LogEntry> LogEntries
+        {
+            get;
+            set;
         }
 
         public TimeoutTimer RaftTimer
@@ -44,8 +48,6 @@ namespace RaftDemo.Raft
             RaftTimer.Init();
             TranslateToState(RaftNodeState.Follower);
         }
-
-            
 
         public void TranslateToState(RaftNodeState newState)
         {

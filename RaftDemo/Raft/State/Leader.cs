@@ -25,7 +25,7 @@ namespace RaftDemo.Raft.State
 
         void BroadcastAppendEntries()
         {
-            Console.Beep(400, 10);
+            Node.RaftWorld.OnAppendEntries();
             Node.BroadcastMessage(new AppendEntries(Node.CurrentTerm, Node.Id));
             Node.RaftTimer.SetRandomTimeout(500,500);
         }

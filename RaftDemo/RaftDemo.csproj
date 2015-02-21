@@ -81,8 +81,12 @@
     <Compile Include="Model\DiagramNodeBig.cs" />
     <Compile Include="Model\DiagramNodeBroker.cs" />
     <Compile Include="Model\DiagramNodeSmall.cs" />
-    <Compile Include="Raft\ICommunicationModel.cs" />
-    <Compile Include="Raft\LocalCommunication.cs" />
+    <Compile Include="Model\WorldSettings.cs" />
+    <Compile Include="Raft\IWorldModel.cs" />
+    <Compile Include="Raft\LogEntry.cs" />
+    <Compile Include="Raft\Messages\OtherMessages.cs" />
+    <Compile Include="Raft\RaftNodeState.cs" />
+    <Compile Include="Raft\RaftWorldModel.cs" />
     <Compile Include="Raft\InboundMessage.cs" />
     <Compile Include="Raft\Messages\AppendEntries.cs" />
     <Compile Include="Raft\Messages\AppendEntriesResult.cs" />

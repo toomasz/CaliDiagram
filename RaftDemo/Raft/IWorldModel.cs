@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace RaftDemo.Raft
 {
-    public class LocalCommunication: ICommunication
+    public interface IWorldModel
     {
+        void OnElectionStarted();
+        void OnAppendEntries();
     }
 }

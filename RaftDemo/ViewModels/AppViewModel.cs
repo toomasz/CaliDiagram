@@ -8,18 +8,29 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using RaftDemo.Views;
 using RaftDemo.ViewModels;
+using RaftDemo.Model;
+using RaftDemo.Raft;
 
 namespace RaftDemo
 {
     public class AppViewModel : PropertyChangedBase, IShell, IViewAware
     {
+        RaftWorldModel raftWorldModel;
         public AppViewModel(IWindowManager wm)
         {
-            Diagram1 = new DiagramViewModel(new RaftDiagramDefinition());
+            WorldSettings = new WorldSettings(); // TODO load from xml
+            raftWorldModel = new RaftWorldModel(WorldSettings);
+            Diagram1 = new DiagramViewModel(new RaftDiagramDefinition(raftWorldModel));
             modelLoader = new DiagramXmlSerializer(Diagram1);
-            RightPanel = new WorldSettingsViewModel(this);
+            
+            RightPanel = new WorldSettingsViewModel(this, WorldSettings);
         }
         DiagramXmlSerializer modelLoader;
+        public WorldSettings WorldSettings
+        {
+            get;
+            set;
+        }
 
         public async void About()
         {
@@ -86,9 +97,9 @@ namespace RaftDemo
                 }
             }
         }
-        public void WorldSettings()
+        public void ShowWorldSettings()
         {
-            RightPanel = new WorldSettingsViewModel(this);
+            RightPanel = new WorldSettingsViewModel(this, WorldSettings);
         }
         public event System.EventHandler<ViewAttachedEventArgs> ViewAttached;
     }

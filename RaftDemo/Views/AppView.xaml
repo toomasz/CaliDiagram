@@ -60,7 +60,7 @@
             <Button Name="LoadDiagram" Style="{DynamicResource SquareButtonStyle}" Margin="3">Load diagram</Button>
             <Button Name="ClearDiagram" Style="{DynamicResource SquareButtonStyle}" Margin="3">Clear</Button>
             <CheckBox Name="CanEditNames">Edit labels</CheckBox>
-            <Button Name="WorldSettings" HorizontalAlignment="Right" Style="{DynamicResource SquareButtonStyle}" Margin="3">World settings</Button>
+            <Button Name="ShowWorldSettings" HorizontalAlignment="Right" Style="{DynamicResource SquareButtonStyle}" Margin="3">World settings</Button>
         </WrapPanel>
         <ContentControl Name="RightPanel" DockPanel.Dock="Right"></ContentControl>
        <ContentControl DockPanel.Dock="Bottom" Name="Diagram1"></ContentControl>

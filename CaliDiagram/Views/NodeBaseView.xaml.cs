@@ -133,7 +133,6 @@ namespace CaliDiagram.Views
                 // UpdateGuiLocation(x, y);
                 if (vm != null)
                     vm.Location = new Point(x, y);
-                //Console.Beep(3000, 40);
             }
         }
     }
