@@ -1,4 +1,5 @@
 ﻿using CaliDiagram.ViewModels;
+using RaftDemo.Model;
 using RaftDemo.ViewModels;
 using System;
 using System.Threading.Tasks;
@@ -8,9 +9,10 @@ namespace RaftDemo.Raft
     public class NodeChannel : INodeChannel
     {
         readonly ConnectionViewModel connection;
-
-        public NodeChannel(ConnectionViewModel connection, NodeBaseViewModel from)
+        SimulationSettings worldSettings;
+        public NodeChannel(ConnectionViewModel connection, NodeBaseViewModel from, SimulationSettings worldSettings)
         {
+            this.worldSettings = worldSettings;
             this.Socket = connection;
             this.connection = connection;
             this.from = from;
@@ -34,7 +36,7 @@ namespace RaftDemo.Raft
                 throw new ArgumentException();
 
             // this part should happen on network link
-            await Task.Delay(connection.Latency);
+            await Task.Delay(Convert.ToInt32(connection.Latency));
 
             // data arrived and is assembled into packet
             INodeChannel messageChannel = to.NodeSoftware.GetChannelBySocket(connection);

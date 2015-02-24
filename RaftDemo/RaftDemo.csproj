@@ -81,12 +81,15 @@
     <Compile Include="Model\DiagramNodeBig.cs" />
     <Compile Include="Model\DiagramNodeBroker.cs" />
     <Compile Include="Model\DiagramNodeSmall.cs" />
-    <Compile Include="Model\WorldSettings.cs" />
-    <Compile Include="Raft\IWorldModel.cs" />
+    <Compile Include="Model\ICommuncatuionModel.cs" />
+    <Compile Include="Model\LocalCommunication.cs" />
+    <Compile Include="Model\SimulationSettings.cs" />
+    <Compile Include="Raft\IRaftNodeSettings.cs" />
+    <Compile Include="Raft\IRaftEventListener.cs" />
     <Compile Include="Raft\LogEntry.cs" />
     <Compile Include="Raft\Messages\OtherMessages.cs" />
     <Compile Include="Raft\RaftNodeState.cs" />
-    <Compile Include="Raft\RaftWorldModel.cs" />
+    <Compile Include="Raft\RaftEventListener.cs" />
     <Compile Include="Raft\InboundMessage.cs" />
     <Compile Include="Raft\Messages\AppendEntries.cs" />
     <Compile Include="Raft\Messages\AppendEntriesResult.cs" />
@@ -109,13 +112,13 @@
     <Compile Include="ViewModels\DiagramNodeBrokerViewModel.cs" />
     <Compile Include="RaftDiagramDefinition.cs" />
     <Compile Include="ViewModels\NetworkNodeViewModel.cs" />
-    <Compile Include="ViewModels\SlimConnectionViewModel.cs" />
+    <Compile Include="ViewModels\ClientToServerConnectionViewModel.cs" />
     <Compile Include="ViewModels\DiagramNodeSmallViewModel.cs" />
     <Compile Include="ViewModels\DiagramNodeServerViewModel.cs" />
     <Compile Include="ViewModels\IShell.cs" />
     <Compile Include="ViewModels\AppViewModel.cs" />
-    <Compile Include="ViewModels\ThickConnectionViewModel.cs" />
-    <Compile Include="ViewModels\WorldSettingsViewModel.cs" />
+    <Compile Include="ViewModels\ServerToServerConnectionViewModel.cs" />
+    <Compile Include="ViewModels\SimulationSettingsViewModel.cs" />
     <Compile Include="Views\AttachDescriptorToView.xaml.cs">
       <DependentUpon>AttachDescriptorToView.xaml</DependentUpon>
     </Compile>
@@ -125,14 +128,14 @@
     <Compile Include="Views\DiagramNodeBrokerView.xaml.cs">
       <DependentUpon>DiagramNodeBrokerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\DiagramNodeSmallView.xaml.cs">
-      <DependentUpon>DiagramNodeSmallView.xaml</DependentUpon>
+    <Compile Include="Views\DiagramNodeClientView.xaml.cs">
+      <DependentUpon>DiagramNodeClientView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\DiagramNodeServerView.xaml.cs">
       <DependentUpon>DiagramNodeServerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\WorldSettingsView.xaml.cs">
-      <DependentUpon>WorldSettingsView.xaml</DependentUpon>
+    <Compile Include="Views\SimulationSettingsView.xaml.cs">
+      <DependentUpon>SimulationSettingsView.xaml</DependentUpon>
     </Compile>
     <Page Include="Resources\Icons.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -174,7 +177,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\DiagramNodeSmallView.xaml">
+    <Page Include="Views\DiagramNodeClientView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -182,7 +185,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\WorldSettingsView.xaml">
+    <Page Include="Views\SimulationSettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

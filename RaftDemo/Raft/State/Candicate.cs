@@ -15,8 +15,6 @@ namespace RaftDemo.Raft.State
             
         }
 
-        int NodeCount = 4;
-
         public override string ToString()
         {
             return "Candidate";
@@ -30,14 +28,14 @@ namespace RaftDemo.Raft.State
         void StartNewElection()
         {
             VoteTable.Clear();
-            Node.RaftWorld.OnElectionStarted();
+            Node.RaftEventListener.OnElectionStarted();
             // increment current term
             Node.CurrentTerm++;
             // vote for self
             VoteCount = 1;
             Node.VotedFor = Node.Id;
             // start random election timer
-            Node.RaftTimer.SetRandomTimeout(2000, 6000);
+            Node.RaftTimer.SetRandomTimeout(Node.RaftSettings.FollowerTimeoutFrom, Node.RaftSettings.FollowerTimeoutTo);
             // send request votes to all servers
             Node.BroadcastMessage(new RequestVote() { CandidateId = Node.Id, CandidateTerm = Node.CurrentTerm });
         }
@@ -91,7 +89,7 @@ namespace RaftDemo.Raft.State
             }
             
 
-            int majority = (NodeCount / 2) + 1;
+            int majority = (Node.RaftSettings.ClusterSize / 2) + 1;
             if (VoteCount >= majority)
             {               
                 Node.TranslateToState(RaftNodeState.Leader);

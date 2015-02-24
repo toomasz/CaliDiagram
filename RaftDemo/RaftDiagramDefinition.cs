@@ -18,27 +18,31 @@ namespace RaftDemo
         int serverNo = 1;
         int brokerNo = 1;
 
+        
 
         string GenerateRandomHex(int length)
         {
             var random = new Random();
             return String.Format("{0:x6}", random.Next(0x1000000));
         }
-        IWorldModel worldModel;
-        public RaftDiagramDefinition(RaftWorldModel worldModel)
+        IRaftEventListener raftEventListener;
+        SimulationSettings simulationSettings;
+
+        public RaftDiagramDefinition(RaftEventListener worldModel, ICommuncatuionModel commModel, SimulationSettings worldSettings)
         {
-            this.worldModel = worldModel;
+            this.raftEventListener = worldModel;
+            this.simulationSettings = worldSettings;
             AddModelFor<DiagramNodeBrokerViewModel, DiagramNodeBroker>(
                 "Broker",
                 (p) => new DiagramNodeBrokerViewModel(string.Format("Br{0}", brokerNo++)) { Location = p },
                 (vm) => new DiagramNodeBroker() { Location = vm.Location, Name = vm.Name },
                 (m) => new DiagramNodeBrokerViewModel(m.Name) { Location = m.Location }
             );
-            AddModelFor<DiagramNodeSmallViewModel, DiagramNodeSmall>(
+            AddModelFor<DiagramNodeClientViewModel, DiagramNodeSmall>(
                 "Client",
-                (p) => new DiagramNodeSmallViewModel(string.Format("{0}", GenerateRandomHex(8))) { Location = p },
+                (p) => new DiagramNodeClientViewModel(string.Format("{0}", GenerateRandomHex(8))) { Location = p },
                 (vm) => new DiagramNodeSmall() { Location = vm.Location, Name = vm.Name },
-                (m) => new DiagramNodeSmallViewModel(m.Name) { Location = m.Location }
+                (m) => new DiagramNodeClientViewModel(m.Name) { Location = m.Location }
             );
             AddModelFor<DiagramNodeServerViewModel, DiagramNodeBig>(
                 "Server",
@@ -46,19 +50,19 @@ namespace RaftDemo
                     {
                         
                         //this looks nasty
-                        return new DiagramNodeServerViewModel(string.Format("{0}", GenerateRandomHex(4))) 
+                        return new DiagramNodeServerViewModel(string.Format("{0}", GenerateRandomHex(4)), commModel) 
                         { 
                             Location = p, 
-                            NodeSoftware = new RaftNode(worldModel) 
+                            NodeSoftware = new RaftNode(worldModel, simulationSettings) 
                         };
                     },
                 (vm) => new DiagramNodeBig() { Location = vm.Location, Name = vm.Name },
                 (m) =>
                     {
-                        return new DiagramNodeServerViewModel(m.Name) 
+                        return new DiagramNodeServerViewModel(m.Name, commModel) 
                         { 
                             Location = m.Location, 
-                            NodeSoftware = new RaftNode(worldModel) 
+                            NodeSoftware = new RaftNode(worldModel, simulationSettings) 
                         };
                     }
             );
@@ -71,7 +75,7 @@ namespace RaftDemo
                 return null;
             if (from is DiagramNodeServerViewModel && to is DiagramNodeServerViewModel)
             {
-                connectionViewModel = new ThickConnectionViewModel(from, to)
+                connectionViewModel = new ServerToServerConnectionViewModel(from, to, simulationSettings)
                 {
                     FromDescriptor = new AttachDescriptorFromViewModel(),
                     ToDescriptor = new AttachDescriptorToViewModel()
@@ -79,7 +83,7 @@ namespace RaftDemo
             }
             else
             {
-                connectionViewModel = new SlimConnectionViewModel(from, to)
+                connectionViewModel = new ClientToServerConnectionViewModel(from, to, simulationSettings)
                 {
                     FromDescriptor = new AttachDescriptorFromViewModel(),
                     ToDescriptor = new AttachDescriptorToViewModel()

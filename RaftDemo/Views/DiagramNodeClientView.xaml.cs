@@ -16,13 +16,14 @@ using System.Windows.Shapes;
 namespace RaftDemo.Views
 {
     /// <summary>
-    /// Interaction logic for WorldSettingsView.xaml
+    /// Interaction logic for DiagramNodeSmallView.xaml
     /// </summary>
-    public partial class WorldSettingsView : UserControl
+    public partial class DiagramNodeClientView : UserControl
     {
-        public WorldSettingsView()
+        public DiagramNodeClientView()
         {
             InitializeComponent();
         }
+        
     }
 }

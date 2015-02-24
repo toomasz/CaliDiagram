@@ -168,12 +168,12 @@ namespace CaliDiagram.ViewModels
             set;
         }
 
-        Random rnd = new Random();
-        public int Latency
+        
+        public virtual double Latency
         {
             get
             {
-                return 800 +rnd.Next(20);
+                return 1000;
             }
         }
         public void SendPacket(NodeBaseViewModel from, object message)

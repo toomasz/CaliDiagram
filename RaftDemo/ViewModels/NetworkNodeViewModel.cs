@@ -10,21 +10,25 @@ using System.Windows;
 using System;
 using System.Threading;
 using RaftDemo.Raft;
+using RaftDemo.Model;
 
 namespace RaftDemo.ViewModels
 {
     public class NetworkNodeViewModel: NodeBaseViewModel
     {
+        ICommuncatuionModel commModel;
+        public NetworkNodeViewModel(ICommuncatuionModel commModel)
+        {
+            this.commModel = commModel;
+            StartText = "Pause";
+        }
+
         public NetworkSoftwareBase NodeSoftware
         {
             get;
             set;
         }
-        public NetworkNodeViewModel()
-        {
-            StartText = "Pause";
-        }
-
+       
         public void ButtonPressed(string name)
         {
             if(name == "startStop")
@@ -49,7 +53,7 @@ namespace RaftDemo.ViewModels
 
             foreach (var connection in Connections)
             {
-                NodeSoftware.RaiseChannelAdded(new NodeChannel(connection, this));
+                NodeSoftware.RaiseChannelAdded(commModel.CreateChannel(connection, this));
             }
             NodeSoftware.Start();
             NodeSoftware.OnMessageSent += NodeSoftware_OnMessageSent;
@@ -101,8 +105,9 @@ namespace RaftDemo.ViewModels
         
         protected override void OnConnectionAdded(ConnectionViewModel connection)
         {
-            var nodeChannel = new NodeChannel(connection, this);
-            NodeSoftware.RaiseChannelAdded(nodeChannel);          
+            INodeChannel newChannel= commModel.CreateChannel(connection, this);
+          
+            NodeSoftware.RaiseChannelAdded(newChannel);          
         }
         protected override void OnConnectionRemoved(ConnectionViewModel connection)
         {

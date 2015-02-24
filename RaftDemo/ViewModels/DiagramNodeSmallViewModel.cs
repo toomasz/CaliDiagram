@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace RaftDemo.ViewModels
 {
-    public class DiagramNodeSmallViewModel : NodeBaseViewModel
+    public class DiagramNodeClientViewModel : NodeBaseViewModel
     {
-        public DiagramNodeSmallViewModel(string name)
+        public DiagramNodeClientViewModel(string name)
         {
             this.Name = name;
         }

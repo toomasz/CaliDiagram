@@ -13,24 +13,29 @@ namespace RaftDemo.Raft
 {
     public class RaftNode : NetworkSoftwareBase
     {
-        public RaftNode(IWorldModel raftWorld)
+        public RaftNode(IRaftEventListener raftEventListener, IRaftNodeSettings raftSettings)
         {
-            if (raftWorld == null)
+            if (raftEventListener == null)
                 throw new ArgumentNullException("raftWorld");
-            RaftWorld = raftWorld;
-
+            RaftEventListener = raftEventListener;
+            RaftSettings = raftSettings;
             CurrentTerm = 0;
             RaftTimer = new TimeoutTimer(this);
             LogEntries = new List<LogEntry>();
             LogEntries.Add(new LogEntry() { Data = "A=2", CommitIndex = 1, Term = 1 });
             LogEntries.Add(new LogEntry() { Data = "C=1", CommitIndex = 2, Term = 1 });
         }
-        public IWorldModel RaftWorld
+
+        public IRaftEventListener RaftEventListener
         {
             get;
             private set;
         }
-
+        public IRaftNodeSettings RaftSettings
+        {
+            get;
+            private set;
+        }
         public List<LogEntry> LogEntries
         {
             get;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RaftDemo.Raft
 {
-    public interface IWorldModel
+    public interface IRaftEventListener
     {
         void OnElectionStarted();
         void OnAppendEntries();

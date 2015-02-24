@@ -25,9 +25,9 @@ namespace RaftDemo.Raft.State
 
         void BroadcastAppendEntries()
         {
-            Node.RaftWorld.OnAppendEntries();
+            Node.RaftEventListener.OnAppendEntries();
             Node.BroadcastMessage(new AppendEntries(Node.CurrentTerm, Node.Id));
-            Node.RaftTimer.SetRandomTimeout(500,500);
+            Node.RaftTimer.SetRandomTimeout(Node.RaftSettings.LeaderTimeoutFrom,Node.RaftSettings.LeaderTimeoutTo);
         }
 
         public override void OnTimeout()

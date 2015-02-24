@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace RaftDemo.Raft
 {
-    public class RaftWorldModel: IWorldModel
+    public class RaftEventListener: IRaftEventListener
     {
-        WorldSettings worldSettings;
-        public RaftWorldModel(WorldSettings worldSettings)
+        SimulationSettings worldSettings;
+        public RaftEventListener(SimulationSettings worldSettings)
         {
             this.worldSettings = worldSettings;
         }

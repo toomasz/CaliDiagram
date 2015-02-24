@@ -23,7 +23,7 @@ namespace RaftDemo.Raft.State
         public override void EnterState()
         {
             // Start new election(translate to candidate) of no sign of leader for random time specified here
-            Node.RaftTimer.SetRandomTimeout(2000, 6000);
+            Node.RaftTimer.SetRandomTimeout(Node.RaftSettings.FollowerTimeoutFrom, Node.RaftSettings.FollowerTimeoutTo);
         }
         public override void ExitState()
         {
@@ -55,7 +55,7 @@ namespace RaftDemo.Raft.State
             {
                 Node.SendMessage(sourceChannel, GrantVote);
                 Node.VotedFor = requestVote.CandidateId;
-                Node.RaftTimer.SetRandomTimeout(8000,8000);
+                Node.RaftTimer.SetRandomTimeout(Node.RaftSettings.FollowerTimeoutFrom*2, Node.RaftSettings.FollowerTimeoutTo*2);
                 return;
             }
         }
@@ -71,7 +71,7 @@ namespace RaftDemo.Raft.State
                 return;
 
             CurrentTerm = appendEntries.LeaderTerm;
-            Node.RaftTimer.SetRandomTimeout(2000, 6000);            
+            Node.RaftTimer.SetRandomTimeout(Node.RaftSettings.FollowerTimeoutFrom, Node.RaftSettings.FollowerTimeoutTo);            
         }
 
         public override void ReceiveAppendEntriesResponse(AppendEntriesResponse appendEntriesResponse, INodeChannel sourceChannel)

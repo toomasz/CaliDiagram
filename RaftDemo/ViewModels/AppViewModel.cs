@@ -15,23 +15,28 @@ namespace RaftDemo
 {
     public class AppViewModel : PropertyChangedBase, IShell, IViewAware
     {
-        RaftWorldModel raftWorldModel;
+        RaftEventListener raftWorldModel;
         public AppViewModel(IWindowManager wm)
         {
-            WorldSettings = new WorldSettings(); // TODO load from xml
-            raftWorldModel = new RaftWorldModel(WorldSettings);
-            Diagram1 = new DiagramViewModel(new RaftDiagramDefinition(raftWorldModel));
+            WorldSettings = new SimulationSettings(); // TODO load from xml
+            raftWorldModel = new RaftEventListener(WorldSettings);
+            CommunicationModel = new LocalCommunication(WorldSettings);
+            Diagram1 = new DiagramViewModel(new RaftDiagramDefinition(raftWorldModel, CommunicationModel, WorldSettings));
             modelLoader = new DiagramXmlSerializer(Diagram1);
             
-            RightPanel = new WorldSettingsViewModel(this, WorldSettings);
+            RightPanel = new SimulationSettingsViewModel(this, WorldSettings);
         }
         DiagramXmlSerializer modelLoader;
-        public WorldSettings WorldSettings
+        public SimulationSettings WorldSettings
         {
             get;
             set;
         }
-
+        public ICommuncatuionModel CommunicationModel
+        {
+            get;
+            set;
+        }
         public async void About()
         {
             await window.ShowMessageAsync("Raft algorithm visualization", "Copyright Tomasz Œcis³owicz(toomasz@gmail.com)");
@@ -99,7 +104,7 @@ namespace RaftDemo
         }
         public void ShowWorldSettings()
         {
-            RightPanel = new WorldSettingsViewModel(this, WorldSettings);
+            RightPanel = new SimulationSettingsViewModel(this, WorldSettings);
         }
         public event System.EventHandler<ViewAttachedEventArgs> ViewAttached;
     }

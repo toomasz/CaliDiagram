@@ -36,7 +36,7 @@
             </LinearGradientBrush>
         </Border.Background>
         <Grid Margin="6">
-        <TextBox Text="0fda" x:Name="Name" FontWeight="Bold" Margin="20,6"  FontSize="14" FontFamily="Consolas" 
+        <TextBox Text="0fda" x:Name="Name" FontWeight="Bold" Margin="20,6" ToolTip="Node ID"  FontSize="14" FontFamily="Consolas" 
 			Background="Transparent" Foreground="Black" BorderThickness="0" BorderBrush="Transparent" TextAlignment="Center" VerticalAlignment="Center"
 			HorizontalAlignment="Center" AcceptsReturn="True" MinWidth="20" 
                  IsHitTestVisible="{Binding CanEditName}">

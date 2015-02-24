@@ -12,17 +12,13 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Threading;
 using System.Windows.Media;
+using RaftDemo.Model;
 
 namespace RaftDemo.ViewModels
 {
-    class Message
-    {
-        public int Clock { get; set; }
-        public string Value { get; set; }
-    }
     class DiagramNodeServerViewModel : NetworkNodeViewModel
     {
-        public DiagramNodeServerViewModel(string name):base()
+        public DiagramNodeServerViewModel(string name, ICommuncatuionModel commModel):base(commModel)
         {
             this.Name = name;
             RaftStateColor = Brushes.DarkBlue;
