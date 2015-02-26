@@ -13,7 +13,7 @@ namespace CaliDiagram
     /// Strategy that favourizes vertical connections(Top-bottom, bottom-top)
     /// It's best for wide rectangles nodes 
     /// </summary>
-    public class VerticalFavourizedConnectionSrategy: IConnectorSideStrategy
+    public class DefaultConnectionStrategy: IConnectorSideStrategy
     {
         public static AttachSides GetAttachmentSidesForConnection(Rect fromRect, Rect toRect)
         {

@@ -28,9 +28,9 @@ namespace RaftDemo
         IRaftEventListener raftEventListener;
         SimulationSettings simulationSettings;
 
-        public RaftDiagramDefinition(RaftEventListener worldModel, ICommuncatuionModel commModel, SimulationSettings worldSettings)
+        public RaftDiagramDefinition(RaftEventListener raftEventListener, INetworkModel commModel, SimulationSettings worldSettings)
         {
-            this.raftEventListener = worldModel;
+            this.raftEventListener = raftEventListener;
             this.simulationSettings = worldSettings;
             AddModelFor<DiagramNodeBrokerViewModel, DiagramNodeBroker>(
                 "Broker",
@@ -48,12 +48,12 @@ namespace RaftDemo
                 "Server",
                 (p) =>
                     {
-                        
+                        string raftNodeId = GenerateRandomHex(4);
                         //this looks nasty
-                        return new DiagramNodeServerViewModel(string.Format("{0}", GenerateRandomHex(4)), commModel) 
+                        return new DiagramNodeServerViewModel(raftNodeId, commModel) 
                         { 
-                            Location = p, 
-                            NodeSoftware = new RaftNode(worldModel, simulationSettings) 
+                            Location = p,
+                            NodeSoftware = new RaftHost(raftEventListener, simulationSettings, raftNodeId)
                         };
                     },
                 (vm) => new DiagramNodeBig() { Location = vm.Location, Name = vm.Name },
@@ -61,8 +61,8 @@ namespace RaftDemo
                     {
                         return new DiagramNodeServerViewModel(m.Name, commModel) 
                         { 
-                            Location = m.Location, 
-                            NodeSoftware = new RaftNode(worldModel, simulationSettings) 
+                            Location = m.Location,
+                            NodeSoftware = new RaftHost(raftEventListener, simulationSettings, m.Name)
                         };
                     }
             );
@@ -101,6 +101,8 @@ namespace RaftDemo
     
         public override FrameworkElement CreateVisualForPacket(object packet)
         {
+            if (!simulationSettings.PacketVisualizationEnabled)
+                return null;
             if(packet is RaftMessageBase)
             {
                 TextBlock text = new TextBlock();

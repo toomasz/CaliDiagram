@@ -26,7 +26,7 @@ namespace CaliDiagram
                 Type type = o.GetType();
 
                 NodeBaseView diagramBaseView = new NodeBaseView();
-             //   diagramBaseView.con = "asd";
+
                 if (type.IsSubclassOf(typeof(NodeBaseViewModel)))
                 {
                     UIElement element = OriginalLocateForModel(o, dependencyObject, arg3);

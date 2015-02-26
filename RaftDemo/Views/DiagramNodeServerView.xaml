@@ -26,7 +26,7 @@
     </UserControl.Resources>
 
     <Border Opacity="{Binding NodeSoftware.IsStarted, Converter={StaticResource BooleanToOpacity}}"
-            CornerRadius="3" Style="{Binding NodeSoftware.State, Converter={StaticResource StateToStyle}}">
+            CornerRadius="3" Style="{Binding RaftState, Converter={StaticResource StateToStyle}}">
         
         
         <Border.Background>
@@ -36,7 +36,7 @@
             </LinearGradientBrush>
         </Border.Background>
         <Grid Margin="6">
-        <TextBox Text="0fda" x:Name="Name" FontWeight="Bold" Margin="20,6" ToolTip="Node ID"  FontSize="14" FontFamily="Consolas" 
+        <TextBox Text="0fda" x:Name="NodeId" FontWeight="Bold" Margin="20,6" ToolTip="Node ID"  FontSize="14" FontFamily="Consolas" 
 			Background="Transparent" Foreground="Black" BorderThickness="0" BorderBrush="Transparent" TextAlignment="Center" VerticalAlignment="Center"
 			HorizontalAlignment="Center" AcceptsReturn="True" MinWidth="20" 
                  IsHitTestVisible="{Binding CanEditName}">
@@ -47,14 +47,14 @@
                 <Button Opacity="1" Padding="0" cal:Message.Attach="[Event Click] = [Action ButtonPressed('startStop')]" FontSize="10" Margin="2,0,0,0" Name="ButtonStartStop" Content="{Binding StartText,FallbackValue='Pause'}"  VerticalAlignment="Bottom" Width="45" Height="16"/>
             </StackPanel>
             <!-- TERM -->
-            <TextBlock ToolTip="Term number"  HorizontalAlignment="Right" TextWrapping="Wrap" Name="Clock" Text="{Binding NodeSoftware.CurrentTerm, FallbackValue=1}"
+            <TextBlock ToolTip="Term number"  HorizontalAlignment="Right" TextWrapping="Wrap" Name="Clock" Text="{Binding CurrentTerm, FallbackValue=666}"
                     FontWeight="Bold" VerticalAlignment="Top" FontSize="15" Padding="20,2" >
             </TextBlock>
 
             <!-- STATE   -->
             <Border ToolTip="Raft node state" BorderThickness="1" 
                     BorderBrush="Black" 
-                    Background="{Binding NodeSoftware.State, Converter={StaticResource StateToColor},FallbackValue=LightBlue}"                     
+                    Background="{Binding RaftState, Converter={StaticResource StateToColor},FallbackValue=LightBlue}"                     
                     CornerRadius="2" 
                     HorizontalAlignment="Left" 
                     VerticalAlignment="Top" >
@@ -62,8 +62,8 @@
                             TextWrapping="Wrap" 
                             TextAlignment="Center" 
                             FontWeight="Bold"
-                            Text="{Binding NodeSoftware.State,FallbackValue='Follower'}"           
-                            Foreground="{Binding NodeSoftware.State,Converter={StaticResource StateToColor},ConverterParameter=x}"
+                            Text="{Binding RaftState,FallbackValue='Follower'}"           
+                            Foreground="{Binding RaftState,Converter={StaticResource StateToColor},ConverterParameter=x}"
                             FontSize="12" 
                             MinWidth="60"
                             

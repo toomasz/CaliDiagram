@@ -36,7 +36,7 @@ namespace CaliDiagram
     {
         public DiagramDefinitionBase()
         {
-            ConnectorSideStrategy = new VerticalFavourizedConnectionSrategy();
+            ConnectorSideStrategy = new DefaultConnectionStrategy();
         }
         /// <summary>
         /// Returns System.Type array of models used in diagram

@@ -14,14 +14,10 @@ namespace RaftDemo.Raft
         public TimeoutTimer(NetworkSoftwareBase software)
         {
             this.software = software;
-        }
-        Timer timer;
-
-        public void Init()
-        {
             isDisposed = false;
             timer = new Timer();
         }
+        Timer timer;
 
         /// <summary>
         /// Timer not started - actiong will be executed on T+ms

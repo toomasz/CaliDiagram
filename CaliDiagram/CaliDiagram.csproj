@@ -63,7 +63,7 @@
     <Compile Include="Commands\AddNodeCommand.cs" />
     <Compile Include="Commands\MoveNodeCommand.cs" />
     <Compile Include="Commands\RemoveNodeCommand.cs" />
-    <Compile Include="DiagramLibHelpers.cs" />
+    <Compile Include="CaliDiagramHelpers.cs" />
     <Compile Include="Helpers\DragAndDropHelper.cs" />
     <Compile Include="Model\DiagramConnection.cs" />
     <Compile Include="Model\DiagramModel.cs" />
@@ -84,7 +84,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="VerticalFavourizedConnectionSrategy.cs" />
+    <Compile Include="DefaultConnectionStrategy.cs" />
     <Compile Include="ViewModels\AttachSides.cs" />
     <Compile Include="ViewModels\DiagramBatchMode.cs" />
     <Compile Include="Commands\DiagramCommand.cs" />

@@ -1,4 +1,5 @@
-﻿using RaftDemo.Raft;
+﻿using RaftDemo.Model;
+using RaftDemo.Raft;
 using RaftDemo.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -27,8 +28,8 @@ namespace RaftDemo.Views
         {
             InitializeComponent();
             DataContextChanged += DiagramNodeBigView_DataContextChanged;
-            Storyboard sb = this.FindResource("timerStoryboard") as Storyboard;
-            DoubleAnimation anim = (DoubleAnimation)sb.Children.FirstOrDefault(c => c.Name == "doubleAnimation");
+           // Storyboard sb = this.FindResource("timerStoryboard") as Storyboard;
+         //   DoubleAnimation anim = (DoubleAnimation)sb.Children.FirstOrDefault(c => c.Name == "doubleAnimation");
          
         }
 
@@ -39,16 +40,22 @@ namespace RaftDemo.Views
             var vm = DataContext as DiagramNodeServerViewModel ;
             if (vm != null)
             {
-                RaftNode raftNode = vm.NodeSoftware as RaftNode;
-                raftNode.RaftTimer.TimerSet += RaftTimer_TimerSet;
+                RaftHost raftNode = vm.NodeSoftware as RaftHost;
+                raftNode.OnRaftEvent += raftNode_OnRaftEvent;
             }
         }
 
-        void RaftTimer_TimerSet(object sender, int e)
+        void raftNode_OnRaftEvent(object sender, RaftEventResult e)
+        {
+            if(e.TimerSet)
+                Dispatcher.BeginInvoke(new Action(()=>StartTimerAnimation(e.TimerValue)));
+        }
+
+        void StartTimerAnimation(int ms)
         {
             Storyboard sb = this.FindResource("timerStoryboard") as Storyboard;
             DoubleAnimation anim = (DoubleAnimation)sb.Children.FirstOrDefault(c => c.Name == "doubleAnimation");
-            anim.Duration = TimeSpan.FromMilliseconds(e);  
+            anim.Duration = TimeSpan.FromMilliseconds(ms);
             sb.Begin();
         }
 

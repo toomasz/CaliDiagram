@@ -18,14 +18,13 @@ namespace RaftDemo.Raft.State
             get;
             private set;
         }
-        public abstract void EnterState();
-        public abstract void ExitState();
-        public virtual void OnTimeout() {  }
+        public abstract RaftEventResult EnterState();
+        public virtual RaftEventResult OnTimeout() { return RaftEventResult.Empty; }
 
-        public abstract void ReceiveRequestVote(RequestVote requestVote, INodeChannel sourceChannel);
-        public abstract void ReceiveRequestVoteResponse(RequestVoteResponse requestVoteResponse, INodeChannel sourceChannel);
-        public abstract void ReceiveAppendEntries(AppendEntries appendEntries, INodeChannel sourceChannel);
-        public abstract void ReceiveAppendEntriesResponse(AppendEntriesResponse appendEntriesResponse, INodeChannel sourceChannel);
+        public abstract RaftEventResult ReceiveRequestVote(RequestVote requestVote);
+        public abstract RaftEventResult ReceiveRequestVoteResponse(RequestVoteResponse requestVoteResponse);
+        public abstract RaftEventResult ReceiveAppendEntries(AppendEntries appendEntries);
+        public abstract RaftEventResult ReceiveAppendEntriesResponse(AppendEntriesResponse appendEntriesResponse);
 
 
         protected RequestVoteResponse GrantVote

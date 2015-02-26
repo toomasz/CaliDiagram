@@ -1,23 +1,14 @@
 ﻿using CaliDiagram.ViewModels;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Timers;
-using System.Windows;
-using System;
-using System.Threading;
-using RaftDemo.Raft;
 using RaftDemo.Model;
+using RaftDemo.Raft;
+using System;
 
 namespace RaftDemo.ViewModels
 {
     public class NetworkNodeViewModel: NodeBaseViewModel
     {
-        ICommuncatuionModel commModel;
-        public NetworkNodeViewModel(ICommuncatuionModel commModel)
+        INetworkModel commModel;
+        public NetworkNodeViewModel(INetworkModel commModel)
         {
             this.commModel = commModel;
             StartText = "Pause";
@@ -101,7 +92,6 @@ namespace RaftDemo.ViewModels
             Console.WriteLine(Name + " removed");
             return true;
         }
-
         
         protected override void OnConnectionAdded(ConnectionViewModel connection)
         {

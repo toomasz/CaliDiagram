@@ -1,19 +1,15 @@
-﻿using System;
+﻿using Caliburn.Micro;
+using CaliDiagram.Commands;
+using CaliDiagram.Views;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-using Caliburn.Micro;
-using System.Windows.Input;
 using System.Windows;
-using System.Windows.Threading;
-using CaliDiagram.Commands;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
-using CaliDiagram.Views;
+using System.Windows.Threading;
 
 namespace CaliDiagram.ViewModels
 {

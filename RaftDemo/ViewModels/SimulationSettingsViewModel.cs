@@ -30,6 +30,12 @@ namespace RaftDemo.ViewModels
             }
         }
 
+        public bool PacketVisualizationEnabled
+        {
+            get { return simSettings.PacketVisualizationEnabled; }
+            set { simSettings.PacketVisualizationEnabled = value; }
+        }
+
         public double WorldSpeed
         {
             get { return simSettings.WorldSpeedFactor; }

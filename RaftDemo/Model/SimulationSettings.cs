@@ -19,12 +19,18 @@ namespace RaftDemo.Model
             LeaderTimeoutFromSetting = 70;
             LeaderTimeoutToSetting = 70;
 
-            FollowerTimeoutFromSetting = 200;
-            FollowerTimeoutToSetting = 400;
+            FollowerTimeoutFromSetting = 150;
+            FollowerTimeoutToSetting = 300;
             
-            ClusterSize = 3;
-        }
+            ClusterSize = 4;
+            PacketVisualizationEnabled = true;
 
+        }
+        public bool PacketVisualizationEnabled
+        {
+            get;
+            set;
+        }
         double ApplySpeedFactor(double value)
         {
             return value * (1.0 / WorldSpeedFactor);

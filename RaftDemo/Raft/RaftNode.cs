@@ -11,19 +11,25 @@ using System.Collections.Generic;
 
 namespace RaftDemo.Raft
 {
-    public class RaftNode : NetworkSoftwareBase
+    public class RaftNode
     {
-        public RaftNode(IRaftEventListener raftEventListener, IRaftNodeSettings raftSettings)
+        public RaftNode(IRaftEventListener raftEventListener, IRaftNodeSettings raftSettings, string Id)
         {
             if (raftEventListener == null)
                 throw new ArgumentNullException("raftWorld");
             RaftEventListener = raftEventListener;
             RaftSettings = raftSettings;
             CurrentTerm = 0;
-            RaftTimer = new TimeoutTimer(this);
             LogEntries = new List<LogEntry>();
             LogEntries.Add(new LogEntry() { Data = "A=2", CommitIndex = 1, Term = 1 });
             LogEntries.Add(new LogEntry() { Data = "C=1", CommitIndex = 2, Term = 1 });
+            this.Id = Id;
+        }
+
+        public string Id
+        {
+            get;
+            private set;
         }
 
         public IRaftEventListener RaftEventListener
@@ -42,19 +48,7 @@ namespace RaftDemo.Raft
             set;
         }
 
-        public TimeoutTimer RaftTimer
-        {
-            get;
-            private set;
-        }   
-
-        protected override void OnInitialized()
-        {
-            RaftTimer.Init();
-            TranslateToState(RaftNodeState.Follower);
-        }
-
-        public void TranslateToState(RaftNodeState newState)
+        public RaftEventResult TranslateToState(RaftNodeState newState, RaftMessageBase message = null)
         {
             RaftStateBase newStateObject = null;
 
@@ -67,13 +61,15 @@ namespace RaftDemo.Raft
             else
                 throw new ArgumentException();
            
-            var state = State;
-            if(state != null)
-            {
-                state.ExitState();
-            }
             State = newStateObject;
-            State.EnterState();            
+            RaftEventResult result1 =  State.EnterState();
+            if (message != null)
+            {
+                if (result1.MessageToSend != null)
+                    throw new Exception("WTF");
+                return OnMessageReceived(message);
+            }
+            return result1;
         }
 
         private RaftStateBase _State;
@@ -85,7 +81,7 @@ namespace RaftDemo.Raft
                 if (_State != value)
                 {
                     _State = value;
-                    NotifyOfPropertyChange(() => State);
+                   // NotifyOfPropertyChange(() => State);
                 }
             }
         }
@@ -100,7 +96,7 @@ namespace RaftDemo.Raft
                 {
                     _CurrentTerm = value;
                     VotedFor = null;
-                    NotifyOfPropertyChange(() => CurrentTerm);
+                  //  NotifyOfPropertyChange(() => CurrentTerm);
                 }
             }
         }
@@ -117,67 +113,42 @@ namespace RaftDemo.Raft
                 if (_VotedFor != value)
                 {
                     _VotedFor = value;
-                    NotifyOfPropertyChange(() => VotedFor);
+                 //   NotifyOfPropertyChange(() => VotedFor);
                 }
             }
         }
         
-        
-
-        public void IncrementAndSend()
+        public RaftEventResult OnMessageReceived(RaftMessageBase raftMessage)
         {
-            Message message = new Message() { Clock = ++CurrentTerm};
-            BroadcastMessage(message);            
+            RaftEventResult raftResult = null;
+            /* Append entries */
+            var appEntries = raftMessage as AppendEntries;
+            if (appEntries != null)
+                raftResult = State.ReceiveAppendEntries(appEntries);
+
+            /* Append entries response */
+            var appEntriesResponse = raftMessage as AppendEntriesResponse;
+            if (appEntriesResponse != null)
+                raftResult = State.ReceiveAppendEntriesResponse(appEntriesResponse);
+
+            /* Request vote */
+            var requestVote = raftMessage as RequestVote;
+            if (requestVote != null)
+                raftResult = State.ReceiveRequestVote(requestVote);
+
+            /* Request vote response */
+            var requestVoteResponse = raftMessage as RequestVoteResponse;
+            if (requestVoteResponse != null)
+                raftResult = State.ReceiveRequestVoteResponse(requestVoteResponse);
+
+            if (raftResult == null)
+                throw new InvalidOperationException("Raft message processing returned null");
+            return raftResult;
         }
 
-       
-
-        protected override void OnDestroyed()
+        public RaftEventResult OnTimerElapsed()
         {
-            RaftTimer.Dispose();
-        }
-        protected override void OnChannelCreated(INodeChannel channel)
-        {
-          
-        }
-        protected override void OnChannelDestroyed(INodeChannel channel)
-        {
-         
-        }
-
-        protected override void OnMessageReceived(INodeChannel channel, object message)
-        {
-            RaftMessageBase raftMessage = message as RaftMessageBase;
-            if (raftMessage != null)
-            {
-                var appEntries = raftMessage as AppendEntries;
-                var appEntriesResponse = raftMessage as AppendEntriesResponse;
-                var requestVote = raftMessage as RequestVote;
-                var requestVoteResponse = raftMessage as RequestVoteResponse;
-
-                if (appEntries != null)
-                    State.ReceiveAppendEntries(appEntries,channel);
-                else if (appEntriesResponse != null)
-                    State.ReceiveAppendEntriesResponse(appEntriesResponse, channel);
-                else if (requestVote != null)
-                    State.ReceiveRequestVote(requestVote, channel);
-                else if (requestVoteResponse != null)
-                    State.ReceiveRequestVoteResponse(requestVoteResponse, channel);
-            }
-        }
-
-        protected override void OnCommandReceived(string command) // Queue processing thread
-        {
-            if (command == "send")
-                IncrementAndSend();            
-        }
-        protected override void OnTimerElapsed(TimeoutTimer timer) // Queue processing thread
-        {
-            if (timer == RaftTimer)
-            {
-                if(State != null)
-                    State.OnTimeout();
-            }
-        }        
+            return State.OnTimeout();
+        }      
     }
 }

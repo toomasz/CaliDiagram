@@ -1,9 +1,4 @@
 ﻿using CaliDiagram.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 
 namespace CaliDiagram.Commands
@@ -15,13 +10,12 @@ namespace CaliDiagram.Commands
         {
             this.Description = description;
             this.nodeBehaviour = nodeTypeBehaviour;
+            
         }
-        public override string Description
+        public override void OnSelected()
         {
-            get;
-            set;
+            Diagram.HelpText = Description = string.Format("Add {0} node", nodeBehaviour.Name);
         }
-
         public override void HandleDiagramClick(Point location)
         {
             Diagram.AddNode(nodeBehaviour.CreateNode(location), location);

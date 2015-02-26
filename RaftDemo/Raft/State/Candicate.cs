@@ -20,95 +20,88 @@ namespace RaftDemo.Raft.State
             return "Candidate";
         }
 
-        public override void EnterState()
+        public override RaftEventResult EnterState()
         {            
-            StartNewElection();
+           return StartNewElection();
         }
-        int VoteCount = 1;
-        void StartNewElection()
+
+        RaftEventResult StartNewElection()
         {
             VoteTable.Clear();
             Node.RaftEventListener.OnElectionStarted();
             // increment current term
             Node.CurrentTerm++;
             // vote for self
-            VoteCount = 1;
+            ProcessVote(Node.Id);
             Node.VotedFor = Node.Id;
             // start random election timer
-            Node.RaftTimer.SetRandomTimeout(Node.RaftSettings.FollowerTimeoutFrom, Node.RaftSettings.FollowerTimeoutTo);
+          //  Node.RaftTimer.SetRandomTimeout(Node.RaftSettings.FollowerTimeoutFrom, Node.RaftSettings.FollowerTimeoutTo);
             // send request votes to all servers
-            Node.BroadcastMessage(new RequestVote() { CandidateId = Node.Id, CandidateTerm = Node.CurrentTerm });
+            var requestVote = new RequestVote() { CandidateId = Node.Id, CandidateTerm = Node.CurrentTerm };
+            return RaftEventResult.BroadcastMessage(requestVote).SetTimer(Node.RaftSettings.FollowerTimeoutFrom, Node.RaftSettings.FollowerTimeoutTo);
         }
 
-        
 
-        public override void OnTimeout()
+
+        public override RaftEventResult OnTimeout()
         {
-            StartNewElection();
-        }
-        public override void ExitState()
-        {
-
+            return StartNewElection();
         }
 
-        public override void ReceiveRequestVote(RequestVote requestVote, INodeChannel sourceChannel)
+        public override RaftEventResult ReceiveRequestVote(RequestVote requestVote)
         {
             if (requestVote.CandidateId == Node.Id)
-                return;
+                return RaftEventResult.Empty;
 
         
             bool voteGranted = false;
             if (requestVote.CandidateTerm >= CurrentTerm)
             {
               //  Node.CurrentTerm = requestVote.CandidateTerm;
-                Node.TranslateToState(RaftNodeState.Follower);
-                Node.RaisePacketReceived(requestVote, sourceChannel);
-                return;
+                return Node.TranslateToState(RaftNodeState.Follower, requestVote);
             }
-            Node.SendMessage(sourceChannel, DenyVote);
+            return RaftEventResult.ReplyMessage(DenyVote);
         }
         Dictionary<string, bool> VoteTable = new Dictionary<string, bool>();
-        public override void ReceiveRequestVoteResponse(RequestVoteResponse requestVoteResponse, INodeChannel sourceChannel)
-        {      
-            if(requestVoteResponse.CurrentTerm > CurrentTerm)
-            {
-                
-                Node.TranslateToState(RaftNodeState.Follower);
-                Node.RaisePacketReceived(requestVoteResponse, sourceChannel);
-                return;
-            }
 
-
-
-            if (!VoteTable.ContainsKey(requestVoteResponse.VoterId))
-            {
-                if (requestVoteResponse.VoteGranted)                
-                    VoteCount++;
-
-                VoteTable.Add(requestVoteResponse.VoterId, requestVoteResponse.VoteGranted);
-            }
-            
-
-            int majority = (Node.RaftSettings.ClusterSize / 2) + 1;
-            if (VoteCount >= majority)
-            {               
-                Node.TranslateToState(RaftNodeState.Leader);
-            }
+        void ProcessVote(string voterId)
+        {
+            if (!VoteTable.ContainsKey(voterId))
+                VoteTable.Add(voterId, true);
         }
 
-        public override void ReceiveAppendEntries(AppendEntries appendEntries, INodeChannel sourceChannel)
+        public override RaftEventResult ReceiveRequestVoteResponse(RequestVoteResponse requestVoteResponse)
+        {      
+            if(requestVoteResponse.CurrentTerm > CurrentTerm)
+            {                
+                return Node.TranslateToState(RaftNodeState.Follower, requestVoteResponse);
+            }
+
+            if (requestVoteResponse.VoteGranted)
+            {
+                ProcessVote(requestVoteResponse.VoterId);
+            }
+            
+            int majority = (Node.RaftSettings.ClusterSize / 2) + 1;
+            if (VoteTable.Count >= majority)
+            {               
+                return Node.TranslateToState(RaftNodeState.Leader);
+            }
+            return RaftEventResult.Empty;
+        }
+
+        public override RaftEventResult ReceiveAppendEntries(AppendEntries appendEntries)
         {
             if (appendEntries.LeaderTerm >= Node.CurrentTerm)
             {
-                Node.TranslateToState(RaftNodeState.Follower);
-                Node.RaisePacketReceived(appendEntries, sourceChannel);
+                return Node.TranslateToState(RaftNodeState.Follower, appendEntries );
             }
-
+            return RaftEventResult.Empty;
         }
 
-        public override void ReceiveAppendEntriesResponse(AppendEntriesResponse appendEntriesResponse, INodeChannel sourceChannel)
+        public override RaftEventResult ReceiveAppendEntriesResponse(AppendEntriesResponse appendEntriesResponse)
         {
-            Node.TranslateToState(RaftNodeState.Follower);
+            return Node.TranslateToState(RaftNodeState.Follower);
         }
     }
 }

@@ -1,21 +1,23 @@
 ﻿using CaliDiagram.ViewModels;
 using RaftDemo.Model;
+using RaftDemo.Raft;
 using RaftDemo.ViewModels;
 using System;
 using System.Threading.Tasks;
 
-namespace RaftDemo.Raft
+namespace RaftDemo.Model
 {
-    public class NodeChannel : INodeChannel
+    public class LocalNetworkChannel : INodeChannel
     {
         readonly ConnectionViewModel connection;
         SimulationSettings worldSettings;
-        public NodeChannel(ConnectionViewModel connection, NodeBaseViewModel from, SimulationSettings worldSettings)
+        public LocalNetworkChannel(ConnectionViewModel connection, NodeBaseViewModel from, SimulationSettings worldSettings, NodeChannelType channelType)
         {
             this.worldSettings = worldSettings;
             this.Socket = connection;
             this.connection = connection;
             this.from = from;
+            this.ChannelType = channelType;
         }
         NodeBaseViewModel from;
         public void SendMessage(object message)
@@ -48,6 +50,13 @@ namespace RaftDemo.Raft
         }
 
         public object Socket
+        {
+            get;
+            private set;
+        }
+
+
+        public NodeChannelType ChannelType
         {
             get;
             private set;

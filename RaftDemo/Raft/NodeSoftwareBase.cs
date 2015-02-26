@@ -34,23 +34,7 @@ namespace RaftDemo.Raft
         protected virtual void OnTimerElapsed(TimeoutTimer timer) { }
 
 
-        /// <summary>
-        /// Queues message to be sent via channel
-        /// </summary>
-        /// <param name="channel"></param>
-        /// <param name="message"></param>
-        /// <returns></returns>
-        public bool SendMessage(INodeChannel channel, object message)
-        {
-            if (!IsStarted)
-                return false;
-
-            channel.SendMessage(message);
-            var onMessageSent = OnMessageSent;
-            if(OnMessageSent != null)
-                OnMessageSent(this, new OutboundMessage() { Message = message, DestinationChannel = channel });
-            return true;
-        }
+        
 
         public event EventHandler<OutboundMessage> OnMessageSent;
 
@@ -70,14 +54,35 @@ namespace RaftDemo.Raft
             }
         }
         /// <summary>
+        /// Queues message to be sent via channel
+        /// </summary>
+        /// <param name="channel"></param>
+        /// <param name="message"></param>
+        /// <returns></returns>
+        public bool SendMessage(INodeChannel channel, object message, NodeChannelType channelType = NodeChannelType.All)
+        {
+            if (!IsStarted)
+                return false;
+            if (channelType == NodeChannelType.All || channelType == channel.ChannelType)
+            {
+                channel.SendMessage(message);
+                var onMessageSent = OnMessageSent;
+                if (OnMessageSent != null)
+                    OnMessageSent(this, new OutboundMessage() { Message = message, DestinationChannel = channel });
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Broadcasts message to all active channels
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
-        public void BroadcastMessage(object message)
+        public void BroadcastMessage(object message, NodeChannelType channelType = NodeChannelType.All)
         {
             foreach (var channel in ThreadSafeChannels)
-                SendMessage(channel, message);
+                SendMessage(channel, message, channelType);
         }
 
         /// <summary>
@@ -86,13 +91,13 @@ namespace RaftDemo.Raft
         /// <param name="message"></param>
         /// <param name="channel"></param>
         /// <returns></returns>
-        public void BroadcastExcept(object message, INodeChannel except)
+        public void BroadcastExcept(object message, INodeChannel except, NodeChannelType channelType = NodeChannelType.All)
         {
             foreach (var channel in ThreadSafeChannels)
             {
                 if (channel == except)
                     continue;
-                SendMessage(channel, message);
+                SendMessage(channel, message, channelType);
             }            
         }
 
@@ -114,26 +119,27 @@ namespace RaftDemo.Raft
 
         public void Start()
         {
+            InputQueue = new BlockingCollection<object>();
             lock (isStartedLock)
             {
                 if (IsStarted)
                     return;
                 IsStarted = true;
-            }
-            InputQueue = new BlockingCollection<object>();
+            }            
             OnInitialized();
             StartEventLoop();
         }
 
         public void Stop()
         {
+            InputQueue.CompleteAdding();
             lock (isStartedLock)
             {
                 if (IsStarted == false)
                     return;
                 IsStarted = false;
             }
-            InputQueue.CompleteAdding();
+           
             InputQueue = null;
             OnDestroyed();
         }
@@ -151,45 +157,52 @@ namespace RaftDemo.Raft
             t.Name = string.Format("Event loop {0}", Id);
             t.Start();
         }
-
+        CancellationTokenSource cancelToken = new CancellationTokenSource();
         void EventLoop()
         {
             Console.WriteLine("Started event queue worker");
-            foreach (object evt in InputQueue.GetConsumingEnumerable())
+            try
             {
-                if (evt == null)
-                    continue;
-                if (!IsStarted)
-                    return;
-
-                /// timers are TimeoutTimer
-                TimeoutTimer timer = evt as TimeoutTimer;
-                if (timer != null)
-                    OnTimerElapsed(timer);
-                // strings are commands
-                string command = evt as string;
-                if (command != null)
-                    OnCommandReceived(command);
-
-               // channels as tuples
-                var channelEvent = evt as Tuple<INodeChannel, bool>;
-                if(channelEvent != null)
+                foreach (object evt in InputQueue.GetConsumingEnumerable())
                 {
-                    if (IsStarted)
+                    if (evt == null)
+                        continue;
+                    if (!IsStarted)
+                        return;
+
+                    /// timers are TimeoutTimer
+                    TimeoutTimer timer = evt as TimeoutTimer;
+                    if (timer != null)
+                        OnTimerElapsed(timer);
+                    // strings are commands
+                    string command = evt as string;
+                    if (command != null)
+                        OnCommandReceived(command);
+
+                    // channels as tuples
+                    var channelEvent = evt as Tuple<INodeChannel, bool>;
+                    if (channelEvent != null)
                     {
-                        if (channelEvent.Item2 == false) // channel removing = false
-                            OnChannelCreated(channelEvent.Item1);
-                        else
-                            OnChannelDestroyed(channelEvent.Item1);
+                        if (IsStarted)
+                        {
+                            if (channelEvent.Item2 == false) // channel removing = false
+                                OnChannelCreated(channelEvent.Item1);
+                            else
+                                OnChannelDestroyed(channelEvent.Item1);
+                        }
+                    }
+
+                    // MessageReceived(null, evt);
+                    InboundMessage message = evt as InboundMessage;
+                    if (message != null)
+                    {
+                        OnMessageReceived(message.SourceChannel, message.Message);
                     }
                 }
-
-               // MessageReceived(null, evt);
-                InboundMessage message = evt as InboundMessage;
-                if (message != null)
-                {
-                    OnMessageReceived(message.SourceChannel, message.Message);
-                }
+            }
+            catch(OperationCanceledException )
+            {
+                Console.WriteLine("OperationCanceledException {0}", Id);
             }
 
             Console.Write("Worker finished");
@@ -200,6 +213,8 @@ namespace RaftDemo.Raft
         /// <param name="command"></param>
         public void RaiseCommandReceived(string command)
         {
+            if (!IsStarted)
+                return;
             InputQueue.Add(command);
         }
 
@@ -243,8 +258,9 @@ namespace RaftDemo.Raft
         {
 
             InboundMessage messageObject = new InboundMessage() { Message = packet, SourceChannel = channel };
-            if(!InputQueue.IsAddingCompleted)
-                InputQueue.Add(messageObject);
+            if(InputQueue != null)
+                if(!InputQueue.IsAddingCompleted)
+                      InputQueue.Add(messageObject);
         }
         /// <summary>
         /// Gets channel by underlying socket

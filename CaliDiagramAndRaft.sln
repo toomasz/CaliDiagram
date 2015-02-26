@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaftDemo", "RaftDemo\RaftDe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CaliDiagram", "CaliDiagram\CaliDiagram.csproj", "{28019A1E-74D2-4481-8825-05961921DB7D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RaftAlgorithm", "RaftAlgorithm\RaftAlgorithm.csproj", "{17D6F49D-15F2-4963-A83B-CAAB1F93CAA1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{28019A1E-74D2-4481-8825-05961921DB7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28019A1E-74D2-4481-8825-05961921DB7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28019A1E-74D2-4481-8825-05961921DB7D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17D6F49D-15F2-4963-A83B-CAAB1F93CAA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17D6F49D-15F2-4963-A83B-CAAB1F93CAA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17D6F49D-15F2-4963-A83B-CAAB1F93CAA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17D6F49D-15F2-4963-A83B-CAAB1F93CAA1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

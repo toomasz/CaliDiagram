@@ -20,7 +20,7 @@ namespace RaftDemo
         {
             WorldSettings = new SimulationSettings(); // TODO load from xml
             raftWorldModel = new RaftEventListener(WorldSettings);
-            CommunicationModel = new LocalCommunication(WorldSettings);
+            CommunicationModel = new LocalNetwork(WorldSettings);
             Diagram1 = new DiagramViewModel(new RaftDiagramDefinition(raftWorldModel, CommunicationModel, WorldSettings));
             modelLoader = new DiagramXmlSerializer(Diagram1);
             
@@ -32,7 +32,7 @@ namespace RaftDemo
             get;
             set;
         }
-        public ICommuncatuionModel CommunicationModel
+        public INetworkModel CommunicationModel
         {
             get;
             set;

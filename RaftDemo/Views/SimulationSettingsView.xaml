@@ -16,7 +16,7 @@
                 <Slider Minimum="0.05" Name="WorldSpeed" Value="0.2" Maximum="2"></Slider>
                     <TextBlock Text="{Binding WorldSpeedStr,FallbackValue='0.1x'}"></TextBlock>
                 <CheckBox Margin="0,10,0,0" Name="SoundEnabled">Sound</CheckBox>
-                
+                <CheckBox Margin="0,10,0,0" Name="PacketVisualizationEnabled">Packet visuals</CheckBox>
                 <Label FontWeight="Bold">Server to server connection:</Label>
                     <Label>Latency</Label>
                     <Controls:NumericUpDown Value="{Binding ServerToServerLatency}"  Name="ServerToServerLatency" StringFormat="{}{0}ms" Speedup="False" ></Controls:NumericUpDown>
@@ -30,7 +30,7 @@
                 <StackPanel Orientation="Vertical">
                     <Label>Cluster size:</Label>
                     <Controls:NumericUpDown Value="{Binding ClusterSize}"></Controls:NumericUpDown>
-                    <Label>Leader timer:</Label>
+                    <Label>Heartbeat timeout:</Label>
                     <Label Name="LeaderTimerStr"></Label>
                     <Controls:RangeSlider 
                         AutoToolTipPlacement="TopLeft" 
@@ -40,7 +40,7 @@
                         Maximum="1000"
                         MinRangeWidth="0"
                         ></Controls:RangeSlider>
-                    <Label>Follower timer:</Label>
+                    <Label>Election timeout:</Label>
                     <Label Name="FollowerTimerStr"></Label>
                     <Controls:RangeSlider 
                         AutoToolTipPlacement="TopLeft" 

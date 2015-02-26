@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RaftDemo.Model
 {
-    public interface ICommuncatuionModel
+    public interface INetworkModel
     {
         INodeChannel CreateChannel(ConnectionViewModel connection, NodeBaseViewModel from);
     }

@@ -17,62 +17,57 @@ namespace RaftDemo.Raft.State
         {
             return "Leader";
         }
-        Random rnd = new Random();
-        public override void EnterState()
+
+        public override RaftEventResult EnterState()
         {
-            BroadcastAppendEntries();
+            return BroadcastAppendEntries();
         }
 
-        void BroadcastAppendEntries()
+        RaftEventResult BroadcastAppendEntries()
         {
-            Node.RaftEventListener.OnAppendEntries();
-            Node.BroadcastMessage(new AppendEntries(Node.CurrentTerm, Node.Id));
-            Node.RaftTimer.SetRandomTimeout(Node.RaftSettings.LeaderTimeoutFrom,Node.RaftSettings.LeaderTimeoutTo);
+            Node.RaftEventListener.OnAppendEntries();            
+          //  Node.RaftTimer.SetRandomTimeout(Node.RaftSettings.LeaderTimeoutFrom,Node.RaftSettings.LeaderTimeoutTo);
+
+            var appendEntriesMessage = new AppendEntries(Node.CurrentTerm, Node.Id);
+            return RaftEventResult.BroadcastMessage(appendEntriesMessage).SetTimer(Node.RaftSettings.LeaderTimeoutFrom, Node.RaftSettings.LeaderTimeoutTo);
         }
 
-        public override void OnTimeout()
+        public override RaftEventResult OnTimeout()
         {
-            BroadcastAppendEntries();   
-        }
-        public override void ExitState()
-        {
-
+            return BroadcastAppendEntries();   
         }
 
-        public override void ReceiveRequestVote(RequestVote requestVote, INodeChannel sourceChannel)
+        public override RaftEventResult ReceiveRequestVote(RequestVote requestVote)
         {
             if(requestVote.CandidateTerm > CurrentTerm)
             {
-                Node.TranslateToState(RaftNodeState.Follower);
-                Node.RaisePacketReceived(requestVote, sourceChannel);
-                return;
+                return Node.TranslateToState(RaftNodeState.Follower, requestVote);
             }
-
-            Node.SendMessage(sourceChannel, DenyVote);
+            return RaftEventResult.ReplyMessage(DenyVote);
         }
 
-        public override void ReceiveRequestVoteResponse(RequestVoteResponse requestVoteResponse, INodeChannel sourceChannel)
+        public override RaftEventResult ReceiveRequestVoteResponse(RequestVoteResponse requestVoteResponse)
         {
             // got vote but we dont care because we are leader already
+            return RaftEventResult.Empty;
         }
 
-        public override void ReceiveAppendEntries(AppendEntries appendEntries, INodeChannel sourceChannel)
+        public override RaftEventResult ReceiveAppendEntries(AppendEntries appendEntries)
         {
             if (appendEntries.LeaderTerm > CurrentTerm)
             {
-                Node.TranslateToState(RaftNodeState.Follower);
-                Node.RaisePacketReceived(appendEntries, sourceChannel);
-                return;
+                return Node.TranslateToState(RaftNodeState.Follower, appendEntries);
             }
+            return RaftEventResult.Empty;
         }
 
-        public override void ReceiveAppendEntriesResponse(AppendEntriesResponse appendEntriesResponse, INodeChannel sourceChannel)
+        public override RaftEventResult ReceiveAppendEntriesResponse(AppendEntriesResponse appendEntriesResponse)
         {
             if (appendEntriesResponse.FollowerTerm > CurrentTerm)
             {
-                Node.TranslateToState(RaftNodeState.Follower);
-                return;
+                return Node.TranslateToState(RaftNodeState.Follower);
             }
+            return RaftEventResult.Empty;
         }
     }
 }

@@ -1,9 +1,4 @@
 ﻿using CaliDiagram.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CaliDiagram.Commands
 {
@@ -12,6 +7,11 @@ namespace CaliDiagram.Commands
         public MoveNodeCommand(DiagramViewModel diagram):base(diagram)
         {
             Description = "Move";
+        }
+       
+        public override void OnSelected()
+        {
+            Diagram.HelpText = "Drag and drop nodes!";
         }
     }
 }
