@@ -1,6 +1,5 @@
 ﻿using RaftDemo.Model;
 using RaftDemo.Raft;
-using RaftDemo.Raft.Messages;
 using RaftDemo.ViewModels;
 using CaliDiagram;
 using CaliDiagram.ViewModels;
@@ -9,6 +8,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using RaftAlgorithm;
+using RaftAlgorithm.Messages;
 
 namespace RaftDemo
 {
@@ -117,20 +118,7 @@ namespace RaftDemo
                 text.Foreground = Brushes.White;
 
                 return text;
-            }
-            if (packet is ResponseMessage)
-            {
-                Ellipse ell = new Ellipse()
-                {
-                    Width = 10,
-                    Height = 10,
-                    Fill = fill1,
-                    Stroke = fille2,
-                    StrokeThickness = 3
-                };
-            
-                return ell;
-            }
+            }            
             else
             {
 

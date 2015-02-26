@@ -1,5 +1,6 @@
-﻿using RaftDemo.Raft;
-using RaftDemo.Raft.Messages;
+﻿using RaftAlgorithm;
+using RaftAlgorithm.Messages;
+using RaftDemo.Raft;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,4 +1,5 @@
-﻿using RaftDemo.Model;
+﻿using RaftAlgorithm;
+using RaftDemo.Model;
 using RaftDemo.Raft;
 using RaftDemo.ViewModels;
 using System;

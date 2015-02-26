@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RaftDemo.Raft.Messages
+namespace RaftAlgorithm.Messages
 {
     public class RaftMessageBase
     {

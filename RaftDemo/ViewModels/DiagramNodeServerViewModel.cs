@@ -13,7 +13,9 @@ using System.Windows;
 using System.Windows.Threading;
 using System.Windows.Media;
 using RaftDemo.Model;
-using RaftDemo.Raft.State;
+using RaftAlgorithm;
+using RaftAlgorithm.Messages;
+using RaftAlgorithm.States;
 
 namespace RaftDemo.ViewModels
 {
@@ -33,7 +35,7 @@ namespace RaftDemo.ViewModels
                 RaftHost.OnRaftEvent += host_OnRaftEvent;
         }
 
-        void host_OnRaftEvent(object sender, Raft.RaftEventResult e)
+        void host_OnRaftEvent(object sender, RaftEventResult e)
         {
             RaftState = RaftHost.Raft.State;
             CurrentTerm = RaftHost.Raft.CurrentTerm;

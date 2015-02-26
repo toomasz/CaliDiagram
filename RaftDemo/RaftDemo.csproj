@@ -85,29 +85,13 @@
     <Compile Include="Model\LocalNetwork.cs" />
     <Compile Include="Model\RaftHost.cs" />
     <Compile Include="Model\SimulationSettings.cs" />
-    <Compile Include="Raft\IRaftNodeSettings.cs" />
-    <Compile Include="Raft\IRaftEventListener.cs" />
-    <Compile Include="Raft\LogEntry.cs" />
-    <Compile Include="Raft\Messages\OtherMessages.cs" />
-    <Compile Include="Raft\RaftEventResult.cs" />
-    <Compile Include="Raft\RaftNodeState.cs" />
     <Compile Include="Raft\RaftEventListener.cs" />
     <Compile Include="Raft\InboundMessage.cs" />
-    <Compile Include="Raft\Messages\AppendEntries.cs" />
-    <Compile Include="Raft\Messages\AppendEntriesResult.cs" />
-    <Compile Include="Raft\Messages\RaftMessageBase.cs" />
-    <Compile Include="Raft\Messages\RequestVote.cs" />
-    <Compile Include="Raft\Messages\RequestVoteResult.cs" />
     <Compile Include="Raft\NodeSoftwareBase.cs" />
     <Compile Include="Raft\INodeChannel.cs" />
     <Compile Include="Model\LocalNetworkChannel.cs" />
-    <Compile Include="Raft\State\Candicate.cs" />
-    <Compile Include="Raft\State\Follower.cs" />
-    <Compile Include="Raft\State\Leader.cs" />
-    <Compile Include="Raft\State\RaftStateBase.cs" />
     <Compile Include="Raft\TimeoutTimer.cs" />
     <Compile Include="Raft\OutboundMessage.cs" />
-    <Compile Include="Raft\RaftNode.cs" />
     <Compile Include="ViewModels\AttachDescriptorToViewModel.cs" />
     <Compile Include="ViewModels\AttachDescriptorFromViewModel.cs" />
     <Compile Include="ViewModels\DiagramNodeBrokerViewModel.cs" />
@@ -224,6 +208,10 @@
     <ProjectReference Include="..\CaliDiagram\CaliDiagram.csproj">
       <Project>{28019a1e-74d2-4481-8825-05961921db7d}</Project>
       <Name>CaliDiagram</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\RaftAlgorithm\RaftAlgorithm.csproj">
+      <Project>{17d6f49d-15f2-4963-a83b-caab1f93caa1}</Project>
+      <Name>RaftAlgorithm</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

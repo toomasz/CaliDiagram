@@ -1,4 +1,5 @@
-﻿using RaftDemo.Raft.State;
+﻿using RaftAlgorithm.Messages;
+using RaftAlgorithm.States;
 using System;
 using System.Globalization;
 using System.Windows.Data;

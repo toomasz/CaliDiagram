@@ -4,9 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RaftDemo.Raft.Messages
+namespace RaftAlgorithm
 {
-    public class RaftMessageBase
-    {
-    }
+    public enum RaftNodeState { Follower, Candidate, Leader };
 }

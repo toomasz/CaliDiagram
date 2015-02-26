@@ -1,15 +1,14 @@
-﻿using RaftDemo.Raft.Messages;
-using RaftDemo.Raft.State;
+﻿using RaftAlgorithm.Messages;
+using RaftAlgorithm.States;
 using System;
 using System.Collections.Generic;
-
 
 /*
  * notes - election timeout 150 - 300 ms  
  * broadcastTime ≪ electionTimeout ≪ MTBF
  */
 
-namespace RaftDemo.Raft
+namespace RaftAlgorithm
 {
     public class RaftNode
     {

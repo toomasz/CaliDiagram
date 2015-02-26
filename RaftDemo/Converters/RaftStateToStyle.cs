@@ -1,4 +1,4 @@
-﻿using RaftDemo.Raft.State;
+﻿using RaftAlgorithm.States;
 using System;
 using System.Collections.Generic;
 using System.Linq;

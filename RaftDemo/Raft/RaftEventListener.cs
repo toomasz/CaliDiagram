@@ -1,4 +1,5 @@
-﻿using RaftDemo.Model;
+﻿using RaftAlgorithm;
+using RaftDemo.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;

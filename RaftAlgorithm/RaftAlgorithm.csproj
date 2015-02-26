@@ -39,17 +39,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IRaftEventListener.cs" />
+    <Compile Include="IRaftNodeSettings.cs" />
+    <Compile Include="LogEntry.cs" />
     <Compile Include="Messages\AppendEntries.cs" />
     <Compile Include="Messages\AppendEntriesResult.cs" />
-    <Compile Include="Messages\OtherMessages.cs" />
     <Compile Include="Messages\RaftMessageBase.cs" />
     <Compile Include="Messages\RequestVote.cs" />
     <Compile Include="Messages\RequestVoteResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RaftEventResult.cs" />
+    <Compile Include="RaftNode.cs" />
+    <Compile Include="RaftNodeState.cs" />
+    <Compile Include="States\Candicate.cs" />
+    <Compile Include="States\Follower.cs" />
+    <Compile Include="States\Leader.cs" />
+    <Compile Include="States\RaftStateBase.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="States\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
