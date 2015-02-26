@@ -26,6 +26,8 @@ namespace RaftDemo.Raft
         void SetTimeout(int ms)
         {
             timer.Stop();
+            if (ms == 0)
+                ms = 1;
             timer.Interval = ms;
             timer.Elapsed -= timer_Elapsed;
             timer.Elapsed += timer_Elapsed;
