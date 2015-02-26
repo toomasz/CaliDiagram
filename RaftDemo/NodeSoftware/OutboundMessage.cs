@@ -1,5 +1,5 @@
 ﻿
-namespace RaftDemo.Raft
+namespace RaftDemo.NodeSoftware
 {
     public class OutboundMessage
     {

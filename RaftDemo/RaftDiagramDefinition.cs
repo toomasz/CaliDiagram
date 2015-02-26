@@ -1,15 +1,15 @@
-﻿using RaftDemo.Model;
-using RaftDemo.Raft;
-using RaftDemo.ViewModels;
-using CaliDiagram;
+﻿using CaliDiagram;
 using CaliDiagram.ViewModels;
+using RaftAlgorithm;
+using RaftAlgorithm.Messages;
+using RaftDemo.Model;
+using RaftDemo.NodeSoftware;
+using RaftDemo.ViewModels;
 using System;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using RaftAlgorithm;
-using RaftAlgorithm.Messages;
 
 namespace RaftDemo
 {
@@ -29,7 +29,7 @@ namespace RaftDemo
         IRaftEventListener raftEventListener;
         SimulationSettings simulationSettings;
 
-        public RaftDiagramDefinition(RaftEventListener raftEventListener, INetworkModel commModel, SimulationSettings worldSettings)
+        public RaftDiagramDefinition(RaftSoundPlayer raftEventListener, INetworkModel commModel, SimulationSettings worldSettings)
         {
             this.raftEventListener = raftEventListener;
             this.simulationSettings = worldSettings;
@@ -39,31 +39,32 @@ namespace RaftDemo
                 (vm) => new DiagramNodeBroker() { Location = vm.Location, Name = vm.Name },
                 (m) => new DiagramNodeBrokerViewModel(m.Name) { Location = m.Location }
             );
-            AddModelFor<DiagramNodeClientViewModel, DiagramNodeSmall>(
+            AddModelFor<DiagramNodeClientViewModel, DiagramNodeClient>(
                 "Client",
                 (p) => new DiagramNodeClientViewModel(string.Format("{0}", GenerateRandomHex(8))) { Location = p },
-                (vm) => new DiagramNodeSmall() { Location = vm.Location, Name = vm.Name },
+                (vm) => new DiagramNodeClient() { Location = vm.Location, Name = vm.Name },
                 (m) => new DiagramNodeClientViewModel(m.Name) { Location = m.Location }
             );
-            AddModelFor<DiagramNodeServerViewModel, DiagramNodeBig>(
+            AddModelFor<DiagramNodeServerViewModel, DiagramNodeServer>(
                 "Server",
                 (p) =>
                     {
                         string raftNodeId = GenerateRandomHex(4);
+
+                        NodeSoftwareBase serverSoftware = new RaftHost(raftEventListener, simulationSettings, raftNodeId);
                         //this looks nasty
-                        return new DiagramNodeServerViewModel(raftNodeId, commModel) 
+                        return new DiagramNodeServerViewModel(raftNodeId, commModel, serverSoftware) 
                         { 
-                            Location = p,
-                            NodeSoftware = new RaftHost(raftEventListener, simulationSettings, raftNodeId)
+                            Location = p
                         };
                     },
-                (vm) => new DiagramNodeBig() { Location = vm.Location, Name = vm.Name },
+                (vm) => new DiagramNodeServer() { Location = vm.Location, Name = vm.Name },
                 (m) =>
                     {
-                        return new DiagramNodeServerViewModel(m.Name, commModel) 
+                        NodeSoftwareBase serverSoftware = new RaftHost(raftEventListener, simulationSettings, m.Name);
+                        return new DiagramNodeServerViewModel(m.Name, commModel, serverSoftware) 
                         { 
-                            Location = m.Location,
-                            NodeSoftware = new RaftHost(raftEventListener, simulationSettings, m.Name)
+                            Location = m.Location                            
                         };
                     }
             );

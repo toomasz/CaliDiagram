@@ -25,7 +25,7 @@
         </converters:RaftStateToStyle>
     </UserControl.Resources>
 
-    <Border Opacity="{Binding NodeSoftware.IsStarted, Converter={StaticResource BooleanToOpacity}}"
+    <Border Opacity="{Binding IsStarted, Converter={StaticResource BooleanToOpacity}}"
             CornerRadius="3" Style="{Binding RaftState, Converter={StaticResource StateToStyle}}">
         
         

@@ -6,12 +6,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RaftDemo.Raft
+namespace RaftDemo.Model
 {
-    public class RaftEventListener: IRaftEventListener
+    public class RaftSoundPlayer: IRaftEventListener
     {
         SimulationSettings worldSettings;
-        public RaftEventListener(SimulationSettings worldSettings)
+        public RaftSoundPlayer(SimulationSettings worldSettings)
         {
             this.worldSettings = worldSettings;
         }

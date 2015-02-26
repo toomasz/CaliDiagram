@@ -1,6 +1,6 @@
 ﻿using CaliDiagram.ViewModels;
 using RaftDemo.Model;
-using RaftDemo.Raft;
+using RaftDemo.NodeSoftware;
 using RaftDemo.ViewModels;
 using System;
 using System.Threading.Tasks;

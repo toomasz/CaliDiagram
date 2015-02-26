@@ -47,6 +47,5 @@ namespace RaftAlgorithm.States
             get { return Node.CurrentTerm; }
             set { Node.CurrentTerm = value; }
         }
-      //  public virtual void ReceiveMessage(RaftMessageBase message, INodeChannel channel) { }
     }
 }

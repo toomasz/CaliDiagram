@@ -23,7 +23,6 @@ namespace RaftAlgorithm.States
         public override RaftEventResult EnterState()
         {
             // Start new election(translate to candidate) of no sign of leader for random time specified here
-           // Node.RaftTimer.SetRandomTimeout(Node.RaftSettings.FollowerTimeoutFrom, Node.RaftSettings.FollowerTimeoutTo);
             return RaftEventResult.Empty.SetTimer(Node.RaftSettings.FollowerTimeoutFrom, Node.RaftSettings.FollowerTimeoutTo);
         }
 
@@ -49,7 +48,6 @@ namespace RaftAlgorithm.States
             if (Node.VotedFor == null || Node.VotedFor == requestVote.CandidateId)
             {
                 Node.VotedFor = requestVote.CandidateId;
-              //  Node.RaftTimer.SetRandomTimeout(Node.RaftSettings.FollowerTimeoutFrom*2, Node.RaftSettings.FollowerTimeoutTo*2);
                 return RaftEventResult.ReplyMessage(GrantVote).SetTimer(Node.RaftSettings.FollowerTimeoutFrom * 2, Node.RaftSettings.FollowerTimeoutTo * 2);
             }
             return RaftEventResult.Empty;
@@ -66,7 +64,6 @@ namespace RaftAlgorithm.States
                 return RaftEventResult.Empty;
 
             CurrentTerm = appendEntries.LeaderTerm;
-           // Node.RaftTimer.SetRandomTimeout(Node.RaftSettings.FollowerTimeoutFrom, Node.RaftSettings.FollowerTimeoutTo);
             return RaftEventResult.Empty.SetTimer(Node.RaftSettings.FollowerTimeoutFrom, Node.RaftSettings.FollowerTimeoutTo);
         }
 

@@ -1,5 +1,5 @@
 ﻿using CaliDiagram.ViewModels;
-using RaftDemo.Raft;
+using RaftDemo.NodeSoftware;
 using System;
 using System.Collections.Generic;
 using System.Linq;

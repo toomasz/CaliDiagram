@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 
-namespace RaftDemo.Raft
+namespace RaftDemo.NodeSoftware
 {
     public class TimeoutTimer: IDisposable
     {
-        NetworkSoftwareBase software;
-        public TimeoutTimer(NetworkSoftwareBase software)
+        NodeSoftwareBase software;
+        public TimeoutTimer(NodeSoftwareBase software)
         {
             this.software = software;
             isDisposed = false;

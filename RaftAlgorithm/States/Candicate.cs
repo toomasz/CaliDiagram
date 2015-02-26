@@ -34,8 +34,6 @@ namespace RaftAlgorithm.States
             // vote for self
             ProcessVote(Node.Id);
             Node.VotedFor = Node.Id;
-            // start random election timer
-          //  Node.RaftTimer.SetRandomTimeout(Node.RaftSettings.FollowerTimeoutFrom, Node.RaftSettings.FollowerTimeoutTo);
             // send request votes to all servers
             var requestVote = new RequestVote() { CandidateId = Node.Id, CandidateTerm = Node.CurrentTerm };
             return RaftEventResult.BroadcastMessage(requestVote).SetTimer(Node.RaftSettings.FollowerTimeoutFrom, Node.RaftSettings.FollowerTimeoutTo);

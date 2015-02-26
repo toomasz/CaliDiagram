@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 namespace RaftDemo.Model
 {
     [DataContract]
-    class DiagramNodeBig:DiagramNodeBase
+    class DiagramNodeServer:DiagramNodeBase
     {
         
     }

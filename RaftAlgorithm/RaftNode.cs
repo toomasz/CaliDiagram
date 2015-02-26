@@ -61,28 +61,21 @@ namespace RaftAlgorithm
                 throw new ArgumentException();
            
             State = newStateObject;
-            RaftEventResult result1 =  State.EnterState();
+            RaftEventResult enterStateResult =  State.EnterState();
             if (message != null)
             {
-                if (result1.MessageToSend != null)
+                if (enterStateResult.MessageToSend != null)
                     throw new Exception("WTF");
                 return OnMessageReceived(message);
             }
-            return result1;
+            return enterStateResult;
         }
 
         private RaftStateBase _State;
         public RaftStateBase State
         {
-            get { return _State; }
-            set
-            {
-                if (_State != value)
-                {
-                    _State = value;
-                   // NotifyOfPropertyChange(() => State);
-                }
-            }
+            get;
+            internal set;
         }
         
         private int _CurrentTerm;
@@ -95,7 +88,6 @@ namespace RaftAlgorithm
                 {
                     _CurrentTerm = value;
                     VotedFor = null;
-                  //  NotifyOfPropertyChange(() => CurrentTerm);
                 }
             }
         }
@@ -106,15 +98,8 @@ namespace RaftAlgorithm
         private string _VotedFor;
         public string VotedFor
         {
-            get { return _VotedFor; }
-            set
-            {
-                if (_VotedFor != value)
-                {
-                    _VotedFor = value;
-                 //   NotifyOfPropertyChange(() => VotedFor);
-                }
-            }
+            get;
+            internal set;
         }
         
         public RaftEventResult OnMessageReceived(RaftMessageBase raftMessage)

@@ -1,6 +1,5 @@
 ﻿using RaftAlgorithm;
 using RaftDemo.Model;
-using RaftDemo.Raft;
 using RaftDemo.ViewModels;
 using System;
 using System.Collections.Generic;

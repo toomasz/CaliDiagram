@@ -9,17 +9,16 @@ using System.Windows.Media;
 using RaftDemo.Views;
 using RaftDemo.ViewModels;
 using RaftDemo.Model;
-using RaftDemo.Raft;
 
 namespace RaftDemo
 {
     public class AppViewModel : PropertyChangedBase, IShell, IViewAware
     {
-        RaftEventListener raftWorldModel;
+        RaftSoundPlayer raftWorldModel;
         public AppViewModel(IWindowManager wm)
         {
             WorldSettings = new SimulationSettings(); // TODO load from xml
-            raftWorldModel = new RaftEventListener(WorldSettings);
+            raftWorldModel = new RaftSoundPlayer(WorldSettings);
             CommunicationModel = new LocalNetwork(WorldSettings);
             Diagram1 = new DiagramViewModel(new RaftDiagramDefinition(raftWorldModel, CommunicationModel, WorldSettings));
             modelLoader = new DiagramXmlSerializer(Diagram1);

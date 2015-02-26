@@ -1,6 +1,6 @@
 ﻿using CaliDiagram.ViewModels;
 using RaftDemo.Model;
-using RaftDemo.Raft;
+using RaftDemo.NodeSoftware;
 using System;
 
 namespace RaftDemo.ViewModels
@@ -8,16 +8,38 @@ namespace RaftDemo.ViewModels
     public class NetworkNodeViewModel: NodeBaseViewModel
     {
         INetworkModel commModel;
-        public NetworkNodeViewModel(INetworkModel commModel)
+        public NetworkNodeViewModel(INetworkModel commModel, NodeSoftwareBase nodeSoftware)
         {
             this.commModel = commModel;
             StartText = "Pause";
+            this.NodeSoftware = nodeSoftware;
+            NodeSoftware.IsStartedChanged += NodeSoftware_IsStartedChanged;
         }
 
-        public NetworkSoftwareBase NodeSoftware
+        void NodeSoftware_IsStartedChanged(object sender, bool e)
+        {
+            IsStarted = e;
+        }
+
+        private bool _IsStarted;
+        public bool IsStarted
+        {
+            get { return _IsStarted; }
+            set
+            {
+                if (_IsStarted != value)
+                {
+                    _IsStarted = value;
+                    NotifyOfPropertyChange(() => IsStarted);
+                }
+            }
+        }
+        
+
+        public NodeSoftwareBase NodeSoftware
         {
             get;
-            set;
+            private set;
         }
        
         public void ButtonPressed(string name)
@@ -49,6 +71,15 @@ namespace RaftDemo.ViewModels
             NodeSoftware.Start();
             NodeSoftware.OnMessageSent += NodeSoftware_OnMessageSent;
             NodeSoftware.Id = Name;
+        }
+
+        protected override bool OnNodeDeleting()
+        {
+            NodeSoftware.OnMessageSent -= NodeSoftware_OnMessageSent;
+            NodeSoftware.IsStartedChanged -= NodeSoftware_IsStartedChanged;
+            NodeSoftware.Stop();
+            Console.WriteLine(Name + " removed");
+            return true;
         }
 
         public void ButtonStartStopClick()
@@ -85,13 +116,7 @@ namespace RaftDemo.ViewModels
             var connection = e.DestinationChannel.Socket as ConnectionViewModel;
             connection.StartMessageAnimationFrom(this, e.Message);
         }
-        protected override bool OnNodeDeleting()
-        {
-            NodeSoftware.OnMessageSent -= NodeSoftware_OnMessageSent;
-            NodeSoftware.Stop();
-            Console.WriteLine(Name + " removed");
-            return true;
-        }
+        
         
         protected override void OnConnectionAdded(ConnectionViewModel connection)
         {
@@ -103,5 +128,6 @@ namespace RaftDemo.ViewModels
         {
             NodeSoftware.RaiseSocketDead(connection);
         }
+        
     }
 }

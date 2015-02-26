@@ -16,13 +16,14 @@ using RaftDemo.Model;
 using RaftAlgorithm;
 using RaftAlgorithm.Messages;
 using RaftAlgorithm.States;
+using RaftDemo.NodeSoftware;
 
 namespace RaftDemo.ViewModels
 {
     class DiagramNodeServerViewModel : NetworkNodeViewModel
     {
         RaftHost RaftHost;
-        public DiagramNodeServerViewModel(string name, INetworkModel commModel):base(commModel)
+        public DiagramNodeServerViewModel(string name, INetworkModel commModel, NodeSoftwareBase nodeSoftware):base(commModel, nodeSoftware)
         {
             this.Name = name;
         }

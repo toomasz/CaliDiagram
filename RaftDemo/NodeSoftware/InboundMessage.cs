@@ -1,5 +1,5 @@
 ﻿
-namespace RaftDemo.Raft
+namespace RaftDemo.NodeSoftware
 {
     /// <summary>
     /// Message origination from another component

@@ -1,6 +1,6 @@
 ﻿using RaftAlgorithm;
 using RaftAlgorithm.Messages;
-using RaftDemo.Raft;
+using RaftDemo.NodeSoftware;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace RaftDemo.Model
 {
-    public class RaftHost : NetworkSoftwareBase
+    public class RaftHost : NodeSoftwareBase
     {
         public RaftHost(IRaftEventListener raftEventListener, IRaftNodeSettings raftSettings, string Id)
         {

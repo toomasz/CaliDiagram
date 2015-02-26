@@ -5,20 +5,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace RaftDemo.Raft
+namespace RaftDemo.NodeSoftware
 {
-    public abstract class NetworkSoftwareBase: PropertyChangedBase
+    public abstract class NodeSoftwareBase
     {
+        public NodeSoftwareBase()
+        {
+            Channels = new List<INodeChannel>();
+        }
+
         public string Id
         {
             get;
             set;
         }
 
-        public NetworkSoftwareBase()
-        {
-            Channels = new List<INodeChannel>();
-        }
         List<INodeChannel> Channels
         {
             get;
@@ -33,12 +34,7 @@ namespace RaftDemo.Raft
 
         protected virtual void OnTimerElapsed(TimeoutTimer timer) { }
 
-
-        
-
         public event EventHandler<OutboundMessage> OnMessageSent;
-
-        
 
         INodeChannel[] ThreadSafeChannels
         {
@@ -100,6 +96,7 @@ namespace RaftDemo.Raft
                 SendMessage(channel, message, channelType);
             }            
         }
+        public event EventHandler<bool> IsStartedChanged;
 
         private bool _IsStarted;
         public bool IsStarted
@@ -110,7 +107,8 @@ namespace RaftDemo.Raft
                 if (_IsStarted != value)
                 {
                     _IsStarted = value;
-                    NotifyOfPropertyChange(() => IsStarted);
+                    if (IsStartedChanged != null)
+                        IsStartedChanged(this, value);
                 }
             }
         }
@@ -157,7 +155,6 @@ namespace RaftDemo.Raft
             t.Name = string.Format("Event loop {0}", Id);
             t.Start();
         }
-        CancellationTokenSource cancelToken = new CancellationTokenSource();
         void EventLoop()
         {
             Console.WriteLine("Started event queue worker");
