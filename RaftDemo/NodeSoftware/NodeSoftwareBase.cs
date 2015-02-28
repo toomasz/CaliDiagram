@@ -9,10 +9,16 @@ namespace RaftDemo.NodeSoftware
 {
     public abstract class NodeSoftwareBase
     {
-        public NodeSoftwareBase()
+        public NodeSoftwareBase(INetworkModel networkModel)
         {
             Channels = new List<INodeChannel>();
+            this.NetworkModel = networkModel;
         }
+        public INetworkModel NetworkModel
+        {
+            get;
+            private set;
+        }       
 
         public string Id
         {
@@ -117,6 +123,8 @@ namespace RaftDemo.NodeSoftware
 
         public void Start()
         {
+            if (IsStarted)
+                return;
             InputQueue = new BlockingCollection<object>();
             lock (isStartedLock)
             {
@@ -130,6 +138,8 @@ namespace RaftDemo.NodeSoftware
 
         public void Stop()
         {
+            if (!IsStarted)
+                return;
             InputQueue.CompleteAdding();
             lock (isStartedLock)
             {

@@ -19,41 +19,55 @@ namespace RaftDemo
         int serverNo = 1;
         int brokerNo = 1;
 
-        
-
         string GenerateRandomHex(int length)
         {
             var random = new Random();
             return String.Format("{0:x6}", random.Next(0x1000000));
         }
+
         IRaftEventListener raftEventListener;
         SimulationSettings simulationSettings;
 
-        public RaftDiagramDefinition(RaftSoundPlayer raftEventListener, INetworkModel commModel, SimulationSettings worldSettings)
+        public RaftDiagramDefinition(RaftSoundPlayer raftEventListener, INetworkModel networkModel, SimulationSettings worldSettings)
         {
             this.raftEventListener = raftEventListener;
             this.simulationSettings = worldSettings;
+
+            // brokers
             AddModelFor<DiagramNodeBrokerViewModel, DiagramNodeBroker>(
                 "Broker",
                 (p) => new DiagramNodeBrokerViewModel(string.Format("Br{0}", brokerNo++)) { Location = p },
                 (vm) => new DiagramNodeBroker() { Location = vm.Location, Name = vm.Name },
                 (m) => new DiagramNodeBrokerViewModel(m.Name) { Location = m.Location }
             );
+
+            // clients
             AddModelFor<DiagramNodeClientViewModel, DiagramNodeClient>(
                 "Client",
-                (p) => new DiagramNodeClientViewModel(string.Format("{0}", GenerateRandomHex(8))) { Location = p },
+                (p) => 
+                {
+                    string cliendId = GenerateRandomHex(4);
+                    RaftClient raftClient = new RaftClient(networkModel, cliendId);
+                    return new DiagramNodeClientViewModel(raftClient) { Location = p };
+                },
                 (vm) => new DiagramNodeClient() { Location = vm.Location, Name = vm.Name },
-                (m) => new DiagramNodeClientViewModel(m.Name) { Location = m.Location }
+                (m) =>
+                    {
+                        RaftClient raftClient = new RaftClient(networkModel, m.Name);
+                        return new DiagramNodeClientViewModel(raftClient) { Location = m.Location };
+                    }
             );
+
+            // servers
             AddModelFor<DiagramNodeServerViewModel, DiagramNodeServer>(
                 "Server",
                 (p) =>
                     {
                         string raftNodeId = GenerateRandomHex(4);
 
-                        NodeSoftwareBase serverSoftware = new RaftHost(raftEventListener, simulationSettings, raftNodeId);
+                        RaftHost serverSoftware = new RaftHost(networkModel, raftEventListener, simulationSettings, raftNodeId);
                         //this looks nasty
-                        return new DiagramNodeServerViewModel(raftNodeId, commModel, serverSoftware) 
+                        return new DiagramNodeServerViewModel(serverSoftware) 
                         { 
                             Location = p
                         };
@@ -61,8 +75,8 @@ namespace RaftDemo
                 (vm) => new DiagramNodeServer() { Location = vm.Location, Name = vm.Name },
                 (m) =>
                     {
-                        NodeSoftwareBase serverSoftware = new RaftHost(raftEventListener, simulationSettings, m.Name);
-                        return new DiagramNodeServerViewModel(m.Name, commModel, serverSoftware) 
+                        RaftHost serverSoftware = new RaftHost(networkModel, raftEventListener, simulationSettings, m.Name);
+                        return new DiagramNodeServerViewModel(serverSoftware) 
                         { 
                             Location = m.Location                            
                         };
@@ -119,7 +133,27 @@ namespace RaftDemo
                 text.Foreground = Brushes.White;
 
                 return text;
-            }            
+            }     
+            else if(packet is Message)
+            {
+                Message msg = packet as Message;
+                Border border = new Border();
+                border.BorderThickness = new Thickness(1);
+                border.BorderBrush = Brushes.Red;
+                border.Background = Brushes.White;
+                border.CornerRadius = new CornerRadius(1);         
+                border.Width = 30;
+                border.Height = 15;
+
+                TextBlock text = new TextBlock();
+                text.Text = msg.Operation;
+                text.Foreground = Brushes.Red;
+                text.TextAlignment = TextAlignment.Center;
+                text.FontSize = 10;
+                border.Child = text;
+                return border;
+               
+            }
             else
             {
 

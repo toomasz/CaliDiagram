@@ -1,21 +1,6 @@
-﻿using System.Collections.ObjectModel;
-using CaliDiagram.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.RightsManagement;
-using System.Text;
-using System.Threading.Tasks;
-using System.Net.NetworkInformation;
-using System.Collections.Concurrent;
-using System.Threading;
-using System.Windows;
-using System.Windows.Threading;
-using System.Windows.Media;
-using RaftDemo.Model;
-using RaftAlgorithm;
-using RaftAlgorithm.Messages;
+﻿using RaftAlgorithm;
 using RaftAlgorithm.States;
+using RaftDemo.Model;
 using RaftDemo.NodeSoftware;
 
 namespace RaftDemo.ViewModels
@@ -23,24 +8,33 @@ namespace RaftDemo.ViewModels
     class DiagramNodeServerViewModel : NetworkNodeViewModel
     {
         RaftHost RaftHost;
-        public DiagramNodeServerViewModel(string name, INetworkModel commModel, NodeSoftwareBase nodeSoftware):base(commModel, nodeSoftware)
+        public DiagramNodeServerViewModel(RaftHost raftHost)
+            : base(raftHost)
         {
-            this.Name = name;
+            Name = raftHost.Id;
+            this.RaftHost = raftHost;
+            UpdateViewModel();
         }
         protected override void OnNodeCreated()
         {
             base.OnNodeCreated();
-            RaftHost = NodeSoftware as RaftHost;
-            RaftState = RaftHost.Raft.State;
             if (RaftHost != null)
                 RaftHost.OnRaftEvent += host_OnRaftEvent;
+            UpdateViewModel();
         }
 
         void host_OnRaftEvent(object sender, RaftEventResult e)
         {
+            UpdateViewModel();
+        }
+
+        void UpdateViewModel()
+        {
             RaftState = RaftHost.Raft.State;
             CurrentTerm = RaftHost.Raft.CurrentTerm;
             NodeId = RaftHost.Raft.Id;
+            VotedFor = RaftHost.Raft.VotedFor;
+            CurrentIndex = RaftHost.Raft.CurrentIndex;
         }
 
         private RaftStateBase _RaftState;
@@ -81,6 +75,34 @@ namespace RaftDemo.ViewModels
                 {
                     _CurrentTerm = value;
                     NotifyOfPropertyChange(() => CurrentTerm);
+                }
+            }
+        }
+
+        private string _VotedFor;
+        public string VotedFor
+        {
+            get { return _VotedFor; }
+            set
+            {
+                if (_VotedFor != value)
+                {
+                    _VotedFor = value;
+                    NotifyOfPropertyChange(() => VotedFor);
+                }
+            }
+        }
+
+        private long _CurrentIndex;
+        public long CurrentIndex
+        {
+            get { return _CurrentIndex; }
+            set
+            {
+                if (_CurrentIndex != value)
+                {
+                    _CurrentIndex = value;
+                    NotifyOfPropertyChange(() => CurrentIndex);
                 }
             }
         }

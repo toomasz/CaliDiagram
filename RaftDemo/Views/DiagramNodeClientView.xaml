@@ -2,7 +2,8 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:cal="http://www.caliburnproject.org" 
              mc:Ignorable="d">
     <Border BorderThickness="1" BorderBrush="Red" Padding="4" Background="SlateBlue">
         <StackPanel Orientation="Vertical">
@@ -19,7 +20,7 @@
                  FontWeight="Bold" 
                  >            
         </TextBlock>
-            <Button Width="20" Height="10"></Button>
+            <Button Width="20" cal:Message.Attach="[Event Click] = [Action ButtonPressed('op')]" Height="10"></Button>
         </StackPanel>   
     </Border>
 </UserControl>

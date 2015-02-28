@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using Caliburn.Micro;
+﻿using Caliburn.Micro;
 using CaliDiagram.ViewModels;
 using CaliDiagram.Views;
+using System;
+using System.Windows;
 
 namespace CaliDiagram
 {

@@ -1,5 +1,6 @@
 ﻿using RaftAlgorithm;
 using RaftAlgorithm.Messages;
+using RaftAlgorithm.States;
 using RaftDemo.NodeSoftware;
 using System;
 using System.Collections.Generic;
@@ -11,9 +12,12 @@ namespace RaftDemo.Model
 {
     public class RaftHost : NodeSoftwareBase
     {
-        public RaftHost(IRaftEventListener raftEventListener, IRaftNodeSettings raftSettings, string Id)
+        public RaftHost(INetworkModel networkModel, IRaftEventListener raftEventListener, IRaftNodeSettings raftSettings, string Id):
+            base(networkModel)
         {
             this.Id = Id;
+            if (Id == null)
+                throw new ArgumentException("Id");
             Raft = new RaftNode(raftEventListener, raftSettings, Id);            
         }
 
@@ -40,13 +44,32 @@ namespace RaftDemo.Model
         {
             RaftTimer.Dispose();
         }
+        INodeChannel leaderChannel;
         protected override void OnMessageReceived(INodeChannel channel, object message)
         {
             RaftMessageBase raftMessage = message as RaftMessageBase;
+            if (raftMessage is AppendEntries)
+                leaderChannel = channel;
+
             if (raftMessage != null)
             {
                 var raftOperationResult = Raft.OnMessageReceived(raftMessage);
                 ProcessRaftResult(raftOperationResult, channel);
+            }
+
+            Message messageFromClient = message as Message;
+            if(messageFromClient != null)
+            {
+                if(Raft.State is Leader)
+                {
+                    // apply state
+                }
+                else
+                {
+                    if(leaderChannel != null)
+                        SendMessage(leaderChannel, messageFromClient);
+                    // forward message to leader
+                }
             }
         }
         protected override void OnTimerElapsed(TimeoutTimer timer)

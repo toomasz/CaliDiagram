@@ -13,6 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
+    <ExpressionBlendVersion>12.0.51020.0</ExpressionBlendVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -49,6 +50,8 @@
     <Reference Include="MahApps.Metro">
       <HintPath>..\packages\MahApps.Metro.1.0.1-ALPHA027\lib\net45\MahApps.Metro.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Expression.Effects" />
+    <Reference Include="Microsoft.Expression.Interactions" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
@@ -81,7 +84,9 @@
     <Compile Include="Model\DiagramNodeServer.cs" />
     <Compile Include="Model\DiagramNodeBroker.cs" />
     <Compile Include="Model\DiagramNodeClient.cs" />
-    <Compile Include="Model\INetworkModel.cs" />
+    <Compile Include="Model\Messages.cs" />
+    <Compile Include="Model\RaftClient.cs" />
+    <Compile Include="NodeSoftware\INetworkModel.cs" />
     <Compile Include="Model\LocalNetwork.cs" />
     <Compile Include="Model\RaftHost.cs" />
     <Compile Include="Model\SimulationSettings.cs" />
@@ -98,7 +103,7 @@
     <Compile Include="RaftDiagramDefinition.cs" />
     <Compile Include="ViewModels\NetworkNodeViewModel.cs" />
     <Compile Include="ViewModels\ClientToServerConnectionViewModel.cs" />
-    <Compile Include="ViewModels\DiagramNodeSmallViewModel.cs" />
+    <Compile Include="ViewModels\DiagramNodeClientViewModel.cs" />
     <Compile Include="ViewModels\DiagramNodeServerViewModel.cs" />
     <Compile Include="ViewModels\IShell.cs" />
     <Compile Include="ViewModels\AppViewModel.cs" />

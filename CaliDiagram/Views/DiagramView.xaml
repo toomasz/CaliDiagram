@@ -51,7 +51,7 @@
 
       
         <!-- Dev node entities-->
-       <ItemsControl Background="Transparent" Name="Nodes">
+       <ItemsControl Background="Transparent" Name="Nodes" Panel.ZIndex="2">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <Canvas></Canvas>

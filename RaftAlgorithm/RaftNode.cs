@@ -12,23 +12,29 @@ namespace RaftAlgorithm
 {
     public class RaftNode
     {
-        public RaftNode(IRaftEventListener raftEventListener, IRaftNodeSettings raftSettings, string Id)
+        public RaftNode(IRaftEventListener raftEventListener, IRaftNodeSettings raftSettings, string id)
         {
             if (raftEventListener == null)
                 throw new ArgumentNullException("raftWorld");
+            if (id == null)
+                throw new ArgumentException("id");
+            this._id = id;
+
             RaftEventListener = raftEventListener;
             RaftSettings = raftSettings;
             CurrentTerm = 0;
             LogEntries = new List<LogEntry>();
             LogEntries.Add(new LogEntry() { Data = "A=2", CommitIndex = 1, Term = 1 });
             LogEntries.Add(new LogEntry() { Data = "C=1", CommitIndex = 2, Term = 1 });
-            this.Id = Id;
+            
         }
-
+        private readonly string _id;
         public string Id
         {
-            get;
-            private set;
+            get
+            {
+                return _id;
+            }
         }
 
         public IRaftEventListener RaftEventListener
@@ -90,6 +96,12 @@ namespace RaftAlgorithm
                     VotedFor = null;
                 }
             }
+        }
+
+        public int CurrentIndex
+        {
+            get;
+            internal set;
         }
 
         /// <summary>

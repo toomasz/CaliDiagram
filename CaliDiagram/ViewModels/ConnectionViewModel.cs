@@ -180,14 +180,15 @@ namespace CaliDiagram.ViewModels
                     SendPacketInternal(from, message);
                 }
                 else
-                    ParentDiagram.Canvas.Dispatcher.BeginInvoke(new System.Action(() => SendPacketInternal(from, message)));
+                    ParentDiagram.Canvas.Dispatcher.BeginInvoke(new System.Action(() => SendPacketInternal(from, message)),
+                        System.Windows.Threading.DispatcherPriority.DataBind);
             }
             catch (Exception ex)
             {
 
             }
         }
-        public void SendPacketInternal(NodeBaseViewModel from, object message)
+        void SendPacketInternal(NodeBaseViewModel from, object message)
         {
             // packet view is created in definition
             FrameworkElement vis = ParentDiagram.Definition.CreateVisualForPacket(message);

@@ -9,6 +9,7 @@ using System.Windows.Media;
 using RaftDemo.Views;
 using RaftDemo.ViewModels;
 using RaftDemo.Model;
+using RaftDemo.NodeSoftware;
 
 namespace RaftDemo
 {

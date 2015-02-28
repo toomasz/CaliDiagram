@@ -31,7 +31,8 @@ namespace RaftDemo.NodeSoftware
             timer.Interval = ms;
             timer.Elapsed -= timer_Elapsed;
             timer.Elapsed += timer_Elapsed;
-            
+            if (!software.IsStarted)
+                return;
             timer.Start();
             if (Application.Current == null)
                 return;

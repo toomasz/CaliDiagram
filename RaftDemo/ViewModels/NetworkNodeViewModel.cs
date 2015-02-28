@@ -7,10 +7,8 @@ namespace RaftDemo.ViewModels
 {
     public class NetworkNodeViewModel: NodeBaseViewModel
     {
-        INetworkModel commModel;
-        public NetworkNodeViewModel(INetworkModel commModel, NodeSoftwareBase nodeSoftware)
+        public NetworkNodeViewModel(NodeSoftwareBase nodeSoftware)
         {
-            this.commModel = commModel;
             StartText = "Pause";
             this.NodeSoftware = nodeSoftware;
             NodeSoftware.IsStartedChanged += NodeSoftware_IsStartedChanged;
@@ -66,7 +64,7 @@ namespace RaftDemo.ViewModels
 
             foreach (var connection in Connections)
             {
-                NodeSoftware.RaiseChannelAdded(commModel.CreateChannel(connection, this));
+                NodeSoftware.RaiseChannelAdded(NodeSoftware.NetworkModel.CreateChannel(connection, this));
             }
             NodeSoftware.Start();
             NodeSoftware.OnMessageSent += NodeSoftware_OnMessageSent;
@@ -120,7 +118,7 @@ namespace RaftDemo.ViewModels
         
         protected override void OnConnectionAdded(ConnectionViewModel connection)
         {
-            INodeChannel newChannel= commModel.CreateChannel(connection, this);
+            INodeChannel newChannel= NodeSoftware.NetworkModel.CreateChannel(connection, this);
           
             NodeSoftware.RaiseChannelAdded(newChannel);          
         }
