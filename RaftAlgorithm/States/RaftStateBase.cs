@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace RaftAlgorithm.States
 {
-    public abstract class RaftStateBase
+    public abstract class RaftStateBase<T>
     {
-        public RaftStateBase(RaftNode Node)
+        public RaftStateBase(RaftNode<T> Node)
         {
             this.Node = Node;
         }
-        protected RaftNode Node
+        protected RaftNode<T> Node
         {
             get;
             private set;

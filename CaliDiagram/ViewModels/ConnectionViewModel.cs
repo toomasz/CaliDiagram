@@ -171,7 +171,7 @@ namespace CaliDiagram.ViewModels
                 return 1000;
             }
         }
-        public void SendPacket(NodeBaseViewModel from, object message)
+        void SendPacket(NodeBaseViewModel from, object message)
         {
             try
             {

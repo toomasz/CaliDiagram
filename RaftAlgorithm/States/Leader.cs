@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace RaftAlgorithm.States
 {
-    public class Leader : RaftStateBase
+    public class Leader<T> : RaftStateBase<T>
     {
-        public Leader(RaftNode node):base(node)
+        public Leader(RaftNode<T> node):base(node)
         {
             
         }

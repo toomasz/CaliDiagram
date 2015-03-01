@@ -37,8 +37,8 @@ namespace RaftDemo.ViewModels
             CurrentIndex = RaftHost.Raft.CurrentIndex;
         }
 
-        private RaftStateBase _RaftState;
-        public RaftStateBase RaftState
+        private RaftNodeState _RaftState;
+        public RaftNodeState RaftState
         {
             get { return _RaftState; }
             set

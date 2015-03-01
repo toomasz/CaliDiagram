@@ -10,7 +10,7 @@ using System.Collections.Generic;
 
 namespace RaftAlgorithm
 {
-    public class RaftNode
+    public class RaftNode<T>
     {
         public RaftNode(IRaftEventListener raftEventListener, IRaftNodeSettings raftSettings, string id)
         {
@@ -23,9 +23,7 @@ namespace RaftAlgorithm
             RaftEventListener = raftEventListener;
             RaftSettings = raftSettings;
             CurrentTerm = 0;
-            LogEntries = new List<LogEntry>();
-            LogEntries.Add(new LogEntry() { Data = "A=2", CommitIndex = 1, Term = 1 });
-            LogEntries.Add(new LogEntry() { Data = "C=1", CommitIndex = 2, Term = 1 });
+           
             
         }
         private readonly string _id;
@@ -47,7 +45,7 @@ namespace RaftAlgorithm
             get;
             private set;
         }
-        public List<LogEntry> LogEntries
+        public List<LogEntry<T>> LogEntries
         {
             get;
             set;
@@ -55,19 +53,20 @@ namespace RaftAlgorithm
 
         public RaftEventResult TranslateToState(RaftNodeState newState, RaftMessageBase message = null)
         {
-            RaftStateBase newStateObject = null;
+            RaftStateBase<T> newStateObject = null;
 
             if (newState == RaftNodeState.Candidate)
-                newStateObject = new Candicate(this);
+                newStateObject = new Candicate<T>(this);
             else if (newState == RaftNodeState.Follower)
-                newStateObject = new Follower(this);
+                newStateObject = new Follower<T>(this);
             else if (newState == RaftNodeState.Leader)
-                newStateObject = new Leader(this);
+                newStateObject = new Leader<T>(this);
             else
                 throw new ArgumentException();
-           
-            State = newStateObject;
-            RaftEventResult enterStateResult =  State.EnterState();
+            State = newState;
+
+            StateObject = newStateObject;
+            RaftEventResult enterStateResult =  StateObject.EnterState();
             if (message != null)
             {
                 if (enterStateResult.MessageToSend != null)
@@ -77,11 +76,16 @@ namespace RaftAlgorithm
             return enterStateResult;
         }
 
-        private RaftStateBase _State;
-        public RaftStateBase State
+        public RaftNodeState State
         {
             get;
-            internal set;
+            private set;
+        }
+
+        RaftStateBase<T> StateObject
+        {
+            get;
+            set;
         }
         
         private int _CurrentTerm;
@@ -120,22 +124,22 @@ namespace RaftAlgorithm
             /* Append entries */
             var appEntries = raftMessage as AppendEntries;
             if (appEntries != null)
-                raftResult = State.ReceiveAppendEntries(appEntries);
+                raftResult = StateObject.ReceiveAppendEntries(appEntries);
 
             /* Append entries response */
             var appEntriesResponse = raftMessage as AppendEntriesResponse;
             if (appEntriesResponse != null)
-                raftResult = State.ReceiveAppendEntriesResponse(appEntriesResponse);
+                raftResult = StateObject.ReceiveAppendEntriesResponse(appEntriesResponse);
 
             /* Request vote */
             var requestVote = raftMessage as RequestVote;
             if (requestVote != null)
-                raftResult = State.ReceiveRequestVote(requestVote);
+                raftResult = StateObject.ReceiveRequestVote(requestVote);
 
             /* Request vote response */
             var requestVoteResponse = raftMessage as RequestVoteResponse;
             if (requestVoteResponse != null)
-                raftResult = State.ReceiveRequestVoteResponse(requestVoteResponse);
+                raftResult = StateObject.ReceiveRequestVoteResponse(requestVoteResponse);
 
             if (raftResult == null)
                 throw new InvalidOperationException("Raft message processing returned null");
@@ -144,7 +148,7 @@ namespace RaftAlgorithm
 
         public RaftEventResult OnTimerElapsed()
         {
-            return State.OnTimeout();
+            return StateObject.OnTimeout();
         }      
     }
 }

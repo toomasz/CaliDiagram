@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace RaftAlgorithm
 {
-    public class LogEntry
+    public class LogEntry<T>
     {
         public override string ToString()
         {
-            return Data;
+            return Data.ToString();
         }
-        public string Data
+        public T Data
         {
             get;
             set;

@@ -18,10 +18,10 @@ namespace RaftDemo.Model
             this.Id = Id;
             if (Id == null)
                 throw new ArgumentException("Id");
-            Raft = new RaftNode(raftEventListener, raftSettings, Id);            
+            Raft = new RaftNode<string>(raftEventListener, raftSettings, Id);            
         }
 
-        public RaftNode Raft
+        public RaftNode<string> Raft
         {
             get;
             private set;
@@ -60,7 +60,7 @@ namespace RaftDemo.Model
             Message messageFromClient = message as Message;
             if(messageFromClient != null)
             {
-                if(Raft.State is Leader)
+                if(Raft.State == RaftNodeState.Leader)
                 {
                     // apply state
                 }

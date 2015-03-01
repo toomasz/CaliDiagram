@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace RaftAlgorithm.States
 {
-    public class Candicate : RaftStateBase
+    public class Candicate<T> : RaftStateBase<T>
     {
-        public Candicate(RaftNode node)
+        public Candicate(RaftNode<T> node)
             : base(node)
         {
             

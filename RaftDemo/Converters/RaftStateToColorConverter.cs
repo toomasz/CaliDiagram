@@ -1,5 +1,4 @@
-﻿using RaftAlgorithm.Messages;
-using RaftAlgorithm.States;
+﻿using RaftAlgorithm;
 using System;
 using System.Globalization;
 using System.Windows.Data;
@@ -11,22 +10,26 @@ namespace RaftDemo.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (!(value is RaftNodeState))
+                return null;
+
+            RaftNodeState state = (RaftNodeState)value;
             if (parameter == null)
             {
-                if (value is Follower)
+                if (state == RaftNodeState.Follower)
                     return Brushes.LightBlue;
-                if (value is Leader)
+                if (state == RaftNodeState.Leader)
                     return Brushes.DarkRed;
-                if (value is Candicate)
+                if (state == RaftNodeState.Candidate)
                     return Brushes.Orange;
             }
             else
             {
-                if (value is Follower)
+                if (state == RaftNodeState.Follower)
                     return Brushes.Black;
-                if (value is Leader)
+                if (state == RaftNodeState.Leader)
                     return Brushes.White;
-                if (value is Candicate)
+                if (state == RaftNodeState.Candidate)
                     return Brushes.Black;
             }
             return Brushes.Black;

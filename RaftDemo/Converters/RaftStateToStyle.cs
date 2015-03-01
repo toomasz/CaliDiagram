@@ -1,12 +1,7 @@
-﻿using RaftAlgorithm.States;
+﻿using RaftAlgorithm;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
-using System.Windows.Media;
 
 namespace RaftDemo.Converters
 {
@@ -29,11 +24,16 @@ namespace RaftDemo.Converters
         }
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (value is Follower)
+            if (!(value is RaftNodeState))
+                return null;
+
+            RaftNodeState state = (RaftNodeState)value;
+
+            if (state == RaftNodeState.Follower)
                 return FollowerStyle;
-            if (value is Leader)
+            if (state == RaftNodeState.Leader)
                 return LeaderStyle;
-            if (value is Candicate)
+            if (state == RaftNodeState.Candidate)
                 return CandidateStyle;
             return null;
         }
