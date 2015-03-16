@@ -30,8 +30,8 @@ namespace CaliDiagram
         {
             Debug.Assert(connection.From != null, "From connection is null");
             Debug.Assert(connection.To != null, "To connection is null");
-            Debug.Assert(!connection.From.Rect.IsEmpty, "Rectangle is empty");
-            Debug.Assert(!connection.From.Rect.IsEmpty, "Rectangle is empty");
+            Debug.Assert(!connection.From.Rect.IsEmpty, "From Rectangle is empty");
+            Debug.Assert(!connection.To.Rect.IsEmpty, "To Rectangle is empty");
             return GetAttachmentSidesForConnection(connection.From.Rect, connection.To.Rect);
         }
     }

@@ -42,8 +42,9 @@
     <Compile Include="IRaftEventListener.cs" />
     <Compile Include="IRaftNodeSettings.cs" />
     <Compile Include="LogEntry.cs" />
-    <Compile Include="Messages\AppendEntries.cs" />
+    <Compile Include="Messages\AppendEntriesRPC.cs" />
     <Compile Include="Messages\AppendEntriesResult.cs" />
+    <Compile Include="Messages\ClientRequestRPC.cs" />
     <Compile Include="Messages\RaftMessageBase.cs" />
     <Compile Include="Messages\RequestVote.cs" />
     <Compile Include="Messages\RequestVoteResult.cs" />

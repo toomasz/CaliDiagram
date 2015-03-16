@@ -1,5 +1,6 @@
 ﻿using RaftAlgorithm;
 using System;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
@@ -22,7 +23,7 @@ namespace RaftDemo.Converters
             get;
             set;
         }
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (!(value is RaftNodeState))
                 return null;
@@ -38,7 +39,7 @@ namespace RaftDemo.Converters
             return null;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return null;
         }

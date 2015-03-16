@@ -15,7 +15,7 @@
                 <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/BaseLight.xaml" />
 
                 <ResourceDictionary Source="Styles/BlueButton.xaml"></ResourceDictionary>
-                
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/FlatSlider.xaml" />
             </ResourceDictionary.MergedDictionaries>
         
             <Style TargetType="Border" x:Key="CandidateStyle">
@@ -41,7 +41,7 @@
             </Style>
             <Style TargetType="Border" x:Key="LeaderStyle">
                 <Setter Property="BorderBrush"  Value="Red"></Setter>
-                <Setter Property="BorderThickness" Value="2"></Setter>
+                <Setter Property="BorderThickness" Value="1"></Setter>
             </Style>
             <Style TargetType="Border" x:Key="FollowerStyle">
                 <Setter Property="BorderBrush"  Value="Black"></Setter>

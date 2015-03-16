@@ -2,6 +2,7 @@
 using RaftAlgorithm.States;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 /*
  * notes - election timeout 150 - 300 ms  
@@ -23,9 +24,14 @@ namespace RaftAlgorithm
             RaftEventListener = raftEventListener;
             RaftSettings = raftSettings;
             CurrentTerm = 0;
-           
-            
+            Log = new ObservableCollection<LogEntry<T>>();
         }
+
+        public void Start()
+        {
+            RaftEventResult result = TranslateToState(RaftNodeState.Follower);
+        }
+
         private readonly string _id;
         public string Id
         {
@@ -45,13 +51,8 @@ namespace RaftAlgorithm
             get;
             private set;
         }
-        public List<LogEntry<T>> LogEntries
-        {
-            get;
-            set;
-        }
 
-        public RaftEventResult TranslateToState(RaftNodeState newState, RaftMessageBase message = null)
+        internal RaftEventResult TranslateToState(RaftNodeState newState, RaftMessageBase message = null)
         {
             RaftStateBase<T> newStateObject = null;
 
@@ -88,6 +89,14 @@ namespace RaftAlgorithm
             set;
         }
         
+        public int CurrentIndex
+        {
+            get;
+            internal set;
+        }
+        /// <summary>
+        /// Current term [ persisted state]
+        /// </summary>
         private int _CurrentTerm;
         public int CurrentTerm
         {
@@ -101,15 +110,8 @@ namespace RaftAlgorithm
                 }
             }
         }
-
-        public int CurrentIndex
-        {
-            get;
-            internal set;
-        }
-
         /// <summary>
-        /// Candiate Id that received vote in current term
+        /// Candiate Id that received vote in current term [ persisted state]
         /// </summary>
         private string _VotedFor;
         public string VotedFor
@@ -117,12 +119,22 @@ namespace RaftAlgorithm
             get;
             internal set;
         }
-        
+
+        /// <summary>
+        /// Commit log [ persisted state]
+        /// </summary>
+        /// <returns></returns>
+        public ObservableCollection<LogEntry<T>> Log
+        {
+            get;
+            private set;
+        }
+
         public RaftEventResult OnMessageReceived(RaftMessageBase raftMessage)
         {
             RaftEventResult raftResult = null;
             /* Append entries */
-            var appEntries = raftMessage as AppendEntries;
+            var appEntries = raftMessage as AppendEntriesRPC<T>;
             if (appEntries != null)
                 raftResult = StateObject.ReceiveAppendEntries(appEntries);
 
@@ -141,9 +153,28 @@ namespace RaftAlgorithm
             if (requestVoteResponse != null)
                 raftResult = StateObject.ReceiveRequestVoteResponse(requestVoteResponse);
 
+            /* client rpc */
+            var clientRequest = raftMessage as ClientRequestRPC<T>;
+            if(clientRequest != null)
+            {
+                
+                CommitEntryBegin(clientRequest);
+                raftResult = RaftEventResult.Empty;
+            }
+
             if (raftResult == null)
                 throw new InvalidOperationException("Raft message processing returned null");
+
             return raftResult;
+        }
+        
+        bool CommitEntryBegin(ClientRequestRPC<T> request)
+        {
+            int nextIndex = Log.Count + 1;
+            LogEntry<T> newEntry = new LogEntry<T>(nextIndex, CurrentTerm, request.Message);
+            Log.Add(newEntry);
+     
+            return true;
         }
 
         public RaftEventResult OnTimerElapsed()

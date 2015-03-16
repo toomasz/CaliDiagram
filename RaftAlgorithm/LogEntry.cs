@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RaftAlgorithm
+﻿namespace RaftAlgorithm
 {
     public class LogEntry<T>
     {
+        public LogEntry(int commitIndex, int term, T data)
+        {
+            CommitIndex = commitIndex;
+            Term = term;
+            Data = data;
+        }
         public override string ToString()
         {
             return Data.ToString();

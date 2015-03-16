@@ -21,7 +21,8 @@ namespace RaftDemo
             WorldSettings = new SimulationSettings(); // TODO load from xml
             raftWorldModel = new RaftSoundPlayer(WorldSettings);
             CommunicationModel = new LocalNetwork(WorldSettings);
-            Diagram1 = new DiagramViewModel(new RaftDiagramDefinition(raftWorldModel, CommunicationModel, WorldSettings));
+            RaftDiagramDefinition diagramDefinition = new RaftDiagramDefinition(raftWorldModel, CommunicationModel, WorldSettings);
+            Diagram1 = new DiagramViewModel(diagramDefinition);
             modelLoader = new DiagramXmlSerializer(Diagram1);
             
             RightPanel = new SimulationSettingsViewModel(this, WorldSettings);

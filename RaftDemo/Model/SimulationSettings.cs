@@ -14,7 +14,7 @@ namespace RaftDemo.Model
             SoundEnabled = false;
             WorldSpeedFactor = 0.1;
             ServerToServerLatencySetting = 33;
-            ClientToServerLatencySetting = 150;
+            ClientToServerLatencySetting = 40;
 
             LeaderTimeoutFromSetting = 70;
             LeaderTimeoutToSetting = 70;

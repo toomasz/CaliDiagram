@@ -101,6 +101,7 @@
     <Compile Include="ViewModels\AttachDescriptorFromViewModel.cs" />
     <Compile Include="ViewModels\DiagramNodeBrokerViewModel.cs" />
     <Compile Include="RaftDiagramDefinition.cs" />
+    <Compile Include="ViewModels\LogEntryViewModel.cs" />
     <Compile Include="ViewModels\NetworkNodeViewModel.cs" />
     <Compile Include="ViewModels\ClientToServerConnectionViewModel.cs" />
     <Compile Include="ViewModels\DiagramNodeClientViewModel.cs" />
@@ -123,6 +124,9 @@
     </Compile>
     <Compile Include="Views\DiagramNodeServerView.xaml.cs">
       <DependentUpon>DiagramNodeServerView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\LogEntryView.xaml.cs">
+      <DependentUpon>LogEntryView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\SimulationSettingsView.xaml.cs">
       <DependentUpon>SimulationSettingsView.xaml</DependentUpon>
@@ -172,6 +176,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\DiagramNodeServerView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\LogEntryView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

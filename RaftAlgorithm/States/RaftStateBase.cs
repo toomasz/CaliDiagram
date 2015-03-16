@@ -23,7 +23,7 @@ namespace RaftAlgorithm.States
 
         public abstract RaftEventResult ReceiveRequestVote(RequestVote requestVote);
         public abstract RaftEventResult ReceiveRequestVoteResponse(RequestVoteResponse requestVoteResponse);
-        public abstract RaftEventResult ReceiveAppendEntries(AppendEntries appendEntries);
+        public abstract RaftEventResult ReceiveAppendEntries(AppendEntriesRPC<T> appendEntries);
         public abstract RaftEventResult ReceiveAppendEntriesResponse(AppendEntriesResponse appendEntriesResponse);
 
 

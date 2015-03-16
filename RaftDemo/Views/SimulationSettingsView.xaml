@@ -11,19 +11,21 @@
         <StackPanel DockPanel.Dock="Top" Orientation="Vertical">
         <GroupBox Header="World settings">
             <StackPanel  Orientation="Vertical" >
-       
-                <Label>World speed factor:</Label>
-                <Slider Minimum="0.05" Name="WorldSpeed" Value="0.2" Maximum="2"></Slider>
+                 <Label FontWeight="Bold">Networ/simulation settings:</Label>
+                    <Label>World speed factor:</Label>
+                    <Slider Minimum="0.05" Name="WorldSpeed" Value="0.2" Maximum="2"></Slider>
                     <TextBlock Text="{Binding WorldSpeedStr,FallbackValue='0.1x'}"></TextBlock>
-                <CheckBox Margin="0,10,0,0" Name="SoundEnabled">Sound</CheckBox>
-                <CheckBox Margin="0,10,0,0" Name="PacketVisualizationEnabled">Packet visuals</CheckBox>
+                    <CheckBox Margin="0,10,0,0" Name="SoundEnabled">Sound</CheckBox>
+                    <CheckBox Margin="0,10,0,0" Name="PacketVisualizationEnabled">Packet visuals</CheckBox>
+                
                 <Label FontWeight="Bold">Server to server connection:</Label>
                     <Label>Latency</Label>
-                    <Controls:NumericUpDown Value="{Binding ServerToServerLatency}"  Name="ServerToServerLatency" StringFormat="{}{0}ms" Speedup="False" ></Controls:NumericUpDown>
-                
+                        <Controls:NumericUpDown  Value="{Binding ServerToServerLatency}"  StringFormat="{}{0}ms" Speedup="False" ></Controls:NumericUpDown>
+                    <Slider IsSnapToTickEnabled="True" Value="{Binding ServerToServerLatency}" Minimum="10" Maximum="300" Name="ServerToServerLatency"></Slider>                
                 <Label FontWeight="Bold">Client to server connection:</Label>
                     <Label>Latency</Label>
                     <Controls:NumericUpDown Value="{Binding ClientToServerLatency}" Name="ClientToServerLatency" StringFormat="{}{0}ms"></Controls:NumericUpDown>
+                    <Slider IsSnapToTickEnabled="True" Value="{Binding ClientToServerLatency}" Minimum="10" Maximum="300"></Slider>
                 </StackPanel>
         </GroupBox>
         <GroupBox Header="Raft settings">

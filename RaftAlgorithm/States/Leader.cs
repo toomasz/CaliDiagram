@@ -12,11 +12,16 @@ namespace RaftAlgorithm.States
         public Leader(RaftNode<T> node):base(node)
         {
             
-        }
-        public override string ToString()
-        {
-            return "Leader";
-        }
+        }        
+        /// <summary>
+        /// Index of highest log entry known to be commited(initialized to 0, increases monotonically) 
+        /// </summary>
+        readonly Dictionary<string, int> NextIndex = new Dictionary<string, int>();
+        /// <summary>
+        /// For each server, index of highest log entry applied to state machine(initialized to 0, increases monotonically)
+        /// </summary>
+        readonly Dictionary<string, int> MatchIndex = new Dictionary<string, int>();
+
 
         public override RaftEventResult EnterState()
         {
@@ -26,9 +31,15 @@ namespace RaftAlgorithm.States
         RaftEventResult BroadcastAppendEntries()
         {
             Node.RaftEventListener.OnAppendEntries();            
-          //  Node.RaftTimer.SetRandomTimeout(Node.RaftSettings.LeaderTimeoutFrom,Node.RaftSettings.LeaderTimeoutTo);
-
-            var appendEntriesMessage = new AppendEntries(Node.CurrentTerm, Node.Id);
+         
+            var appendEntriesMessage = new AppendEntriesRPC<T>(Node.CurrentTerm, Node.Id);
+            appendEntriesMessage.LeaderCommit = Node.CurrentIndex;
+            for (int i=Node.CurrentIndex; i < Node.Log.Count; i++)
+            {
+                if (appendEntriesMessage.LogEntries == null)
+                    appendEntriesMessage.LogEntries = new List<LogEntry<T>>();
+                appendEntriesMessage.LogEntries.Add(Node.Log[i]);
+            }
             return RaftEventResult.BroadcastMessage(appendEntriesMessage).SetTimer(Node.RaftSettings.LeaderTimeoutFrom, Node.RaftSettings.LeaderTimeoutTo);
         }
 
@@ -52,7 +63,7 @@ namespace RaftAlgorithm.States
             return RaftEventResult.Empty;
         }
 
-        public override RaftEventResult ReceiveAppendEntries(AppendEntries appendEntries)
+        public override RaftEventResult ReceiveAppendEntries(AppendEntriesRPC<T> appendEntries)
         {
             if (appendEntries.LeaderTerm > CurrentTerm)
             {
@@ -68,6 +79,10 @@ namespace RaftAlgorithm.States
                 return Node.TranslateToState(RaftNodeState.Follower);
             }
             return RaftEventResult.Empty;
+        }
+        public override string ToString()
+        {
+            return "Leader";
         }
     }
 }

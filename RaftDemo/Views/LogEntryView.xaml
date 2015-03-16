@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="RaftDemo.Views.LogEntryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style TargetType="TextBlock">
+            <Setter Property="TextBlock.LineStackingStrategy" Value="BlockLineHeight"></Setter>
+            <Setter Property="TextBlock.Height" Value="12"></Setter>
+            <Setter Property="Height" Value="12"></Setter>
+            <Setter Property="Margin" Value="0,-3,0,0"></Setter>
+        </Style>
+    </UserControl.Resources>
+
+    <Border BorderThickness="{Binding CellMargin, FallbackValue='1,1,1,1'}" Background="{Binding EntryColor, FallbackValue=Green}" BorderBrush="Black" Height="15">
+        <StackPanel Orientation="Horizontal" TextBlock.FontSize="10">
+            <TextBlock TextAlignment="Center" FontWeight="Bold" MinWidth="20" Text="{Binding CommitIndex,FallbackValue=222}"></TextBlock>
+            <Border BorderThickness="1,0" BorderBrush="Black">
+                <TextBlock  TextAlignment="Center" Padding="0"  MinWidth="15" Text="{Binding Term, FallbackValue=0}"></TextBlock>
+            </Border>
+            <TextBlock MinWidth="50" Padding="4,0,0,0"  Text="{Binding Data, FallbackValue='xxxx'}"></TextBlock>
+        </StackPanel>
+    </Border>
+</UserControl>

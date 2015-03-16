@@ -2,6 +2,12 @@
 using RaftAlgorithm.States;
 using RaftDemo.Model;
 using RaftDemo.NodeSoftware;
+using System;
+using System.Collections;
+using System.Collections.ObjectModel;
+using System.Windows.Data;
+using System.Windows;
+using System.Windows.Media;
 
 namespace RaftDemo.ViewModels
 {
@@ -14,7 +20,47 @@ namespace RaftDemo.ViewModels
             Name = raftHost.Id;
             this.RaftHost = raftHost;
             UpdateViewModel();
+            RaftHost.Raft.Log.CollectionChanged += Log_CollectionChanged;
+            Log = new ObservableCollection<LogEntryViewModel>();
+         
         }
+        int LogVisibleEntryLimit = 4;
+
+        void Log_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            App.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                var logEntry = e.NewItems[0] as LogEntry<string>;
+                var logEntryViewModel = new LogEntryViewModel(logEntry);
+                Log.Insert(0, logEntryViewModel);
+                if (Log.Count > LogVisibleEntryLimit)
+                    Log.RemoveAt(Log.Count - 1);
+                UpdateMargins();
+            }));
+        }
+        void UpdateMargins()
+        {
+            if (Log.Count == 0)
+                return;
+            Log[0].CellMargin = new Thickness(0, 0, 0, 1);
+            for (int i = 1; i < Log.Count-1; i++)
+                Log[i].CellMargin = new Thickness(0, 0, 0, 1);
+            if (Log.Count > 2)
+                Log[Log.Count - 1].CellMargin = new Thickness(0, 0, 0, 0);
+            for (int i=0; i < Log.Count; i++)
+            {
+                if (Log[i].CommitIndex <= RaftHost.Raft.CurrentIndex)
+                    Log[i].EntryColor = Brushes.LightGreen;
+                else
+                    Log[i].EntryColor = Brushes.Yellow;
+            }
+        }
+        public ObservableCollection<LogEntryViewModel> Log
+        {
+            get;
+            private set;
+        }
+
         protected override void OnNodeCreated()
         {
             base.OnNodeCreated();

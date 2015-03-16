@@ -88,7 +88,7 @@ namespace RaftAlgorithm.States
             return RaftEventResult.Empty;
         }
 
-        public override RaftEventResult ReceiveAppendEntries(AppendEntries appendEntries)
+        public override RaftEventResult ReceiveAppendEntries(AppendEntriesRPC<T> appendEntries)
         {
             if (appendEntries.LeaderTerm >= Node.CurrentTerm)
             {

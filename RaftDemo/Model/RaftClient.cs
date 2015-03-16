@@ -13,14 +13,14 @@ namespace RaftDemo.Model
         {
             this.Id = clientId;
         }
-        int i = 0;
+        uint clientSequence = 0;
         protected override void OnCommandReceived(string command)
         {
             if(command == "op")
             {
-                string str = i.ToString();
+                string str = string.Format("c_{0}:{1}", Id, clientSequence);
                 BroadcastMessage(new Message(str));
-                i++;
+                clientSequence++;
             }
         }
         protected override void OnMessageReceived(INodeChannel channel, object message)

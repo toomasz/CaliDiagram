@@ -8,8 +8,7 @@
     
     x:Class="RaftDemo.Views.DiagramNodeServerView"             
     mc:Ignorable="d" 
-    Width="140"
-    Height="96"    
+    Width="140" 
     >
 	
     <UserControl.Resources>
@@ -65,7 +64,7 @@
             </Grid>
             <!--  END STATE   -->
             
-                <UniformGrid Columns="2" HorizontalAlignment="Left" TextBlock.FontFamily="Consolas">
+                <UniformGrid Columns="4" HorizontalAlignment="Left" TextBlock.FontSize="10">
                     <!-- SERVER ID-->
                     <TextBlock HorizontalAlignment="Right">Id:</TextBlock>
                     <TextBlock FontWeight="Bold" Text="0fda" x:Name="NodeId" ToolTip="Node ID" VerticalAlignment="Center"/>
@@ -78,8 +77,20 @@
                     <TextBlock FontWeight="Bold" ToolTip="Voted for"  x:Name="VotedFor" Text="{Binding VotedFor, FallbackValue=xx34}" ></TextBlock>
                     <!-- INDEX-->
                     <TextBlock HorizontalAlignment="Right">Idx:</TextBlock>
-                    <TextBlock FontWeight="Bold" ToolTip="Current index"  x:Name="CurrentIndex" Text="{Binding CurrentIndex, FallbackValue=0}" ></TextBlock>
+                    <TextBlock FontWeight="Bold" ToolTip="Current index"  x:Name="CurrentIndex" Text="{Binding CurrentIndex, FallbackValue=0}" >
+                    </TextBlock>
+                    <!-- LEADER -->
+                    <TextBlock HorizontalAlignment="Right">Ldr:</TextBlock>
+                    <TextBlock FontWeight="Bold" ToolTip="Current index"  x:Name="Leader" Text="{Binding Leader, FallbackValue=0}" ></TextBlock>
+
                 </UniformGrid>
+                <ItemsControl Name="Log" MinHeight="40" BorderBrush="Black" BorderThickness="1,1,1,1">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Vertical"></StackPanel>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>                  
+                </ItemsControl>
             </StackPanel>           
 			    
         </DockPanel>

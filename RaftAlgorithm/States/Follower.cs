@@ -58,13 +58,29 @@ namespace RaftAlgorithm.States
             return RaftEventResult.Empty;
         }
 
-        public override RaftEventResult ReceiveAppendEntries(AppendEntries appendEntries)
+        public override RaftEventResult ReceiveAppendEntries(AppendEntriesRPC<T> appendEntries)
         {
+            //Reply false if term < currentTerm (§5.1)
             if (appendEntries.LeaderTerm < Node.CurrentTerm)
-                return RaftEventResult.Empty;
+            {
+                var falseResponse = new AppendEntriesResponse(CurrentTerm, Node.Id, false);
+                return RaftEventResult.ReplyMessage(falseResponse).SetTimer(Node.RaftSettings.FollowerTimeoutFrom, Node.RaftSettings.FollowerTimeoutTo);
+            }
 
             CurrentTerm = appendEntries.LeaderTerm;
-            return RaftEventResult.Empty.SetTimer(Node.RaftSettings.FollowerTimeoutFrom, Node.RaftSettings.FollowerTimeoutTo);
+
+            if (appendEntries.LogEntries != null)
+                for (int i = 0; i < appendEntries.LogEntries.Count; i++)
+                {
+                    if (appendEntries.LogEntries[i].CommitIndex > Node.Log.Count)
+                    {
+                        Node.Log.Add(appendEntries.LogEntries[i]);
+                        Node.CurrentIndex = appendEntries.LogEntries[i].CommitIndex;
+                    }
+                }
+
+            var aeResponse = new AppendEntriesResponse(CurrentTerm, Node.Id, true );
+            return RaftEventResult.ReplyMessage(aeResponse).SetTimer(Node.RaftSettings.FollowerTimeoutFrom, Node.RaftSettings.FollowerTimeoutTo);
         }
 
         public override RaftEventResult ReceiveAppendEntriesResponse(AppendEntriesResponse appendEntriesResponse)

@@ -46,7 +46,7 @@ namespace RaftDemo
                 "Client",
                 (p) => 
                 {
-                    string cliendId = GenerateRandomHex(4);
+                    string cliendId = (clientNo++).ToString();
                     RaftClient raftClient = new RaftClient(networkModel, cliendId);
                     return new DiagramNodeClientViewModel(raftClient) { Location = p };
                 },
@@ -63,7 +63,10 @@ namespace RaftDemo
                 "Server",
                 (p) =>
                     {
-                        string raftNodeId = GenerateRandomHex(4);
+                        serverNo++;
+                        string raftNodeId = serverNo.ToString();
+                        
+                        
 
                         RaftHost serverSoftware = new RaftHost(networkModel, raftEventListener, simulationSettings, raftNodeId);
                         //this looks nasty

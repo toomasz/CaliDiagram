@@ -48,21 +48,19 @@ namespace RaftDemo.Model
         protected override void OnMessageReceived(INodeChannel channel, object message)
         {
             RaftMessageBase raftMessage = message as RaftMessageBase;
-            if (raftMessage is AppendEntries)
+            if (raftMessage is AppendEntriesRPC<string>)
                 leaderChannel = channel;
-
-            if (raftMessage != null)
-            {
-                var raftOperationResult = Raft.OnMessageReceived(raftMessage);
-                ProcessRaftResult(raftOperationResult, channel);
-            }
 
             Message messageFromClient = message as Message;
             if(messageFromClient != null)
             {
                 if(Raft.State == RaftNodeState.Leader)
                 {
-                    // apply state
+                    raftMessage = new ClientRequestRPC<string>()
+                    {
+                        Message = messageFromClient.Operation,
+                        SequenceNumber = 0
+                    };
                 }
                 else
                 {
@@ -71,6 +69,14 @@ namespace RaftDemo.Model
                     // forward message to leader
                 }
             }
+
+            if (raftMessage != null)
+            {
+                var raftOperationResult = Raft.OnMessageReceived(raftMessage);
+                ProcessRaftResult(raftOperationResult, channel);
+            }
+
+            
         }
         protected override void OnTimerElapsed(TimeoutTimer timer)
         {
