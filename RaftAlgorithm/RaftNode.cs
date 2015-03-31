@@ -19,38 +19,28 @@ namespace RaftAlgorithm
                 throw new ArgumentNullException("raftWorld");
             if (id == null)
                 throw new ArgumentException("id");
-            this._id = id;
+            this.Id = id;
 
             RaftEventListener = raftEventListener;
             RaftSettings = raftSettings;
-            CurrentTerm = 0;
-            Log = new ObservableCollection<LogEntry<T>>();
+            PersistedState = new PersistedState<T>();
         }
 
-        public void Start()
+        public PersistedState<T> PersistedState { get; private set; }
+
+        public RaftEventResult Start()
         {
-            RaftEventResult result = TranslateToState(RaftNodeState.Follower);
+            return TranslateToState(RaftNodeState.Follower);
         }
 
-        private readonly string _id;
-        public string Id
-        {
-            get
-            {
-                return _id;
-            }
-        }
+        public string Id { get; private set; }
 
         public IRaftEventListener RaftEventListener
         {
             get;
             private set;
         }
-        public IRaftNodeSettings RaftSettings
-        {
-            get;
-            private set;
-        }
+        public IRaftNodeSettings RaftSettings {get; private set; }
 
         internal RaftEventResult TranslateToState(RaftNodeState newState, RaftMessageBase message = null)
         {
@@ -64,7 +54,6 @@ namespace RaftAlgorithm
                 newStateObject = new Leader<T>(this);
             else
                 throw new ArgumentException();
-            State = newState;
 
             StateObject = newStateObject;
             RaftEventResult enterStateResult =  StateObject.EnterState();
@@ -79,8 +68,13 @@ namespace RaftAlgorithm
 
         public RaftNodeState State
         {
-            get;
-            private set;
+            get
+            {
+                var stateObj = StateObject;
+                if (stateObj == null)
+                    return RaftNodeState.Booting;
+                return stateObj.State;
+            }
         }
 
         RaftStateBase<T> StateObject
@@ -94,41 +88,9 @@ namespace RaftAlgorithm
             get;
             internal set;
         }
-        /// <summary>
-        /// Current term [ persisted state]
-        /// </summary>
-        private int _CurrentTerm;
-        public int CurrentTerm
-        {
-            get { return _CurrentTerm; }
-            set
-            {
-                if (_CurrentTerm != value)
-                {
-                    _CurrentTerm = value;
-                    VotedFor = null;
-                }
-            }
-        }
-        /// <summary>
-        /// Candiate Id that received vote in current term [ persisted state]
-        /// </summary>
-        private string _VotedFor;
-        public string VotedFor
-        {
-            get;
-            internal set;
-        }
 
-        /// <summary>
-        /// Commit log [ persisted state]
-        /// </summary>
-        /// <returns></returns>
-        public ObservableCollection<LogEntry<T>> Log
-        {
-            get;
-            private set;
-        }
+
+        
 
         public RaftEventResult OnMessageReceived(RaftMessageBase raftMessage)
         {
@@ -156,9 +118,8 @@ namespace RaftAlgorithm
             /* client rpc */
             var clientRequest = raftMessage as ClientRequestRPC<T>;
             if(clientRequest != null)
-            {
-                
-                CommitEntryBegin(clientRequest);
+            {             
+                PersistedState.AddEntry(clientRequest.Message);
                 raftResult = RaftEventResult.Empty;
             }
 
@@ -166,15 +127,6 @@ namespace RaftAlgorithm
                 throw new InvalidOperationException("Raft message processing returned null");
 
             return raftResult;
-        }
-        
-        bool CommitEntryBegin(ClientRequestRPC<T> request)
-        {
-            int nextIndex = Log.Count + 1;
-            LogEntry<T> newEntry = new LogEntry<T>(nextIndex, CurrentTerm, request.Message);
-            Log.Add(newEntry);
-     
-            return true;
         }
 
         public RaftEventResult OnTimerElapsed()

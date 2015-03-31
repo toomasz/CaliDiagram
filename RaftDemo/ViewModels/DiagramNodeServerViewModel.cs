@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Data;
 using System.Windows;
 using System.Windows.Media;
+using System.Linq;
 
 namespace RaftDemo.ViewModels
 {
@@ -19,25 +20,33 @@ namespace RaftDemo.ViewModels
         {
             Name = raftHost.Id;
             this.RaftHost = raftHost;
-            UpdateViewModel();
-            RaftHost.Raft.Log.CollectionChanged += Log_CollectionChanged;
+            UpdateViewModel();            
             Log = new ObservableCollection<LogEntryViewModel>();
-         
+            UpdateLogViewModel();
+        }
+        int lastShownIndex = 0;
+        void UpdateLogViewModel()
+        {
+            for(int i=lastShownIndex; i < RaftHost.Raft.PersistedState.LogEntries.Count; i++)
+            {
+                var logEntry = RaftHost.Raft.PersistedState.LogEntries[i];
+                LogEntryViewModel entryViewModel = new LogEntryViewModel(logEntry);
+                
+                if(Log.Count >= LogVisibleEntryLimit)
+                {
+                    Log.RemoveAt(Log.Count - 1);
+                }
+                Log.Insert(0, entryViewModel);
+                if (logEntry.CommitIndex < 1)
+                    throw new InvalidOperationException("Log entry index must be grater than 0");
+                lastShownIndex = logEntry.CommitIndex;
+            }
+            lastShownIndex=RaftHost.Raft.PersistedState.LogEntries.Count;
+            UpdateMargins();
         }
         int LogVisibleEntryLimit = 4;
 
-        void Log_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            App.Current.Dispatcher.BeginInvoke(new Action(() =>
-            {
-                var logEntry = e.NewItems[0] as LogEntry<string>;
-                var logEntryViewModel = new LogEntryViewModel(logEntry);
-                Log.Insert(0, logEntryViewModel);
-                if (Log.Count > LogVisibleEntryLimit)
-                    Log.RemoveAt(Log.Count - 1);
-                UpdateMargins();
-            }));
-        }
+  
         void UpdateMargins()
         {
             if (Log.Count == 0)
@@ -71,15 +80,20 @@ namespace RaftDemo.ViewModels
 
         void host_OnRaftEvent(object sender, RaftEventResult e)
         {
-            UpdateViewModel();
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                UpdateViewModel();
+                UpdateLogViewModel();
+            }));
+            
         }
 
         void UpdateViewModel()
         {
             RaftState = RaftHost.Raft.State;
-            CurrentTerm = RaftHost.Raft.CurrentTerm;
+            CurrentTerm = RaftHost.Raft.PersistedState.CurrentTerm;
             NodeId = RaftHost.Raft.Id;
-            VotedFor = RaftHost.Raft.VotedFor;
+            VotedFor = RaftHost.Raft.PersistedState.VotedFor;
             CurrentIndex = RaftHost.Raft.CurrentIndex;
         }
 

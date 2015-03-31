@@ -14,10 +14,13 @@ namespace RaftAlgorithm.States
         {
             
         }
+        public override RaftNodeState State
+        {
+            get { return RaftNodeState.Follower; }
+        }
         public override string ToString()
         {
-            return "Follower";
-            
+            return "Follower";            
         }
         static Random rnd = new Random();
         public override RaftEventResult EnterState()
@@ -45,9 +48,9 @@ namespace RaftAlgorithm.States
                 CurrentTerm = requestVote.CandidateTerm;
             }
             // if haven't voted before
-            if (Node.VotedFor == null || Node.VotedFor == requestVote.CandidateId)
+            if (Node.PersistedState.VotedFor == null || Node.PersistedState.VotedFor == requestVote.CandidateId)
             {
-                Node.VotedFor = requestVote.CandidateId;
+                Node.PersistedState.VotedFor = requestVote.CandidateId;
                 return RaftEventResult.ReplyMessage(GrantVote).SetTimer(Node.RaftSettings.FollowerTimeoutFrom * 2, Node.RaftSettings.FollowerTimeoutTo * 2);
             }
             return RaftEventResult.Empty;
@@ -60,24 +63,24 @@ namespace RaftAlgorithm.States
 
         public override RaftEventResult ReceiveAppendEntries(AppendEntriesRPC<T> appendEntries)
         {
-            //Reply false if term < currentTerm (§5.1)
-            if (appendEntries.LeaderTerm < Node.CurrentTerm)
+            //Reply false if term from append entires < currentTerm (§5.1)
+            if (appendEntries.LeaderTerm < CurrentTerm)
             {
                 var falseResponse = new AppendEntriesResponse(CurrentTerm, Node.Id, false);
                 return RaftEventResult.ReplyMessage(falseResponse).SetTimer(Node.RaftSettings.FollowerTimeoutFrom, Node.RaftSettings.FollowerTimeoutTo);
             }
-
+           
             CurrentTerm = appendEntries.LeaderTerm;
 
-            if (appendEntries.LogEntries != null)
-                for (int i = 0; i < appendEntries.LogEntries.Count; i++)
-                {
-                    if (appendEntries.LogEntries[i].CommitIndex > Node.Log.Count)
-                    {
-                        Node.Log.Add(appendEntries.LogEntries[i]);
-                        Node.CurrentIndex = appendEntries.LogEntries[i].CommitIndex;
-                    }
-                }
+            //if (appendEntries.LogEntries != null)
+            //    for (int i = 0; i < appendEntries.LogEntries.Count; i++)
+            //    {
+            //        if (appendEntries.LogEntries[i].CommitIndex > Node.Log.Count)
+            //        {
+            //            Node.Log.Add(appendEntries.LogEntries[i]);
+            //            Node.CurrentIndex = appendEntries.LogEntries[i].CommitIndex;
+            //        }
+            //    }
 
             var aeResponse = new AppendEntriesResponse(CurrentTerm, Node.Id, true );
             return RaftEventResult.ReplyMessage(aeResponse).SetTimer(Node.RaftSettings.FollowerTimeoutFrom, Node.RaftSettings.FollowerTimeoutTo);

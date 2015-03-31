@@ -66,7 +66,7 @@ namespace RaftAlgorithm.Messages
         /// <summary>
         /// Leader commit index
         /// </summary>
-        public int LeaderCommit
+        public long LeaderCommit
         {
             get;
             set;

@@ -1,13 +1,15 @@
-﻿using CaliDiagram.ViewModels;
+﻿using System;
+using System.Collections.Generic;
+using CaliDiagram.ViewModels;
 using RaftDemo.NodeSoftware;
 using RaftDemo.ViewModels;
 
 namespace RaftDemo.Model
 {
-    public class LocalNetwork: INetworkModel
+    public class InProcNetwork: INetworkModel
     {
         SimulationSettings worldSettings;
-        public LocalNetwork(SimulationSettings worldSettings)
+        public InProcNetwork(SimulationSettings worldSettings)
         {
             this.worldSettings = worldSettings;
         }
@@ -16,7 +18,13 @@ namespace RaftDemo.Model
             NodeChannelType channelType = NodeChannelType.ClientToServer;
             if (connection is ServerToServerConnectionViewModel)
                 channelType = NodeChannelType.ServerToServer;
-            return new LocalNetworkChannel(connection, from, worldSettings, channelType);
+            return new InProcNetworkChannel(connection, from, worldSettings, channelType);
+        }
+        List<INetworkNode> NetworkNodes = new List<INetworkNode>();
+
+        public INetworkNode CreateListener(string address)
+        {
+            return new InProcNetworkNode(address); 
         }
     }
 }

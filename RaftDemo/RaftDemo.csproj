@@ -14,6 +14,7 @@
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
     <ExpressionBlendVersion>12.0.51020.0</ExpressionBlendVersion>
+    <NuGetPackageImportStamp>da50e2d0</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -52,6 +53,10 @@
     </Reference>
     <Reference Include="Microsoft.Expression.Effects" />
     <Reference Include="Microsoft.Expression.Interactions" />
+    <Reference Include="PropertyChanged">
+      <HintPath>..\packages\PropertyChanged.Fody.1.49.0\Lib\portable-net4+sl4+wp8+win8+wpa81+MonoAndroid16+MonoTouch40\PropertyChanged.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data" />
@@ -84,17 +89,19 @@
     <Compile Include="Model\DiagramNodeServer.cs" />
     <Compile Include="Model\DiagramNodeBroker.cs" />
     <Compile Include="Model\DiagramNodeClient.cs" />
+    <Compile Include="Model\InProcNetworkNode.cs" />
     <Compile Include="Model\Messages.cs" />
     <Compile Include="Model\RaftClient.cs" />
     <Compile Include="NodeSoftware\INetworkModel.cs" />
-    <Compile Include="Model\LocalNetwork.cs" />
+    <Compile Include="Model\InProcNetwork.cs" />
     <Compile Include="Model\RaftHost.cs" />
     <Compile Include="Model\SimulationSettings.cs" />
     <Compile Include="Model\RaftSoundPlayer.cs" />
     <Compile Include="NodeSoftware\InboundMessage.cs" />
+    <Compile Include="NodeSoftware\INetworkNode.cs" />
     <Compile Include="NodeSoftware\NodeSoftwareBase.cs" />
     <Compile Include="NodeSoftware\INodeChannel.cs" />
-    <Compile Include="Model\LocalNetworkChannel.cs" />
+    <Compile Include="Model\InProcNetworkChannel.cs" />
     <Compile Include="NodeSoftware\TimeoutTimer.cs" />
     <Compile Include="NodeSoftware\OutboundMessage.cs" />
     <Compile Include="ViewModels\AttachDescriptorToViewModel.cs" />
@@ -239,7 +246,19 @@
   <ItemGroup>
     <Folder Include="Assets\" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="FodyWeavers.xml">
+      <SubType>Designer</SubType>
+    </Resource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="..\packages\Fody.1.28.1\build\Fody.targets" Condition="Exists('..\packages\Fody.1.28.1\build\Fody.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Fody.1.28.1\build\Fody.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Fody.1.28.1\build\Fody.targets'))" />
+  </Target>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

@@ -10,7 +10,10 @@ namespace RaftDemo.NodeSoftware
 {
     public interface INetworkModel
     {
+        INetworkNode CreateListener(string address);
+
         INodeChannel CreateChannel(ConnectionViewModel connection, NodeBaseViewModel from);
+       
         //IAddress LookupName(string name)
         //
     }

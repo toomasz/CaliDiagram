@@ -31,21 +31,22 @@ namespace RaftAlgorithm.States
         {
             get
             {
-                return new RequestVoteResponse() { VoteGranted = true, CurrentTerm = Node.CurrentTerm, VoterId = Node.Id };
+                return new RequestVoteResponse() { VoteGranted = true, CurrentTerm = CurrentTerm, VoterId = Node.Id };
             }
         }
         protected RequestVoteResponse DenyVote
         {
             get
             {
-                return new RequestVoteResponse() { VoteGranted = false, CurrentTerm = Node.CurrentTerm, VoterId = Node.Id };
+                return new RequestVoteResponse() { VoteGranted = false, CurrentTerm = CurrentTerm, VoterId = Node.Id };
             }
         }
 
         protected int CurrentTerm
         {
-            get { return Node.CurrentTerm; }
-            set { Node.CurrentTerm = value; }
+            get { return Node.PersistedState.CurrentTerm; }
+            set { Node.PersistedState.CurrentTerm = value; }
         }
+        public abstract RaftNodeState State { get; }
     }
 }

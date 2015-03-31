@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace RaftDemo.Model
 {
-    public class LocalNetworkChannel : INodeChannel
+    public class InProcNetworkChannel : INodeChannel
     {
         readonly ConnectionViewModel connection;
         SimulationSettings worldSettings;
-        public LocalNetworkChannel(ConnectionViewModel connection, NodeBaseViewModel from, SimulationSettings worldSettings, NodeChannelType channelType)
+        public InProcNetworkChannel(ConnectionViewModel connection, NodeBaseViewModel from, SimulationSettings worldSettings, NodeChannelType channelType)
         {
             this.worldSettings = worldSettings;
             this.Socket = connection;

@@ -37,8 +37,8 @@ namespace RaftDemo.Model
         {
             base.OnInitialized();
             RaftTimer = new TimeoutTimer(this);
-            var raftOperationResult = Raft.TranslateToState(RaftNodeState.Follower);
-            ProcessRaftResult(raftOperationResult, null);
+            var raftOperationResult = Raft.Start();
+            ProcessRaftResult(raftOperationResult);
         }
         protected override void OnDestroyed()
         {
@@ -88,7 +88,7 @@ namespace RaftDemo.Model
         }
         public event EventHandler<RaftEventResult> OnRaftEvent;
 
-        void ProcessRaftResult(RaftEventResult raftResult, INodeChannel channel)
+        void ProcessRaftResult(RaftEventResult raftResult, INodeChannel channel = null)
         {
             if (raftResult == null)
                 throw new ArgumentNullException("raftResult");

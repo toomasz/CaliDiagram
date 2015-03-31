@@ -12,7 +12,11 @@ namespace RaftAlgorithm.States
         public Leader(RaftNode<T> node):base(node)
         {
             
-        }        
+        }
+        public override RaftNodeState State
+        {
+            get { return RaftNodeState.Leader; }
+        }
         /// <summary>
         /// Index of highest log entry known to be commited(initialized to 0, increases monotonically) 
         /// </summary>
@@ -32,14 +36,14 @@ namespace RaftAlgorithm.States
         {
             Node.RaftEventListener.OnAppendEntries();            
          
-            var appendEntriesMessage = new AppendEntriesRPC<T>(Node.CurrentTerm, Node.Id);
+            var appendEntriesMessage = new AppendEntriesRPC<T>(Node.PersistedState.CurrentTerm, Node.Id);
             appendEntriesMessage.LeaderCommit = Node.CurrentIndex;
-            for (int i=Node.CurrentIndex; i < Node.Log.Count; i++)
-            {
-                if (appendEntriesMessage.LogEntries == null)
-                    appendEntriesMessage.LogEntries = new List<LogEntry<T>>();
-                appendEntriesMessage.LogEntries.Add(Node.Log[i]);
-            }
+            //for (int i=Node.CurrentIndex; i < Node.Log.Count; i++)
+            //{
+            //    if (appendEntriesMessage.LogEntries == null)
+            //        appendEntriesMessage.LogEntries = new List<LogEntry<T>>();
+            //    appendEntriesMessage.LogEntries.Add(Node.Log[i]);
+            //}
             return RaftEventResult.BroadcastMessage(appendEntriesMessage).SetTimer(Node.RaftSettings.LeaderTimeoutFrom, Node.RaftSettings.LeaderTimeoutTo);
         }
 

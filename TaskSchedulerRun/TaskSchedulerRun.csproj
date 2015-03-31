@@ -4,15 +4,16 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{17D6F49D-15F2-4963-A83B-CAAB1F93CAA1}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{F7117825-CEBA-406F-A36D-5AC6EC8B21C8}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RaftAlgorithm</RootNamespace>
-    <AssemblyName>RaftAlgorithm</AssemblyName>
+    <RootNamespace>TaskSchedulerRun</RootNamespace>
+    <AssemblyName>TaskSchedulerRun</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -22,6 +23,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -39,27 +41,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IRaftEventListener.cs" />
-    <Compile Include="IRaftNodeSettings.cs" />
-    <Compile Include="LogEntry.cs" />
-    <Compile Include="Messages\AppendEntriesRPC.cs" />
-    <Compile Include="Messages\AppendEntriesResult.cs" />
-    <Compile Include="Messages\ClientRequestRPC.cs" />
-    <Compile Include="Messages\RaftMessageBase.cs" />
-    <Compile Include="Messages\RequestVote.cs" />
-    <Compile Include="Messages\RequestVoteResult.cs" />
-    <Compile Include="PersistedState.cs" />
+    <Compile Include="CircullarBuffer.cs" />
+    <Compile Include="HighPrecisionTimer.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RaftEventResult.cs" />
-    <Compile Include="RaftNode.cs" />
-    <Compile Include="RaftNodeState.cs" />
-    <Compile Include="States\Candicate.cs" />
-    <Compile Include="States\Follower.cs" />
-    <Compile Include="States\Leader.cs" />
-    <Compile Include="States\LogReplicationAgent.cs" />
-    <Compile Include="States\RaftStateBase.cs" />
+    <Compile Include="TsTest.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\NetworkModel\NetworkModel.csproj">
+      <Project>{44ca1876-b5be-4438-a0dd-bb3a7b6eed5f}</Project>
+      <Name>NetworkModel</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

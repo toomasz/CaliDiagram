@@ -14,7 +14,10 @@ namespace RaftAlgorithm.States
         {
             
         }
-
+        public override RaftNodeState State
+        {
+            get { return RaftNodeState.Candidate; }
+        }
         public override string ToString()
         {
             return "Candidate";
@@ -30,12 +33,12 @@ namespace RaftAlgorithm.States
             VoteTable.Clear();
             Node.RaftEventListener.OnElectionStarted();
             // increment current term
-            Node.CurrentTerm++;
+            Node.PersistedState.CurrentTerm++;
             // vote for self
             ProcessVote(Node.Id);
-            Node.VotedFor = Node.Id;
+            Node.PersistedState.VotedFor = Node.Id;
             // send request votes to all servers
-            var requestVote = new RequestVote() { CandidateId = Node.Id, CandidateTerm = Node.CurrentTerm };
+            var requestVote = new RequestVote() { CandidateId = Node.Id, CandidateTerm = CurrentTerm };
             return RaftEventResult.BroadcastMessage(requestVote).SetTimer(Node.RaftSettings.FollowerTimeoutFrom, Node.RaftSettings.FollowerTimeoutTo);
         }
 
@@ -90,7 +93,7 @@ namespace RaftAlgorithm.States
 
         public override RaftEventResult ReceiveAppendEntries(AppendEntriesRPC<T> appendEntries)
         {
-            if (appendEntries.LeaderTerm >= Node.CurrentTerm)
+            if (appendEntries.LeaderTerm >= CurrentTerm)
             {
                 return Node.TranslateToState(RaftNodeState.Follower, appendEntries );
             }

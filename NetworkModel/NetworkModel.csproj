@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{17D6F49D-15F2-4963-A83B-CAAB1F93CAA1}</ProjectGuid>
+    <ProjectGuid>{44CA1876-B5BE-4438-A0DD-BB3A7B6EED5F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RaftAlgorithm</RootNamespace>
-    <AssemblyName>RaftAlgorithm</AssemblyName>
+    <RootNamespace>NetworkModel</RootNamespace>
+    <AssemblyName>NetworkModel</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -39,27 +39,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IRaftEventListener.cs" />
-    <Compile Include="IRaftNodeSettings.cs" />
-    <Compile Include="LogEntry.cs" />
-    <Compile Include="Messages\AppendEntriesRPC.cs" />
-    <Compile Include="Messages\AppendEntriesResult.cs" />
-    <Compile Include="Messages\ClientRequestRPC.cs" />
-    <Compile Include="Messages\RaftMessageBase.cs" />
-    <Compile Include="Messages\RequestVote.cs" />
-    <Compile Include="Messages\RequestVoteResult.cs" />
-    <Compile Include="PersistedState.cs" />
+    <Compile Include="ChannelType.cs" />
+    <Compile Include="ConnectionState.cs" />
+    <Compile Include="IChannel.cs" />
+    <Compile Include="INetworkClient.cs" />
+    <Compile Include="INetworkModel.cs" />
+    <Compile Include="INetworkServer.cs" />
+    <Compile Include="InProcNetwork\InProcChannel.cs" />
+    <Compile Include="InProcNetwork\InProcClient.cs" />
+    <Compile Include="InProcNetwork\InProcNetwork.cs" />
+    <Compile Include="InProcNetwork\InProcServer.cs" />
+    <Compile Include="InProcNetwork\TaskScheduling\TaskScheduler.cs" />
+    <Compile Include="InProcNetwork\TaskScheduling\TaskSchedulerTask.cs" />
+    <Compile Include="NetworkNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RaftEventResult.cs" />
-    <Compile Include="RaftNode.cs" />
-    <Compile Include="RaftNodeState.cs" />
-    <Compile Include="States\Candicate.cs" />
-    <Compile Include="States\Follower.cs" />
-    <Compile Include="States\Leader.cs" />
-    <Compile Include="States\LogReplicationAgent.cs" />
-    <Compile Include="States\RaftStateBase.cs" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

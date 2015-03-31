@@ -88,6 +88,7 @@ namespace RaftDemo
         }
         public override ConnectionViewModel CreateConnection(NodeBaseViewModel from, NodeBaseViewModel to)
         {
+
             ConnectionViewModel connectionViewModel;
             // No connection between same node
             if (from == to)
