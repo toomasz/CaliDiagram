@@ -10,7 +10,7 @@ namespace NetworkModel
     {
         Closed,
         Connecting,
-        ConnectionEstablished,
+        Established,
         ConnectionFailed,
     }
 }

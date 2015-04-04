@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NetworkModel
 {
-    public interface IChannel
+    public interface INetworkSocket
     {
         /// <summary>
         /// Remote address which channel is connected to
@@ -31,7 +31,12 @@ namespace NetworkModel
         bool SendMessage(object message);
 
         /// <summary>
-        /// Type of channel
+        /// Request to close comm channel
+        /// </summary>
+        void Close();
+
+        /// <summary>
+        /// Type of channel(client/server)
         /// </summary>
         ChannelType Type { get; }
 

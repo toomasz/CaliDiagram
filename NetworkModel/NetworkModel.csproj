@@ -41,14 +41,15 @@
   <ItemGroup>
     <Compile Include="ChannelType.cs" />
     <Compile Include="ConnectionState.cs" />
-    <Compile Include="IChannel.cs" />
+    <Compile Include="INetworkSocket.cs" />
     <Compile Include="INetworkClient.cs" />
     <Compile Include="INetworkModel.cs" />
     <Compile Include="INetworkServer.cs" />
-    <Compile Include="InProcNetwork\InProcChannel.cs" />
+    <Compile Include="InProcNetwork\InProcSocket.cs" />
     <Compile Include="InProcNetwork\InProcClient.cs" />
     <Compile Include="InProcNetwork\InProcNetwork.cs" />
     <Compile Include="InProcNetwork\InProcServer.cs" />
+    <Compile Include="InProcNetwork\SocketId.cs" />
     <Compile Include="InProcNetwork\TaskScheduling\TaskScheduler.cs" />
     <Compile Include="InProcNetwork\TaskScheduling\TaskSchedulerTask.cs" />
     <Compile Include="NetworkNode.cs" />

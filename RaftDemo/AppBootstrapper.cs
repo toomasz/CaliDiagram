@@ -13,7 +13,6 @@ namespace RaftDemo
     using System.Net.Http;
     using System.Threading.Tasks;
 
-
     class TextListener : TraceListener
     {
 
@@ -71,7 +70,6 @@ namespace RaftDemo
             var instance = container.GetInstance(service, key);
             if (instance != null)
                 return instance;
-
             throw new InvalidOperationException("Could not locate any instances.");
         }
 

@@ -14,8 +14,13 @@ namespace NetworkModel.InProcNetwork.TaskScheduling
         public TaskScheduler()
         {
             StartTaskSchedulerThread();
+            Exceptions = new List<Exception>();
         }
-
+        public List<Exception> Exceptions
+        {
+            get;
+            private set;
+        }
         void StartTaskSchedulerThread()
         {
             if (Running == false)
@@ -47,6 +52,7 @@ namespace NetworkModel.InProcNetwork.TaskScheduling
 
         volatile bool Running = false;
         AutoResetEvent ev = new AutoResetEvent(false);
+
         void TaskSchedlulerLoop(object o)
         {
             
@@ -106,6 +112,7 @@ namespace NetworkModel.InProcNetwork.TaskScheduling
             catch(Exception ex)
             {
                 Trace.TraceWarning("Failed to run task");
+                Exceptions.Add(ex);
                 return false;
             }
         }
@@ -113,6 +120,7 @@ namespace NetworkModel.InProcNetwork.TaskScheduling
         public void Dispose()
         {
             Running = false;
+            ev.Set();
             taskSchedulingThread.Join();
         }
     }

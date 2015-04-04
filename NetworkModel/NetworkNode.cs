@@ -16,8 +16,7 @@ namespace NetworkModel
         }
         void Init()
         {
-            Server = Network.CreateServer();
-            Server.StartListening(Name);
+            Server = Network.CreateServer(Name);
         }
         INetworkServer Server { get; set; }
         INetworkModel Network { get; set; }

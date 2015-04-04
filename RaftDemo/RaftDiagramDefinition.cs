@@ -65,9 +65,6 @@ namespace RaftDemo
                     {
                         serverNo++;
                         string raftNodeId = serverNo.ToString();
-                        
-                        
-
                         RaftHost serverSoftware = new RaftHost(networkModel, raftEventListener, simulationSettings, raftNodeId);
                         //this looks nasty
                         return new DiagramNodeServerViewModel(serverSoftware) 

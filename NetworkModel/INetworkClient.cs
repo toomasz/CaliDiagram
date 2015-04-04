@@ -11,7 +11,7 @@ namespace NetworkModel
         /// <summary>
         /// Channel that client uses to send messages to server
         /// </summary>
-        IChannel ClientChannel { get;}
+        INetworkSocket ClientChannel { get;}
 
         /// <summary>
         /// Request connection to remote address

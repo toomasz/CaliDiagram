@@ -11,39 +11,55 @@ namespace NetworkModel.InProcNetwork
         public InProcServer(InProcNetwork network)
         {
             this.Network = network;
-            ClientChannels = new List<IChannel>();
+            ClientChannels = new List<INetworkSocket>();
         }
         InProcNetwork Network;
         public bool StartListening(string address)
-        {
-            Network.RegisterServerEndpoint(address, this);
-            ListeningChannel = new InProcChannel(Network, ChannelType.Server) { LocalAddress = address };
+        {            
+            var listeningChannel = new InProcSocket(Network, ChannelType.Listening) { LocalAddress = address };
+            listeningChannel.ParentServer = this;
+            Network.RegisterListeningEndpoint(address, listeningChannel);
+            ListeningChannel = listeningChannel;
             return true;
         }
-        public IChannel ListeningChannel
+        public INetworkSocket ListeningChannel
         {
             get;
             internal set;
         }
 
-        public void AddClientChannel(IChannel newClient)
+        internal void AddClientChannel(InProcSocket newClient)
         {
             ClientChannels.Add(newClient);
+            newClient.ParentServer = this;
+        }
+        internal void RemoveClientChannel(InProcSocket exisitingClient)
+        {
+            exisitingClient.ParentServer = null;
+            if (!ClientChannels.Remove(exisitingClient))
+                throw new Exception("Failed to remove socket from server client list: " + exisitingClient.ToString());
         }
 
-        public IList<IChannel> ClientChannels
+        public IList<INetworkSocket> ClientChannels
         {
             get;
             private set;
         }
 
-        public IChannel GetSocketFromBacklog()
+        public INetworkSocket GetSocketFromBacklog()
         {
-            return new InProcChannel(Network, ChannelType.Server);
+            return new InProcSocket(Network, ChannelType.Server);
         }
 
-        public event EventHandler<IChannel> NewClientChannel;
+        public event EventHandler<INetworkSocket> ClientConnected;
 
-        public event EventHandler<IChannel> ClientChannelClosed;
+        public event EventHandler<INetworkSocket> ClientDisconnected;
+
+        internal void RaiseMessageReceived(InProcSocket socket, object message)
+        {
+            if (MessageReceived != null)
+                MessageReceived(this, new MessageReceivedArgs(socket, message));
+        }
+        public event EventHandler<MessageReceivedArgs> MessageReceived;
     }
 }

@@ -8,15 +8,19 @@ namespace NetworkModel.InProcNetwork
 {
     public class InProcClient: INetworkClient
     {
-        public InProcClient(InProcNetwork network)
+
+        public InProcClient(InProcNetwork network,string address = null)
         {
             this.Network = network;
-            _Channel = new InProcChannel(network, ChannelType.Client);
+            if (address == null)
+                address = Network.GetNextClientSocketAddress();
+
+            _Channel = new InProcSocket(network, ChannelType.Client) { LocalAddress = address };
         }
         InProcNetwork Network;
 
-        InProcChannel _Channel;
-        public IChannel ClientChannel
+        InProcSocket _Channel;
+        public INetworkSocket ClientChannel
         {
             get
             {
@@ -31,9 +35,16 @@ namespace NetworkModel.InProcNetwork
 
         public void Close()
         {
-            
+            ClientChannel.Close();
         }
 
+        public string LocalAddress
+        {
+            get
+            {
+                return ClientChannel.LocalAddress;
+            }
+        }
 
         public string RemoteAddress
         {

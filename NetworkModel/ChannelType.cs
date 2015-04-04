@@ -15,6 +15,10 @@ namespace NetworkModel
         /// <summary>
         /// Server side channel
         /// </summary>
-        Server
+        Server,
+        /// <summary>
+        /// Listening channel
+        /// </summary>
+        Listening
     }
 }
