@@ -24,6 +24,11 @@ namespace NetworkModel
         event EventHandler<object> MesageReceived;
 
         /// <summary>
+        /// Fires when State changes
+        /// </summary>
+        event EventHandler<ConnectionState> StateChanged;
+
+        /// <summary>
         /// Queue message to be sent to remote part
         /// </summary>
         /// <param name="message"></param>

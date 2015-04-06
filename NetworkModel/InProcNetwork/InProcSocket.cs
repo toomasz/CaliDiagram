@@ -28,6 +28,8 @@ namespace NetworkModel.InProcNetwork
         internal void ChangeStateTo(ConnectionState state)
         {
             this.State = state;
+            if (StateChanged != null)
+                StateChanged(this, state);
         }
         internal void RaiseMessageReceived(object message)
         {
@@ -80,5 +82,8 @@ namespace NetworkModel.InProcNetwork
         {
             return string.Format("Local Address: {0}\nRemote Address: {1}", LocalAddress, RemoteAddress);
         }
+
+
+        public event EventHandler<ConnectionState> StateChanged;
     }
 }

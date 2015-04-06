@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 
 namespace NetworkModel
 {
-    public enum ConnectionState
+    public enum NetworkClientState
     {
         Closed,
+        InvalidAddress,
+        ResolvingName,
         Connecting,
-        Established,
-        ConnectionFailed,
-        Closing
+        Connected,
+        ConnectFailed,
+        Disconnecting
     }
 }

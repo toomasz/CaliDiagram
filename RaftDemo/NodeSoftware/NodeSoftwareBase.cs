@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using NetworkModel;
 
 namespace RaftDemo.NodeSoftware
 {
@@ -11,7 +12,7 @@ namespace RaftDemo.NodeSoftware
     {
         public NodeSoftwareBase(INetworkModel networkModel)
         {
-            Channels = new List<INodeChannel>();
+            Channels = new List<INetworkSocket>();
             this.NetworkModel = networkModel;
         }
         public INetworkModel NetworkModel
@@ -26,30 +27,30 @@ namespace RaftDemo.NodeSoftware
             set;
         }
 
-        List<INodeChannel> Channels
+        List<INetworkSocket> Channels
         {
             get;
             set;
         }
         protected virtual void OnInitialized() { }
         protected virtual void OnDestroyed()  {}
-        protected virtual void OnChannelCreated(INodeChannel channel){}
-        protected virtual void OnChannelDestroyed(INodeChannel channel){}
-        protected virtual void OnMessageReceived(INodeChannel channel, object message){} 
+        protected virtual void OnChannelCreated(INetworkSocket channel) { }
+        protected virtual void OnChannelDestroyed(INetworkSocket channel) { }
+        protected virtual void OnMessageReceived(INetworkSocket channel, object message) { } 
         protected virtual void OnCommandReceived(string command){}
 
         protected virtual void OnTimerElapsed(TimeoutTimer timer) { }
 
         public event EventHandler<OutboundMessage> OnMessageSent;
 
-        INodeChannel[] ThreadSafeChannels
+        INetworkSocket[] ThreadSafeChannels
         {
             get
             {
-                INodeChannel[] channelsClonned = null;
+                INetworkSocket[] channelsClonned = null;
                 lock (Channels)
                 {
-                    channelsClonned = new INodeChannel[Channels.Count];
+                    channelsClonned = new INetworkSocket[Channels.Count];
                     Channels.CopyTo(channelsClonned);
                 }
                 return channelsClonned;
@@ -61,18 +62,17 @@ namespace RaftDemo.NodeSoftware
         /// <param name="channel"></param>
         /// <param name="message"></param>
         /// <returns></returns>
-        public bool SendMessage(INodeChannel channel, object message, NodeChannelType channelType = NodeChannelType.All)
+        public bool SendMessage(INetworkSocket channel, object message)
         {
             if (!IsStarted)
                 return false;
-            if (channelType == NodeChannelType.All || channelType == channel.ChannelType)
-            {
-                channel.SendMessage(message);
-                var onMessageSent = OnMessageSent;
-                if (OnMessageSent != null)
-                    OnMessageSent(this, new OutboundMessage() { Message = message, DestinationChannel = channel });
-                return true;
-            }
+           
+            channel.SendMessage(message);
+            var onMessageSent = OnMessageSent;
+            if (OnMessageSent != null)
+                OnMessageSent(this, new OutboundMessage() { Message = message, DestinationChannel = channel });
+            return true;
+            
             return false;
         }
 
@@ -81,10 +81,10 @@ namespace RaftDemo.NodeSoftware
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
-        public void BroadcastMessage(object message, NodeChannelType channelType = NodeChannelType.All)
+        public void BroadcastMessage(object message)
         {
             foreach (var channel in ThreadSafeChannels)
-                SendMessage(channel, message, channelType);
+                SendMessage(channel, message);
         }
 
         /// <summary>
@@ -93,13 +93,13 @@ namespace RaftDemo.NodeSoftware
         /// <param name="message"></param>
         /// <param name="channel"></param>
         /// <returns></returns>
-        public void BroadcastExcept(object message, INodeChannel except, NodeChannelType channelType = NodeChannelType.All)
+        public void BroadcastExcept(object message, INetworkSocket except)
         {
             foreach (var channel in ThreadSafeChannels)
             {
                 if (channel == except)
                     continue;
-                SendMessage(channel, message, channelType);
+                SendMessage(channel, message);
             }            
         }
         public event EventHandler<bool> IsStartedChanged;
@@ -187,7 +187,7 @@ namespace RaftDemo.NodeSoftware
                         OnCommandReceived(command);
 
                     // channels as tuples
-                    var channelEvent = evt as Tuple<INodeChannel, bool>;
+                    var channelEvent = evt as Tuple<INetworkSocket, bool>;
                     if (channelEvent != null)
                     {
                         if (IsStarted)
@@ -229,14 +229,14 @@ namespace RaftDemo.NodeSoftware
         /// should be called when underlying protocol detects that new connection is established
         /// </summary>
         /// <param name="connection"></param>
-        public void RaiseChannelAdded(INodeChannel channel)
+        public void RaiseChannelAdded(INetworkSocket channel)
         {
            
             lock(Channels)
                 Channels.Add(channel);
 
             if(IsStarted)
-                InputQueue.Add(new Tuple<INodeChannel, bool>(channel, false));
+                InputQueue.Add(new Tuple<INetworkSocket, bool>(channel, false));
         }
         /// <summary>
         /// Should be called when underlying protocol detects connection close or failure
@@ -257,11 +257,11 @@ namespace RaftDemo.NodeSoftware
             if (IsStarted)
             {
                 if (!InputQueue.IsAddingCompleted)
-                    InputQueue.Add(new Tuple<INodeChannel, bool>(channelToRemove, true));
+                    InputQueue.Add(new Tuple<INetworkSocket, bool>(channelToRemove, true));
             }
         }
 
-        public void RaisePacketReceived(object packet, INodeChannel channel)
+        public void RaisePacketReceived(object packet, INetworkSocket channel)
         {
 
             InboundMessage messageObject = new InboundMessage() { Message = packet, SourceChannel = channel };
@@ -274,10 +274,11 @@ namespace RaftDemo.NodeSoftware
         /// </summary>
         /// <param name="socket"></param>
         /// <returns></returns>
-        public INodeChannel GetChannelBySocket(object socket)
+        public INetworkSocket GetChannelBySocket(object socket)
         {
-            lock(Channels)
-                return Channels.FirstOrDefault(channel => channel.Socket == socket);
+            return null;
+           // lock(Channels)
+           //     return Channels.FirstOrDefault(channel => channel.Socket == socket);
         }
     }
 }

@@ -45,7 +45,8 @@ namespace NetworkTest
                 Check.That(client.ClientChannel.State).IsEqualTo(ConnectionState.Closed);
 
                 // Request connection to server
-                client.RequestConnectionTo("server");
+                client.RemoteAddress = "server";
+                client.IsStarted = true;
 
                 // Test client socket state after connect request
                 Check.That(client.ClientChannel.RemoteAddress).IsEqualTo("server");
@@ -84,7 +85,8 @@ namespace NetworkTest
                 Check.That(network1.ListeningSocketCount).IsEqualTo(1);
 
                 // Connect client to server
-                client.RequestConnectionTo("127.0.0.0:80");
+                client.RemoteAddress = "127.0.0.0:80";
+                client.IsStarted = true;
                 Wait(13);
 
                 // Check that connection is established on both sides
@@ -96,7 +98,7 @@ namespace NetworkTest
                 Check.That(network1.CommunicationSocketCount).IsEqualTo(2);
                 TestNetworkState(network1);
                 // Close connection from client side
-                client.Close();
+                client.IsStarted = false;
 
                 Wait(20);
                 TestNetworkState(network1);
@@ -117,7 +119,8 @@ namespace NetworkTest
                 Check.That(network1.ListeningSocketCount).IsEqualTo(1);
 
                 // Connect client to server
-                client.RequestConnectionTo("127.0.0.0:80");
+                client.RemoteAddress = "127.0.0.0:80";
+                client.IsStarted = true;
                 Wait(13);
 
                 // Check that connection is established on both sides
@@ -147,7 +150,7 @@ namespace NetworkTest
             { 
                 ConnectionEstablishLatency = 10, 
                 ConnectionCloseLatency = 10,
-                ConnectionDefaultLatency = 100
+                ConnectionDefaultLatency = 10
             })
             {
                 var server = network1.CreateServer("127.0.0.0:80");
@@ -156,14 +159,25 @@ namespace NetworkTest
                 server.MessageReceived += (o,args) =>
                 {
                     receivedMessages.Add(args);
+                    args.Socket.SendMessage("response");
                 };
                 var client1 = network1.CreateClient("127.0.0.0:1");
                 var client2 = network1.CreateClient("127.0.0.0:2");
                 var client3 = network1.CreateClient("127.0.0.0:3");
+                List<object> messagesReceivedByClients = new List<object>();
+                client1.ClientChannel.MesageReceived += (o,m) => { messagesReceivedByClients.Add(m); };
+                client2.ClientChannel.MesageReceived += (o,m) => { messagesReceivedByClients.Add(m); };
+                client3.ClientChannel.MesageReceived += (o,m) => { messagesReceivedByClients.Add(m); };
 
-                client1.RequestConnectionTo(server.ListeningChannel.LocalAddress);
-                client2.RequestConnectionTo(server.ListeningChannel.LocalAddress);
-                client3.RequestConnectionTo(server.ListeningChannel.LocalAddress);
+                client1.RemoteAddress = server.ListeningChannel.LocalAddress;
+                client1.IsStarted = true;
+
+                client2.RemoteAddress = server.ListeningChannel.LocalAddress;
+                client2.IsStarted = true;
+
+                client3.RemoteAddress = server.ListeningChannel.LocalAddress;
+                client3.IsStarted = true;
+
 
                 // wait for connection to be established
                 Thread.Sleep(12);
@@ -173,7 +187,7 @@ namespace NetworkTest
                 // wait for messages to arrive to server
                 Thread.Sleep(110);
                 Check.That(receivedMessages.Count).IsEqualTo(3);
-
+                Check.That(messagesReceivedByClients.Count).IsEqualTo(3);
             }
 
 

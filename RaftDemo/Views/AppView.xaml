@@ -56,9 +56,9 @@
                 <ListBox.BorderThickness>0</ListBox.BorderThickness>
             </ListBox>
                       
-            <Button Name="SaveDiagram" Style="{DynamicResource SquareButtonStyle}" Margin="3">Save diagram</Button>
-            <Button Name="LoadDiagram" Style="{DynamicResource SquareButtonStyle}" Margin="3">Load diagram</Button>
-            <Button Name="ClearDiagram" Style="{DynamicResource SquareButtonStyle}" Margin="3">Clear</Button>
+            <Button Name="SaveDiagram" Style="{DynamicResource SquareButtonStyle}" Margin="3">Save system</Button>
+            <Button Name="LoadDiagram" Style="{DynamicResource SquareButtonStyle}" Margin="3">Load system</Button>
+            <Button Name="ClearDiagram" Style="{DynamicResource SquareButtonStyle}" Margin="3">Clear system</Button>
             <CheckBox Name="CanEditNames">Edit labels</CheckBox>
             <Button Name="ShowWorldSettings" HorizontalAlignment="Right" Style="{DynamicResource SquareButtonStyle}" Margin="3">World settings</Button>
         </WrapPanel>

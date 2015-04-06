@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace NetworkModel
 {
+   
     public interface INetworkClient
     {
         /// <summary>
@@ -14,18 +15,20 @@ namespace NetworkModel
         INetworkSocket ClientChannel { get;}
 
         /// <summary>
-        /// Request connection to remote address
-        /// </summary>
-        /// <param name="remoteAddress"></param>
-        void RequestConnectionTo(string remoteAddress);
-
-        /// <summary>
         /// Remote address
         /// </summary>
-        string RemoteAddress { get; }
+        string RemoteAddress { get; set; }
         /// <summary>
-        /// Shutdown client
+        /// State of client(connected, etc)
         /// </summary>
-        void Close();
+        NetworkClientState State { get; }
+        /// <summary>
+        /// Fired when state changes
+        /// </summary>
+        event EventHandler<NetworkClientState> StateChanged;
+        /// <summary>
+        /// Used to control client
+        /// </summary>
+        bool IsStarted { get; set; }
     }
 }

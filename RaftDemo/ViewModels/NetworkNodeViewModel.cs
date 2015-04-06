@@ -2,6 +2,7 @@
 using RaftDemo.Model;
 using RaftDemo.NodeSoftware;
 using System;
+using NetworkModel;
 
 namespace RaftDemo.ViewModels
 {
@@ -64,7 +65,7 @@ namespace RaftDemo.ViewModels
 
             foreach (var connection in Connections)
             {
-                NodeSoftware.RaiseChannelAdded(NodeSoftware.NetworkModel.CreateChannel(connection, this));
+               // NodeSoftware.RaiseChannelAdded(NodeSoftware.NetworkModel.CreateChannel(connection, this));
             }
             NodeSoftware.Start();
             NodeSoftware.OnMessageSent += NodeSoftware_OnMessageSent;
@@ -111,16 +112,16 @@ namespace RaftDemo.ViewModels
 
         void NodeSoftware_OnMessageSent(object sender, OutboundMessage e)
         {
-            var connection = e.DestinationChannel.Socket as ConnectionViewModel;
-            connection.StartMessageAnimationFrom(this, e.Message);
+          //  var connection = e.DestinationChannel.Socket as ConnectionViewModel;
+          //  connection.StartMessageAnimationFrom(this, e.Message);
         }
         
         
         protected override void OnConnectionAdded(ConnectionViewModel connection)
         {
-            INodeChannel newChannel= NodeSoftware.NetworkModel.CreateChannel(connection, this);
+           // INetworkSocket newChannel = NodeSoftware.NetworkModel.CreateChannel(connection, this);
           
-            NodeSoftware.RaiseChannelAdded(newChannel);          
+          //  NodeSoftware.RaiseChannelAdded(newChannel);          
         }
         protected override void OnConnectionRemoved(ConnectionViewModel connection)
         {

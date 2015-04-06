@@ -89,19 +89,13 @@
     <Compile Include="Model\DiagramNodeServer.cs" />
     <Compile Include="Model\DiagramNodeBroker.cs" />
     <Compile Include="Model\DiagramNodeClient.cs" />
-    <Compile Include="Model\InProcNetworkNode.cs" />
     <Compile Include="Model\Messages.cs" />
     <Compile Include="Model\RaftClient.cs" />
-    <Compile Include="NodeSoftware\INetworkModel.cs" />
-    <Compile Include="Model\InProcNetwork.cs" />
     <Compile Include="Model\RaftHost.cs" />
     <Compile Include="Model\SimulationSettings.cs" />
     <Compile Include="Model\RaftSoundPlayer.cs" />
     <Compile Include="NodeSoftware\InboundMessage.cs" />
-    <Compile Include="NodeSoftware\INetworkNode.cs" />
     <Compile Include="NodeSoftware\NodeSoftwareBase.cs" />
-    <Compile Include="NodeSoftware\INodeChannel.cs" />
-    <Compile Include="Model\InProcNetworkChannel.cs" />
     <Compile Include="NodeSoftware\TimeoutTimer.cs" />
     <Compile Include="NodeSoftware\OutboundMessage.cs" />
     <Compile Include="ViewModels\AttachDescriptorToViewModel.cs" />
@@ -228,6 +222,10 @@
     <ProjectReference Include="..\CaliDiagram\CaliDiagram.csproj">
       <Project>{28019a1e-74d2-4481-8825-05961921db7d}</Project>
       <Name>CaliDiagram</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\NetworkModel\NetworkModel.csproj">
+      <Project>{44ca1876-b5be-4438-a0dd-bb3a7b6eed5f}</Project>
+      <Name>NetworkModel</Name>
     </ProjectReference>
     <ProjectReference Include="..\RaftAlgorithm\RaftAlgorithm.csproj">
       <Project>{17d6f49d-15f2-4963-a83b-caab1f93caa1}</Project>

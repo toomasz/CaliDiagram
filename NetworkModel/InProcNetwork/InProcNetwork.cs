@@ -29,6 +29,7 @@ namespace NetworkModel.InProcNetwork
 
         Dictionary<string, InProcSocket> listeningSockets = new Dictionary<string, InProcSocket>();
         Dictionary<SocketId, InProcSocket> communicationSockets = new Dictionary<SocketId, InProcSocket>();
+        Dictionary<SocketId, InProcSocket> connectingSockets = new Dictionary<SocketId, InProcSocket>();
         public int ListeningSocketCount
         {
             get { return listeningSockets.Count; }
@@ -64,13 +65,16 @@ namespace NetworkModel.InProcNetwork
         {
             if(clientChannel.Type != ChannelType.Client)
                 throw new Exception("Server endpoint cannot establish connections");
-
+            
             clientChannel.RemoteAddress = destinationAddress;
             clientChannel.ChangeStateTo(ConnectionState.Connecting);
-            communicationSockets.Add(SocketId.FromSocket(clientChannel), clientChannel);
+
+            connectingSockets.Add(SocketId.FromSocket(clientChannel), clientChannel);
             
             TaskScheduler.SchedluleTask(() => 
             {
+                if (!connectingSockets.Remove(SocketId.FromSocket(clientChannel)))
+                    return;
                 // Find server by listening channel
                 InProcSocket listeningChannel = null;
                 if(!listeningSockets.TryGetValue(clientChannel.RemoteAddress, out listeningChannel))
@@ -78,6 +82,9 @@ namespace NetworkModel.InProcNetwork
                     clientChannel.ChangeStateTo(ConnectionState.ConnectionFailed);
                     return;
                 }
+
+                communicationSockets.Add(SocketId.FromSocket(clientChannel), clientChannel);
+
                 // Create server client channel
                 InProcSocket serverSideChannel = new InProcSocket(this, ChannelType.Server);
                 serverSideChannel.RemoteAddress = clientChannel.LocalAddress;
@@ -99,34 +106,43 @@ namespace NetworkModel.InProcNetwork
         /// <param name="closingChannel"></param>
         internal void SocketClosingConnection(InProcSocket closingChannel)
         {
-            if (closingChannel.State != ConnectionState.Established)
+            connectingSockets.Remove(SocketId.FromSocket(closingChannel));
+            if (closingChannel.State == ConnectionState.Closed)
                 throw new Exception("Only connected socket can be closed");
-
-            closingChannel.ChangeStateTo(ConnectionState.Closed);
-            if (closingChannel.ParentServer != null)
-                closingChannel.ParentServer.RemoveClientChannel(closingChannel);
-
-            communicationSockets.Remove(SocketId.FromSocket(closingChannel));
-
-            TaskScheduler.SchedluleTask(() =>
+            else if (closingChannel.State != ConnectionState.Established)
             {
-                // find socket associated with closing one
-                InProcSocket remoteChannel = null;
-                if (!communicationSockets.TryGetValue(SocketId.RemoteSocketId(closingChannel), out remoteChannel))
-                {                    
-                    return;
-                }
+                closingChannel.ChangeStateTo(ConnectionState.Closed);
+            }
+            else
+            {
+
+                closingChannel.ChangeStateTo(ConnectionState.Closing);
+                if (closingChannel.ParentServer != null)
+                    closingChannel.ParentServer.RemoveClientChannel(closingChannel);
+
                 
-                remoteChannel.ChangeStateTo(ConnectionState.Closed);
+                communicationSockets.Remove(SocketId.FromSocket(closingChannel));
 
-                // if remote socket belongs to server
-                if (remoteChannel.ParentServer != null)                
-                    remoteChannel.ParentServer.RemoveClientChannel(remoteChannel);
-                
+                TaskScheduler.SchedluleTask(() =>
+                {
+                    // find socket associated with closing one
+                    InProcSocket remoteChannel = null;
+                    if (!communicationSockets.TryGetValue(SocketId.RemoteSocketId(closingChannel), out remoteChannel))
+                    {
+                        return;
+                    }
+                    closingChannel.ChangeStateTo(ConnectionState.Closed);
+                    remoteChannel.ChangeStateTo(ConnectionState.Closed);
 
-                communicationSockets.Remove(SocketId.FromSocket(remoteChannel));
+                    // if remote socket belongs to server
+                    if (remoteChannel.ParentServer != null)
+                        remoteChannel.ParentServer.RemoveClientChannel(remoteChannel);
 
-            },TimeSpan.FromMilliseconds(ConnectionCloseLatency));
+
+                    communicationSockets.Remove(SocketId.FromSocket(remoteChannel));
+
+                }, TimeSpan.FromMilliseconds(ConnectionCloseLatency));
+            }
         }
         int GetConnectionDelay(InProcSocket source, InProcSocket destination)
         {

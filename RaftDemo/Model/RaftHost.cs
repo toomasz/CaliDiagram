@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NetworkModel;
 
 namespace RaftDemo.Model
 {
@@ -18,9 +19,10 @@ namespace RaftDemo.Model
             this.Id = Id;
             if (Id == null)
                 throw new ArgumentException("Id");
-            Raft = new RaftNode<string>(raftEventListener, raftSettings, Id);            
+            Raft = new RaftNode<string>(raftEventListener, raftSettings, Id);
+            Server = networkModel.CreateServer(Id);
         }
-
+        INetworkServer Server { get; set; }
         public RaftNode<string> Raft
         {
             get;
@@ -44,8 +46,8 @@ namespace RaftDemo.Model
         {
             RaftTimer.Dispose();
         }
-        INodeChannel leaderChannel;
-        protected override void OnMessageReceived(INodeChannel channel, object message)
+        INetworkSocket leaderChannel;
+        protected override void OnMessageReceived(INetworkSocket channel, object message)
         {
             RaftMessageBase raftMessage = message as RaftMessageBase;
             if (raftMessage is AppendEntriesRPC<string>)
@@ -88,7 +90,7 @@ namespace RaftDemo.Model
         }
         public event EventHandler<RaftEventResult> OnRaftEvent;
 
-        void ProcessRaftResult(RaftEventResult raftResult, INodeChannel channel = null)
+        void ProcessRaftResult(RaftEventResult raftResult, INetworkSocket channel = null)
         {
             if (raftResult == null)
                 throw new ArgumentNullException("raftResult");
@@ -98,13 +100,13 @@ namespace RaftDemo.Model
             {
                 if (raftResult.DoBroadcast)
                 {
-                    BroadcastMessage(raftResult.MessageToSend, NodeChannelType.ServerToServer);
+                    BroadcastMessage(raftResult.MessageToSend);
                 }
                 else
                 {
                     if (channel == null)
                         throw new InvalidOperationException("Operation started with no channel");
-                    SendMessage(channel, raftResult.MessageToSend, NodeChannelType.ServerToServer);
+                    SendMessage(channel, raftResult.MessageToSend);
                 }
             }
             if (OnRaftEvent != null)

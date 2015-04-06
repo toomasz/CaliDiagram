@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NetworkModel;
 
 namespace RaftDemo.Model
 {
@@ -12,18 +13,26 @@ namespace RaftDemo.Model
         public RaftClient(INetworkModel networkModel, string clientId) : base(networkModel)
         {
             this.Id = clientId;
+            Client = networkModel.CreateClient(clientId);
+            Client.ClientChannel.StateChanged += ClientChannel_StateChanged;
         }
-        uint clientSequence = 0;
-        protected override void OnCommandReceived(string command)
+
+        void ClientChannel_StateChanged(object sender, ConnectionState e)
         {
-            if(command == "op")
-            {
-                string str = string.Format("c_{0}:{1}", Id, clientSequence);
-                BroadcastMessage(new Message(str));
-                clientSequence++;
-            }
+            
         }
-        protected override void OnMessageReceived(INodeChannel channel, object message)
+        public INetworkClient Client
+        {
+            get;
+            private set;
+        }
+        public string ServerAddress
+        {
+            get;
+            set;
+        }
+
+        protected override void OnMessageReceived(INetworkSocket channel, object message)
         {
             BroadcastExcept(message, channel);
         }

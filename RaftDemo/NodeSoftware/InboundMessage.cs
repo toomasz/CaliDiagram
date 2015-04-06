@@ -1,4 +1,5 @@
 ﻿
+using NetworkModel;
 namespace RaftDemo.NodeSoftware
 {
     /// <summary>
@@ -6,7 +7,7 @@ namespace RaftDemo.NodeSoftware
     /// </summary>
     public class InboundMessage
     {
-        public INodeChannel SourceChannel { get; set; }
+        public INetworkSocket SourceChannel { get; set; }
         public object Message { get; set; }
     }
 }

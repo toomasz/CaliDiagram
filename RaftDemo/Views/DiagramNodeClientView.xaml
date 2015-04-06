@@ -4,23 +4,36 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:cal="http://www.caliburnproject.org" 
+             Width="120"
              mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style TargetType="TextBox">
+            
+        </Style>
+        <Style TargetType="Button">
+            <Setter Property="FontSize" Value="10"></Setter>
+            <Setter Property="Cursor" Value="Hand"></Setter>
+        </Style>
+        
+    </UserControl.Resources>
     <Border BorderThickness="1" BorderBrush="Red" Padding="4" Background="SlateBlue">
         <StackPanel Orientation="Vertical">
-        <TextBlock 
+            <TextBlock 
             
-                Name="Name" 
-                Text="0dfea"
-                 Foreground="White" 
-                 FontFamily="Verdana" 
-                 Background="SlateBlue" 
-                 IsHitTestVisible="{Binding CanEditName}"
-                 FontSize="10" 
-                 TextAlignment="Center"                
-                 FontWeight="Bold" 
-                 >            
-        </TextBlock>
-            <Button Width="20" cal:Message.Attach="[Event Click] = [Action ButtonPressed('op')]" Height="10"></Button>
+                    Name="Name" 
+                    Text="0dfea"
+                     Foreground="White" 
+                     FontFamily="Verdana" 
+                     Background="SlateBlue" 
+                     IsHitTestVisible="{Binding CanEditName}"
+                     FontSize="10" 
+                     TextAlignment="Center"                
+                     FontWeight="Bold" 
+                     >            
+            </TextBlock>
+            <TextBox FontSize="10" Text="s123123" Name="Address"></TextBox>
+            <TextBox FontSize="10" Background="Gray" IsReadOnly="True" Name="State">Disconnected</TextBox>
+            <Button Name="StartStop" Content="{Binding ButtonText,FallbackValue='Start'}"></Button>
         </StackPanel>   
     </Border>
 </UserControl>

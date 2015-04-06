@@ -10,6 +10,8 @@ using RaftDemo.Views;
 using RaftDemo.ViewModels;
 using RaftDemo.Model;
 using RaftDemo.NodeSoftware;
+using NetworkModel;
+using NetworkModel.InProcNetwork;
 
 
 namespace RaftDemo
@@ -22,7 +24,12 @@ namespace RaftDemo
         {
             WorldSettings = new SimulationSettings(); // TODO load from xml
             raftWorldModel = new RaftSoundPlayer(WorldSettings);
-            CommunicationModel = new InProcNetwork(WorldSettings);
+            CommunicationModel = new InProcNetwork() 
+            {
+                ConnectionEstablishLatency = 500, 
+                ConnectionDefaultLatency = 100, 
+                ConnectionCloseLatency = 400 
+            };
             RaftDiagramDefinition diagramDefinition = new RaftDiagramDefinition(raftWorldModel, CommunicationModel, WorldSettings);
             Diagram1 = new DiagramViewModel(diagramDefinition);
             modelLoader = new DiagramXmlSerializer(Diagram1);
