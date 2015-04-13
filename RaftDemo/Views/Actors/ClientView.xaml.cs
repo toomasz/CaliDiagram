@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace RaftDemo.Views
+namespace RaftDemo.Views.Actors
 {
     /// <summary>
     /// Interaction logic for DiagramNodeSmallView.xaml
     /// </summary>
-    public partial class DiagramNodeClientView : UserControl
+    public partial class ClientView : UserControl
     {
-        public DiagramNodeClientView()
+        public ClientView()
         {
             InitializeComponent();
         }

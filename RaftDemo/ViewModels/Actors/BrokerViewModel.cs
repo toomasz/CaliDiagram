@@ -5,11 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RaftDemo.ViewModels
+namespace RaftDemo.ViewModels.Actors
 {
-    public class DiagramNodeBrokerViewModel: NodeBaseViewModel
+    public class BrokerViewModel: NodeBaseViewModel
     {
-        public DiagramNodeBrokerViewModel(string name)
+        public BrokerViewModel(string name)
         {
             this.Name = name;
         }

@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 using PropertyChanged;
 using NetworkModel;
 
-namespace RaftDemo.ViewModels
+namespace RaftDemo.ViewModels.Actors
 {
     [ImplementPropertyChanged]
-    public class DiagramNodeClientViewModel : NetworkNodeViewModel
+    public class ClientViewModel : ActorViewModel
     {
         RaftClient raftClient;
-        public DiagramNodeClientViewModel(RaftClient raftClient)
+        public ClientViewModel(RaftClient raftClient)
             : base(raftClient)
         {
             Name = raftClient.Id;

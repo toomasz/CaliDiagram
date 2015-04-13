@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace RaftDemo.Views
+namespace RaftDemo.Views.Actors
 {
     /// <summary>
     /// Interaction logic for DiagramNodeBroker.xaml

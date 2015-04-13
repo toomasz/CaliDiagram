@@ -11,6 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using NetworkModel;
+using RaftDemo.ViewModels.Actors;
 
 namespace RaftDemo
 {
@@ -35,32 +36,32 @@ namespace RaftDemo
             this.simulationSettings = worldSettings;
 
             // brokers
-            AddModelFor<DiagramNodeBrokerViewModel, DiagramNodeBroker>(
+            AddModelFor<BrokerViewModel, DiagramNodeBroker>(
                 "Broker",
-                (p) => new DiagramNodeBrokerViewModel(string.Format("Br{0}", brokerNo++)) { Location = p },
+                (p) => new BrokerViewModel(string.Format("Br{0}", brokerNo++)) { Location = p },
                 (vm) => new DiagramNodeBroker() { Location = vm.Location, Name = vm.Name },
-                (m) => new DiagramNodeBrokerViewModel(m.Name) { Location = m.Location }
+                (m) => new BrokerViewModel(m.Name) { Location = m.Location }
             );
 
             // clients
-            AddModelFor<DiagramNodeClientViewModel, DiagramNodeClient>(
+            AddModelFor<ClientViewModel, DiagramNodeClient>(
                 "Client",
                 (p) => 
                 {
                     string cliendId = (clientNo++).ToString();
                     RaftClient raftClient = new RaftClient(networkModel, cliendId);
-                    return new DiagramNodeClientViewModel(raftClient) { Location = p };
+                    return new ClientViewModel(raftClient) { Location = p };
                 },
                 (vm) => new DiagramNodeClient() { Location = vm.Location, Name = vm.Name },
                 (m) =>
                     {
                         RaftClient raftClient = new RaftClient(networkModel, m.Name);
-                        return new DiagramNodeClientViewModel(raftClient) { Location = m.Location };
+                        return new ClientViewModel(raftClient) { Location = m.Location };
                     }
             );
 
             // servers
-            AddModelFor<DiagramNodeServerViewModel, DiagramNodeServer>(
+            AddModelFor<ServerViewModel, DiagramNodeServer>(
                 "Server",
                 (p) =>
                     {
@@ -68,7 +69,7 @@ namespace RaftDemo
                         string raftNodeId = serverNo.ToString();
                         RaftHost serverSoftware = new RaftHost(networkModel, raftEventListener, simulationSettings, raftNodeId);
                         //this looks nasty
-                        return new DiagramNodeServerViewModel(serverSoftware) 
+                        return new ServerViewModel(serverSoftware) 
                         { 
                             Location = p
                         };
@@ -77,7 +78,7 @@ namespace RaftDemo
                 (m) =>
                     {
                         RaftHost serverSoftware = new RaftHost(networkModel, raftEventListener, simulationSettings, m.Name);
-                        return new DiagramNodeServerViewModel(serverSoftware) 
+                        return new ServerViewModel(serverSoftware) 
                         { 
                             Location = m.Location                            
                         };
@@ -91,7 +92,7 @@ namespace RaftDemo
             // No connection between same node
             if (from == to)
                 return null;
-            if (from is DiagramNodeServerViewModel && to is DiagramNodeServerViewModel)
+            if (from is ServerViewModel && to is ServerViewModel)
             {
                 connectionViewModel = new ServerToServerConnectionViewModel(from, to, simulationSettings)
                 {

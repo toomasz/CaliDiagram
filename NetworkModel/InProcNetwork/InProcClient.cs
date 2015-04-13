@@ -28,6 +28,24 @@ namespace NetworkModel.InProcNetwork
         Timer reconnectTimer = new Timer();
         void _Channel_StateChanged(object sender, ConnectionState e)
         {
+            switch (e)
+            {
+            case ConnectionState.Closed:
+                ChangeStateTo(NetworkClientState.Closed);
+                break;
+            case ConnectionState.Closing:
+                ChangeStateTo(NetworkClientState.Closed);
+                break;
+            case ConnectionState.Connecting:
+                ChangeStateTo(NetworkClientState.Connecting);
+                break;
+            case ConnectionState.ConnectionFailed:
+                ChangeStateTo(NetworkClientState.ConnectFailed);
+                break;
+            case ConnectionState.Established:
+                ChangeStateTo(NetworkClientState.Connected);
+                break;
+            }
             if (e == ConnectionState.ConnectionFailed)
             {
                 if (!IsStarted)
@@ -92,9 +110,7 @@ namespace NetworkModel.InProcNetwork
         }
 
         void Stop()
-        {
-            if (!IsStarted)
-                throw new Exception("Client is already stopped");
+        { 
             IsStarted = false;
             reconnectTimer.Stop();
             if(_Channel.State != ConnectionState.Closed)

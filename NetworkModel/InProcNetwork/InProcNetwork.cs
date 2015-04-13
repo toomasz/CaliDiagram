@@ -82,8 +82,20 @@ namespace NetworkModel.InProcNetwork
                     clientChannel.ChangeStateTo(ConnectionState.ConnectionFailed);
                     return;
                 }
+                InProcSocket communicationSocket = null;
+                communicationSockets.TryGetValue(SocketId.FromSocket(clientChannel), out communicationSocket);
 
-                communicationSockets.Add(SocketId.FromSocket(clientChannel), clientChannel);
+                // Waring - GBL code
+                if (communicationSocket != null)
+                {
+                    communicationSockets.Add(SocketId.FromSocket(clientChannel), clientChannel);                
+                    return;
+                }
+                else
+                {
+                    clientChannel.ChangeStateTo(ConnectionState.ConnectionFailed);                  
+                    
+                }
 
                 // Create server client channel
                 InProcSocket serverSideChannel = new InProcSocket(this, ChannelType.Server);

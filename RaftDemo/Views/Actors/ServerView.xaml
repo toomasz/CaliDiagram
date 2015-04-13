@@ -6,7 +6,7 @@
     xmlns:cal="http://www.caliburnproject.org" 
     xmlns:converters="clr-namespace:RaftDemo.Converters"             
     
-    x:Class="RaftDemo.Views.DiagramNodeServerView"             
+    x:Class="RaftDemo.Views.Actors.ServerView"             
     mc:Ignorable="d" 
     Width="140" 
     >

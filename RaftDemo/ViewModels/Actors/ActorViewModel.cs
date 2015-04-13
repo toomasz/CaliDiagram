@@ -4,11 +4,11 @@ using RaftDemo.NodeSoftware;
 using System;
 using NetworkModel;
 
-namespace RaftDemo.ViewModels
+namespace RaftDemo.ViewModels.Actors
 {
-    public class NetworkNodeViewModel: NodeBaseViewModel
+    public class ActorViewModel: NodeBaseViewModel
     {
-        public NetworkNodeViewModel(NodeSoftwareBase nodeSoftware)
+        public ActorViewModel(NodeSoftwareBase nodeSoftware)
         {
             StartText = "Pause";
             this.NodeSoftware = nodeSoftware;

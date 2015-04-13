@@ -100,13 +100,13 @@
     <Compile Include="NodeSoftware\OutboundMessage.cs" />
     <Compile Include="ViewModels\AttachDescriptorToViewModel.cs" />
     <Compile Include="ViewModels\AttachDescriptorFromViewModel.cs" />
-    <Compile Include="ViewModels\DiagramNodeBrokerViewModel.cs" />
+    <Compile Include="ViewModels\Actors\BrokerViewModel.cs" />
     <Compile Include="RaftDiagramDefinition.cs" />
     <Compile Include="ViewModels\LogEntryViewModel.cs" />
-    <Compile Include="ViewModels\NetworkNodeViewModel.cs" />
+    <Compile Include="ViewModels\Actors\ActorViewModel.cs" />
     <Compile Include="ViewModels\ClientToServerConnectionViewModel.cs" />
-    <Compile Include="ViewModels\DiagramNodeClientViewModel.cs" />
-    <Compile Include="ViewModels\DiagramNodeServerViewModel.cs" />
+    <Compile Include="ViewModels\Actors\ClientViewModel.cs" />
+    <Compile Include="ViewModels\Actors\ServerViewModel.cs" />
     <Compile Include="ViewModels\IShell.cs" />
     <Compile Include="ViewModels\AppViewModel.cs" />
     <Compile Include="ViewModels\ServerToServerConnectionViewModel.cs" />
@@ -117,14 +117,14 @@
     <Compile Include="Views\AttachDescriptorFromView.xaml.cs">
       <DependentUpon>AttachDescriptorFromView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\DiagramNodeBrokerView.xaml.cs">
+    <Compile Include="Views\Actors\DiagramNodeBrokerView.xaml.cs">
       <DependentUpon>DiagramNodeBrokerView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\DiagramNodeClientView.xaml.cs">
-      <DependentUpon>DiagramNodeClientView.xaml</DependentUpon>
+    <Compile Include="Views\Actors\ClientView.xaml.cs">
+      <DependentUpon>ClientView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\DiagramNodeServerView.xaml.cs">
-      <DependentUpon>DiagramNodeServerView.xaml</DependentUpon>
+    <Compile Include="Views\Actors\ServerView.xaml.cs">
+      <DependentUpon>ServerView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\LogEntryView.xaml.cs">
       <DependentUpon>LogEntryView.xaml</DependentUpon>
@@ -168,15 +168,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\DiagramNodeBrokerView.xaml">
+    <Page Include="Views\Actors\DiagramNodeBrokerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\DiagramNodeClientView.xaml">
+    <Page Include="Views\Actors\ClientView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Views\DiagramNodeServerView.xaml">
+    <Page Include="Views\Actors\ServerView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -233,7 +233,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Views\broker.png" />
+    <Resource Include="Views\Actors\broker.png" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\WindowsIcons-license.txt" />

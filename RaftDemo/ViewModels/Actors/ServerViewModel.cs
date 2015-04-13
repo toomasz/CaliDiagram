@@ -10,12 +10,12 @@ using System.Windows;
 using System.Windows.Media;
 using System.Linq;
 
-namespace RaftDemo.ViewModels
+namespace RaftDemo.ViewModels.Actors
 {
-    class DiagramNodeServerViewModel : NetworkNodeViewModel
+    class ServerViewModel : ActorViewModel
     {
         RaftHost RaftHost;
-        public DiagramNodeServerViewModel(RaftHost raftHost)
+        public ServerViewModel(RaftHost raftHost)
             : base(raftHost)
         {
             Name = raftHost.Id;

@@ -28,8 +28,8 @@ namespace RaftDemo.Model
         }
         public string ServerAddress
         {
-            get;
-            set;
+            get { return Client.RemoteAddress; }
+            set { Client.RemoteAddress = value; }
         }
 
         protected override void OnMessageReceived(INetworkSocket channel, object message)

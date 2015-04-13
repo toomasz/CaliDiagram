@@ -16,28 +16,26 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using RaftDemo.ViewModels.Actors;
 
-namespace RaftDemo.Views
+namespace RaftDemo.Views.Actors
 {
     /// <summary>
     /// Interaction logic for DiagramNodeBigView.xaml
     /// </summary>
-    public partial class DiagramNodeServerView : UserControl
+    public partial class ServerView : UserControl
     {
-        public DiagramNodeServerView()
+        public ServerView()
         {
             InitializeComponent();
             DataContextChanged += DiagramNodeBigView_DataContextChanged;
-           // Storyboard sb = this.FindResource("timerStoryboard") as Storyboard;
-         //   DoubleAnimation anim = (DoubleAnimation)sb.Children.FirstOrDefault(c => c.Name == "doubleAnimation");
-         
         }
 
       
 
         void DiagramNodeBigView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
         {
-            var vm = DataContext as DiagramNodeServerViewModel ;
+            var vm = DataContext as ServerViewModel ;
             if (vm != null)
             {
                 RaftHost raftNode = vm.NodeSoftware as RaftHost;

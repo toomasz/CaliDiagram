@@ -144,6 +144,22 @@ namespace NetworkTest
         }
 
         [TestMethod]
+        public void TestMultipleClientFromOneAddress()
+        {
+            using (InProcNetwork network = new InProcNetwork() 
+            { 
+                ConnectionEstablishLatency = 10, 
+                ConnectionCloseLatency = 10,
+                ConnectionDefaultLatency = 10
+            })
+            {
+            //    var client1 = network.CreateClient();
+           //     var client2 = network.CreateClient();
+            }
+
+        }
+
+        [TestMethod]
         public void MessageSendingAndReceiving()
         {
             using (InProcNetwork network1 = new InProcNetwork() 
