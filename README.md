@@ -15,6 +15,7 @@
  * Wire up network model to GUI for connection/socket/packet visualization,
  * Separate RaftVisualization as an example use of code from this repo,
  * Finally, make it possible to wire netowrk model to any existing messaging library, possibly NetMQ.
+ * Decide whether to rename/split CaliDiagram into several github repositories
 
 #####CaliDiagram features:
 * Creating your own diagram nodes using ViewModel first approach
