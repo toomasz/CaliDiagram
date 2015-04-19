@@ -45,7 +45,7 @@ namespace RaftDemo
 
             // clients
             AddModelFor<ClientViewModel, DiagramNodeClient>(
-                "Client",
+                "NetworkClient",
                 (p) => 
                 {
                     string cliendId = (clientNo++).ToString();

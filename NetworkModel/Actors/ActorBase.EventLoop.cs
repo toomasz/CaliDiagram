@@ -91,6 +91,12 @@ namespace NetworkModel.Actors
                 Console.WriteLine("OperationCanceledException {0}");
                 State = ActorState.Error;
             }
+
+            foreach (var clientInfo in Clients)
+            {
+                clientInfo.NetworkClient.IsStarted = false;
+                clientInfo.NetworkClient = null;
+            }
             State = ActorState.Stopped;
             Console.Write("Worker finished");
         }

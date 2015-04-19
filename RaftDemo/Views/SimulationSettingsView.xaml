@@ -22,7 +22,7 @@
                     <Label>Latency</Label>
                         <Controls:NumericUpDown  Value="{Binding ServerToServerLatency}"  StringFormat="{}{0}ms" Speedup="False" ></Controls:NumericUpDown>
                     <Slider IsSnapToTickEnabled="True" Value="{Binding ServerToServerLatency}" Minimum="10" Maximum="300" Name="ServerToServerLatency"></Slider>                
-                <Label FontWeight="Bold">Client to server connection:</Label>
+                <Label FontWeight="Bold">NetworkClient to server connection:</Label>
                     <Label>Latency</Label>
                     <Controls:NumericUpDown Value="{Binding ClientToServerLatency}" Name="ClientToServerLatency" StringFormat="{}{0}ms"></Controls:NumericUpDown>
                     <Slider IsSnapToTickEnabled="True" Value="{Binding ClientToServerLatency}" Minimum="10" Maximum="300"></Slider>

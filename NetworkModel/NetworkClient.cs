@@ -40,12 +40,6 @@ namespace NetworkModel.InProcNetwork
         {
             switch (e)
             {
-            case ConnectionState.Closed:
-                ChangeStateTo(NetworkClientState.Closed);
-                break;
-            case ConnectionState.Closing:
-                ChangeStateTo(NetworkClientState.Closed);
-                break;
             case ConnectionState.Connecting:
                 ChangeStateTo(NetworkClientState.Connecting);
                 break;
@@ -65,9 +59,12 @@ namespace NetworkModel.InProcNetwork
                 if(MaxConnectAttempts != -1)
                 {
                     if (failedCount >= MaxConnectAttempts)
+                    {
+                        ChangeStateTo(NetworkClientState.ConnectFailed);
                         return;
+                    }
                 }
-              
+                ChangeStateTo(NetworkClientState.Reconnecting);
                 
                 if (failedCount < 4)
                     reconnectTimer.Interval = 400;
@@ -139,6 +136,7 @@ namespace NetworkModel.InProcNetwork
             reconnectTimer.Stop();
             if(_Channel.State != ConnectionState.Closed)
                 _Channel.Close();
+            ChangeStateTo(NetworkClientState.Stopped);
         }
 
         public string LocalAddress

@@ -9,7 +9,7 @@ namespace NetworkModel
     public enum ChannelType
     {
         /// <summary>
-        /// Client side channel
+        /// NetworkClient side channel
         /// </summary>
         Client,
         /// <summary>

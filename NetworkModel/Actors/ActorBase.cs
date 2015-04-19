@@ -15,7 +15,7 @@ namespace NetworkModel.Actors
         public class ClientInfo
         {
             public string Address;
-            public NetworkClient Client;
+            public NetworkClient NetworkClient;
         }
 
         public INetworkModel NetworkModel { get; private set; }
@@ -51,7 +51,7 @@ namespace NetworkModel.Actors
         /// </summary>
         public int WorkingClientCount
         {
-            get { return Clients.Count(c => c.Client != null); }
+            get { return Clients.Count(c => c.NetworkClient != null); }
         }
 
 
@@ -66,11 +66,12 @@ namespace NetworkModel.Actors
 
         void CreateNetworkClient(ClientInfo client)
         {
-            if(client.Client != null)
-                throw new InvalidOperationException("Client already created for address " + client.Address);
-            NetworkClient networkClient = new NetworkClient(NetworkModel);
+            if(client.NetworkClient != null)
+                throw new InvalidOperationException("NetworkClient already created for address " + client.Address);
+
+            NetworkClient networkClient = new NetworkClient(NetworkModel) {MaxConnectAttempts = -1};
             networkClient.StartConnectingTo(client.Address);
-            client.Client = networkClient;
+            client.NetworkClient = networkClient;
         }
         public void RequestConnectionTo(string actorAddress)
         {

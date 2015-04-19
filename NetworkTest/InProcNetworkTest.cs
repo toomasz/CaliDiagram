@@ -96,10 +96,54 @@ namespace NetworkTest
 
                 Wait(20);
                 TestNetworkState(network1);
-               // Check.That(server.ClientChannels[0].State).IsEqualTo(ConnectionState.Closed);
+               // Check.That(server.ClientChannels[0].State).IsEqualTo(ConnectionState.Stopped);
                 Check.That(client.ClientChannel.State).IsEqualTo(ConnectionState.Closed);
                 Check.That(server.ClientChannels.Count).IsEqualTo(0);
                 Check.That(network1.ConnectedSocketCount).IsEqualTo(0);
+            }
+        }
+
+        [TestMethod]
+        public void ClientStateTest()
+        {
+            using(InProcNetwork network = new InProcNetwork { ConnectionEstablishLatency = 5, ConnectionCloseLatency = 5})
+
+            {
+                string serverAddress = "127.0.0.0:80";
+                var server = network.CreateServer(serverAddress);
+                var client = new NetworkClient(network);
+                client.StartConnectingTo(serverAddress);
+
+                Wait(20);
+                Check.That(client.State).IsEqualTo(NetworkClientState.Connected);
+
+                client.IsStarted = false;
+
+                Wait(20);
+                Check.That(client.State).IsEqualTo(NetworkClientState.Stopped);
+
+                client.IsStarted = true;
+
+                Wait(10);
+                Check.That(client.State).IsEqualTo(NetworkClientState.Connected);
+
+                client.IsStarted = false;
+
+                Wait(10);
+                // connect to not existing host with connect attempts = 1
+                client.MaxConnectAttempts = 1;
+                client.StartConnectingTo("127.0.0.0:81");
+                Wait(10);
+                Check.That(client.State).IsEqualTo(NetworkClientState.ConnectFailed);
+
+                client.IsStarted = false;
+
+                // connect to not existing host with connect attempts = 1
+                client.MaxConnectAttempts = -1;
+                client.StartConnectingTo("127.0.0.0:81");
+                Wait(10);
+                Check.That(client.State).IsEqualTo(NetworkClientState.Reconnecting);
+
             }
         }
 
@@ -130,7 +174,7 @@ namespace NetworkTest
 
                 Wait(20);
                 TestNetworkState(network1);
-                // Check.That(server.ClientChannels[0].State).IsEqualTo(ConnectionState.Closed);
+                // Check.That(server.ClientChannels[0].State).IsEqualTo(ConnectionState.Stopped);
                 Check.That(client.ClientChannel.State).IsEqualTo(ConnectionState.Closed);
                 Check.That(server.ClientChannels.Count).IsEqualTo(0);
                 Check.That(network1.ConnectedSocketCount).IsEqualTo(0);
@@ -164,8 +208,8 @@ namespace NetworkTest
 
                 Wait(20);
 
-                Check.That(client1.State).IsEqualTo(NetworkClientState.Closed);
-                Check.That(client2.State).IsEqualTo(NetworkClientState.Closed);
+                Check.That(client1.State).IsEqualTo(NetworkClientState.Stopped);
+                Check.That(client2.State).IsEqualTo(NetworkClientState.Stopped);
                 Check.That(network.ConnectedSocketCount).IsEqualTo(0);
                 
 
@@ -202,16 +246,16 @@ namespace NetworkTest
 
                 Wait(20);
 
-                Check.That(client1.State).IsEqualTo(NetworkClientState.Closed);
-                Check.That(client2.State).IsEqualTo(NetworkClientState.Closed);
-                Check.That(client3.State).IsEqualTo(NetworkClientState.Closed);
+                Check.That(client1.State).IsEqualTo(NetworkClientState.Stopped);
+                Check.That(client2.State).IsEqualTo(NetworkClientState.Stopped);
+                Check.That(client3.State).IsEqualTo(NetworkClientState.Stopped);
                 Check.That(network.ConnectedSocketCount).IsEqualTo(0);
 
                 Wait(500);
 
-                Check.That(client1.State).IsEqualTo(NetworkClientState.Closed);
-                Check.That(client2.State).IsEqualTo(NetworkClientState.Closed);
-                Check.That(client3.State).IsEqualTo(NetworkClientState.Closed);
+                Check.That(client1.State).IsEqualTo(NetworkClientState.Stopped);
+                Check.That(client2.State).IsEqualTo(NetworkClientState.Stopped);
+                Check.That(client3.State).IsEqualTo(NetworkClientState.Stopped);
                 Check.That(network.ConnectedSocketCount).IsEqualTo(0);
 
                 server.StartListening(serverAddress);

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace NetworkModel.Actors
 {
     /// <summary>
-    /// Client actor can only make connection to server actors
+    /// NetworkClient actor can only make connection to server actors
     /// </summary>
     public class ClientActor : ActorBase
     {
