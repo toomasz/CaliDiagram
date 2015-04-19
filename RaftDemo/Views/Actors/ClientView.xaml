@@ -20,7 +20,7 @@
         <StackPanel Orientation="Vertical">
             <TextBlock 
             
-                    Name="Name" 
+                    Name="Address" 
                     Text="0dfea"
                      Foreground="White" 
                      FontFamily="Verdana" 
@@ -31,7 +31,7 @@
                      FontWeight="Bold" 
                      >            
             </TextBlock>
-            <TextBox FontSize="10" Text="s123123" Name="Address"></TextBox>
+            <TextBox FontSize="10" Text="s123123" Name="RemoteAddress"></TextBox>
             <TextBox FontSize="10" Background="Gray" IsReadOnly="True" Name="State">Disconnected</TextBox>
             <Button Name="StartStop" Content="{Binding ButtonText,FallbackValue='Start'}"></Button>
         </StackPanel>   

@@ -16,7 +16,7 @@ namespace NetworkModel
         public object Message { get; private set;}
         public INetworkSocket Socket {get; private set;}
     }
-    public interface INetworkServer
+    public interface INetworkServer: IDisposable
     {
         /// <summary>
         /// Start accepting connections
@@ -24,6 +24,18 @@ namespace NetworkModel
         /// <param name="address"></param>
         /// <returns></returns>
         bool StartListening(string address);
+
+        /// <summary>
+        /// Stop listening in current address
+        /// </summary>
+        /// <returns></returns>
+        bool Stop();
+
+        /// <summary>
+        /// Listening address
+        /// </summary>
+        string Address { get; }
+
         /// <summary>
         /// List of all client channels
         /// </summary>
@@ -42,6 +54,9 @@ namespace NetworkModel
         /// </summary>
         event EventHandler<INetworkSocket> ClientDisconnected;
 
+        /// <summary>
+        /// Fired when message from any client is received
+        /// </summary>
         event EventHandler<MessageReceivedArgs> MessageReceived;
     }
 }

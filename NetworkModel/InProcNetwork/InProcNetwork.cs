@@ -27,22 +27,33 @@ namespace NetworkModel.InProcNetwork
         /// </summary>
         public int ConnectionDefaultLatency { get; set; }
 
-        Dictionary<string, InProcSocket> listeningSockets = new Dictionary<string, InProcSocket>();
-        Dictionary<SocketId, InProcSocket> communicationSockets = new Dictionary<SocketId, InProcSocket>();
-        Dictionary<SocketId, InProcSocket> connectingSockets = new Dictionary<SocketId, InProcSocket>();
+        /// <summary>
+        /// Listening server sockets
+        /// </summary>
+        internal Dictionary<string, InProcSocket> ListeningSockets = new Dictionary<string, InProcSocket>();
+
+        /// <summary>
+        /// SocketIds [local_address, remote_address] -> Socket that have established state
+        /// </summary>
+        internal Dictionary<SocketId, InProcSocket> EstablishedSockets = new Dictionary<SocketId, InProcSocket>();
+
+        /// <summary>
+        /// SocketIds [client_address,server_address] -> Socket that are in 'connecting' state 
+        /// </summary>
+        internal Dictionary<SocketId, InProcSocket> ConnectingSockets = new Dictionary<SocketId, InProcSocket>();
+
         public int ListeningSocketCount
         {
-            get { return listeningSockets.Count; }
+            get { return ListeningSockets.Count; }
         }
-        public int CommunicationSocketCount
+        public int ConnectedSocketCount
         {
-            get { return communicationSockets.Count; }
+            get { return EstablishedSockets.Count; }
         }
-        int clientNo = 1;
+        volatile int clientNo = 1;
         internal string GetNextClientSocketAddress()
         {
-            return string.Format("cl_{0}", clientNo);
-            clientNo++;
+            return string.Format("{0}", clientNo++);
         }
 
         public TaskScheduler TaskScheduler { get; private set; }
@@ -52,139 +63,34 @@ namespace NetworkModel.InProcNetwork
             if (channel.Type != ChannelType.Listening)
                 throw new Exception("Only listening socket can be registered");
             InProcSocket existingServer = null;
-            if (listeningSockets.TryGetValue(addres, out existingServer))
+            if (ListeningSockets.TryGetValue(addres, out existingServer))
                 throw new Exception(string.Format("Address {0} already in use"));
 
-            listeningSockets.Add(addres, channel);
+            ListeningSockets.Add(addres, channel);
         }
         internal bool UnregisterListeningEnpointFromNetwork(string address)
         {
-            return listeningSockets.Remove(address);
+            return ListeningSockets.Remove(address);
         }
-        internal void RequestClientConnectioTo(InProcSocket clientChannel, string destinationAddress)
-        {
-            if(clientChannel.Type != ChannelType.Client)
-                throw new Exception("Server endpoint cannot establish connections");
-            
-            clientChannel.RemoteAddress = destinationAddress;
-            clientChannel.ChangeStateTo(ConnectionState.Connecting);
-
-            connectingSockets.Add(SocketId.FromSocket(clientChannel), clientChannel);
-            
-            TaskScheduler.SchedluleTask(() => 
-            {
-                if (!connectingSockets.Remove(SocketId.FromSocket(clientChannel)))
-                    return;
-                // Find server by listening channel
-                InProcSocket listeningChannel = null;
-                if(!listeningSockets.TryGetValue(clientChannel.RemoteAddress, out listeningChannel))
-                {
-                    clientChannel.ChangeStateTo(ConnectionState.ConnectionFailed);
-                    return;
-                }
-                InProcSocket communicationSocket = null;
-                communicationSockets.TryGetValue(SocketId.FromSocket(clientChannel), out communicationSocket);
-
-                // Waring - GBL code
-                if (communicationSocket != null)
-                {
-                    communicationSockets.Add(SocketId.FromSocket(clientChannel), clientChannel);                
-                    return;
-                }
-                else
-                {
-                    clientChannel.ChangeStateTo(ConnectionState.ConnectionFailed);                  
-                    
-                }
-
-                // Create server client channel
-                InProcSocket serverSideChannel = new InProcSocket(this, ChannelType.Server);
-                serverSideChannel.RemoteAddress = clientChannel.LocalAddress;
-                serverSideChannel.LocalAddress = listeningChannel.LocalAddress;
-                serverSideChannel.ChangeStateTo(ConnectionState.Established);
-
-                communicationSockets.Add(SocketId.FromSocket(serverSideChannel), serverSideChannel);
-
-                clientChannel.ChangeStateTo(ConnectionState.Established);       
-         
-                listeningChannel.ParentServer.AddClientChannel(serverSideChannel);
-
-            },TimeSpan.FromMilliseconds(ConnectionEstablishLatency));
-        }
-
-        /// <summary>
-        /// Called by socket Close functiion
-        /// </summary>
-        /// <param name="closingChannel"></param>
-        internal void SocketClosingConnection(InProcSocket closingChannel)
-        {
-            connectingSockets.Remove(SocketId.FromSocket(closingChannel));
-            if (closingChannel.State == ConnectionState.Closed)
-                throw new Exception("Only connected socket can be closed");
-            else if (closingChannel.State != ConnectionState.Established)
-            {
-                closingChannel.ChangeStateTo(ConnectionState.Closed);
-            }
-            else
-            {
-
-                closingChannel.ChangeStateTo(ConnectionState.Closing);
-                if (closingChannel.ParentServer != null)
-                    closingChannel.ParentServer.RemoveClientChannel(closingChannel);
-
-                
-                communicationSockets.Remove(SocketId.FromSocket(closingChannel));
-
-                TaskScheduler.SchedluleTask(() =>
-                {
-                    // find socket associated with closing one
-                    InProcSocket remoteChannel = null;
-                    if (!communicationSockets.TryGetValue(SocketId.RemoteSocketId(closingChannel), out remoteChannel))
-                    {
-                        return;
-                    }
-                    closingChannel.ChangeStateTo(ConnectionState.Closed);
-                    remoteChannel.ChangeStateTo(ConnectionState.Closed);
-
-                    // if remote socket belongs to server
-                    if (remoteChannel.ParentServer != null)
-                        remoteChannel.ParentServer.RemoveClientChannel(remoteChannel);
-
-
-                    communicationSockets.Remove(SocketId.FromSocket(remoteChannel));
-
-                }, TimeSpan.FromMilliseconds(ConnectionCloseLatency));
-            }
-        }
-        int GetConnectionDelay(InProcSocket source, InProcSocket destination)
+        
+        internal int GetConnectionDelay(InProcSocket source, InProcSocket destination)
         {
             return ConnectionDefaultLatency;
         }
-        internal bool SocketSendMessage(InProcSocket socket, object message)
-        {
-            if (socket.State != ConnectionState.Established)
-                throw new Exception("Only connected sockets can send messages");
-            InProcSocket destinationSocket = null;
-            if(!communicationSockets.TryGetValue(SocketId.RemoteSocketId(socket), out destinationSocket))
-                throw new Exception("Failed to send message, destination socket not found");
 
-            TaskScheduler.SchedluleTask(() =>
-            {
-                destinationSocket.RaiseMessageReceived(message);
-            }, TimeSpan.FromMilliseconds(GetConnectionDelay(socket, destinationSocket)));
-            return true;
-        }
-        
-
-        public INetworkClient CreateClient(string socketAddress = null)
+        public INetworkSocket CreateClientSocket(string socketAddress = null)
         {
-            return new InProcClient(this, socketAddress);
+            if (socketAddress == null)
+                socketAddress = ":" + GetNextClientSocketAddress();
+
+            return new InProcSocket(this, ChannelType.Client) { LocalAddress = socketAddress };
         }
 
-        public INetworkServer CreateServer(string socketAddress)
+        public INetworkServer CreateServer(string socketAddress, bool startListening = true)
         {
             var server = new InProcServer(this);
-            server.StartListening(socketAddress);
+            if(startListening)
+                server.StartListening(socketAddress);
             return server;
         }
 

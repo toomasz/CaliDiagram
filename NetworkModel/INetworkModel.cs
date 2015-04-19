@@ -13,12 +13,12 @@ namespace NetworkModel
         /// </summary>
         /// <param name="clientAddress">Address of client, if null will be assigned by network</param>
         /// <returns></returns>
-        INetworkClient CreateClient(string socketAddress = null);
+        INetworkSocket CreateClientSocket(string socketAddress = null);
 
         /// <summary>
         /// Create network server
         /// </summary>
         /// <returns></returns>
-        INetworkServer CreateServer(string socketAddress);
+        INetworkServer CreateServer(string socketAddress, bool startListening = true);
     }
 }

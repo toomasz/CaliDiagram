@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace NetworkModel.InProcNetwork
 {
+    /// <summary>
+    /// SocketId is tuple [local_address, remote_address]
+    /// </summary>
     class SocketId: IEquatable<SocketId>
     {
         /// <summary>

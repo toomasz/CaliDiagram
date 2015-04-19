@@ -47,6 +47,13 @@ namespace RaftDemo.ViewModels.Actors
         }
         public string Address
         {
+            get
+            {
+                return raftClient.Client.ClientChannel.LocalAddress;
+            }
+        }
+        public string RemoteAddress
+        {
             get { return raftClient.ServerAddress; }
             set { raftClient.ServerAddress = value;}
         }

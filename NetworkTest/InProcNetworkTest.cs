@@ -15,16 +15,6 @@ namespace NetworkTest
         {
             return new InProcNetwork();
         }
-        [TestMethod]
-        public void NodeCreation()
-        {
-            INetworkModel network1 = CreateNetModel();
-            NetworkNode node1 = new NetworkNode("node1", network1);
-            NetworkNode node2 = new NetworkNode("node2", network1);
-            Check.That(() => new NetworkNode("node1", network1)).ThrowsAny();
-            Check.That(node1.Name).IsEqualTo("node1");
-            Check.That(node2.Name).IsEqualTo("node2");            
-        }
 
         void Wait(int milliseconds)
         {
@@ -41,7 +31,7 @@ namespace NetworkTest
                 Check.That(server.ListeningChannel.LocalAddress).IsEqualTo("server");
                 Check.That(server.ListeningChannel.RemoteAddress).IsNull();
 
-                INetworkClient client = network1.CreateClient("c1");
+                NetworkClient client = new NetworkClient(network1, "c1");
                 Check.That(client.ClientChannel.State).IsEqualTo(ConnectionState.Closed);
 
                 // Request connection to server
@@ -78,16 +68,20 @@ namespace NetworkTest
         [TestMethod]
         public void ConnectionCloseFromClientSide()
         {
-            using (InProcNetwork network1 = new InProcNetwork() {ConnectionEstablishLatency = 10, ConnectionCloseLatency = 10})
+            using (InProcNetwork network1 = new InProcNetwork 
+            {
+                ConnectionEstablishLatency = 10, 
+                ConnectionCloseLatency = 10
+            })
             {
                 var server = network1.CreateServer("127.0.0.0:80");
-                var client = network1.CreateClient("127.0.0.0:5341");
+                var client = new NetworkClient(network1,"127.0.0.0:5341");
                 Check.That(network1.ListeningSocketCount).IsEqualTo(1);
 
-                // Connect client to server
-                client.RemoteAddress = "127.0.0.0:80";
-                client.IsStarted = true;
-                Wait(13);
+                // Connect client to server   
+                client.StartConnectingTo("127.0.0.0:80");
+              
+                Wait(20);
 
                 // Check that connection is established on both sides
                 Check.That(client.ClientChannel.State).IsEqualTo(ConnectionState.Established);
@@ -95,7 +89,7 @@ namespace NetworkTest
                 var serverSideChannel = server.ClientChannels[0];
                 Check.That(serverSideChannel.State).IsEqualTo(ConnectionState.Established);
 
-                Check.That(network1.CommunicationSocketCount).IsEqualTo(2);
+                Check.That(network1.ConnectedSocketCount).IsEqualTo(2);
                 TestNetworkState(network1);
                 // Close connection from client side
                 client.IsStarted = false;
@@ -105,7 +99,7 @@ namespace NetworkTest
                // Check.That(server.ClientChannels[0].State).IsEqualTo(ConnectionState.Closed);
                 Check.That(client.ClientChannel.State).IsEqualTo(ConnectionState.Closed);
                 Check.That(server.ClientChannels.Count).IsEqualTo(0);
-                Check.That(network1.CommunicationSocketCount).IsEqualTo(0);
+                Check.That(network1.ConnectedSocketCount).IsEqualTo(0);
             }
         }
 
@@ -115,7 +109,7 @@ namespace NetworkTest
             using (InProcNetwork network1 = new InProcNetwork() { ConnectionEstablishLatency = 10, ConnectionCloseLatency = 10 })
             {
                 var server = network1.CreateServer("127.0.0.0:80");
-                var client = network1.CreateClient("127.0.0.0:5341");
+                var client = new NetworkClient(network1,"127.0.0.0:5341");
                 Check.That(network1.ListeningSocketCount).IsEqualTo(1);
 
                 // Connect client to server
@@ -129,7 +123,7 @@ namespace NetworkTest
                 var serverSideChannel = server.ClientChannels[0];
                 Check.That(serverSideChannel.State).IsEqualTo(ConnectionState.Established);
 
-                Check.That(network1.CommunicationSocketCount).IsEqualTo(2);
+                Check.That(network1.ConnectedSocketCount).IsEqualTo(2);
                 TestNetworkState(network1);
                 // Close connection from client side
                 serverSideChannel.Close();
@@ -139,7 +133,7 @@ namespace NetworkTest
                 // Check.That(server.ClientChannels[0].State).IsEqualTo(ConnectionState.Closed);
                 Check.That(client.ClientChannel.State).IsEqualTo(ConnectionState.Closed);
                 Check.That(server.ClientChannels.Count).IsEqualTo(0);
-                Check.That(network1.CommunicationSocketCount).IsEqualTo(0);
+                Check.That(network1.ConnectedSocketCount).IsEqualTo(0);
             }
         }
 
@@ -153,8 +147,85 @@ namespace NetworkTest
                 ConnectionDefaultLatency = 10
             })
             {
-            //    var client1 = network.CreateClient();
-           //     var client2 = network.CreateClient();
+                string serverAddress = "127.0.0.1:90";
+
+                var server = network.CreateServer(serverAddress);
+                var client1 = new NetworkClient(network);
+                var client2 = new NetworkClient(network);
+
+                client1.StartConnectingTo(serverAddress);
+                client2.StartConnectingTo(serverAddress);
+
+                Wait(20);
+
+                Check.That(network.ConnectedSocketCount).IsEqualTo(4);
+
+                server.Dispose();
+
+                Wait(20);
+
+                Check.That(client1.State).IsEqualTo(NetworkClientState.Closed);
+                Check.That(client2.State).IsEqualTo(NetworkClientState.Closed);
+                Check.That(network.ConnectedSocketCount).IsEqualTo(0);
+                
+
+            }
+
+        }
+
+        [TestMethod]
+        public void TestServerRestart()
+        {
+            using (InProcNetwork network = new InProcNetwork()
+            {
+                ConnectionEstablishLatency = 10,
+                ConnectionCloseLatency = 10,
+                ConnectionDefaultLatency = 10
+            })
+            {
+                string serverAddress = "127.0.0.1:90";
+
+                var server = network.CreateServer(serverAddress);
+                var client1 = new NetworkClient(network) { MaxConnectAttempts = 1 };
+                var client2 = new NetworkClient(network) { MaxConnectAttempts = 1 };
+                var client3 = new NetworkClient(network) { MaxConnectAttempts = 1 };
+
+                client1.StartConnectingTo(serverAddress);
+                client2.StartConnectingTo(serverAddress);
+                client3.StartConnectingTo(serverAddress);
+
+                Wait(20);
+
+                Check.That(network.ConnectedSocketCount).IsEqualTo(6);
+
+                server.Stop();
+
+                Wait(20);
+
+                Check.That(client1.State).IsEqualTo(NetworkClientState.Closed);
+                Check.That(client2.State).IsEqualTo(NetworkClientState.Closed);
+                Check.That(client3.State).IsEqualTo(NetworkClientState.Closed);
+                Check.That(network.ConnectedSocketCount).IsEqualTo(0);
+
+                Wait(500);
+
+                Check.That(client1.State).IsEqualTo(NetworkClientState.Closed);
+                Check.That(client2.State).IsEqualTo(NetworkClientState.Closed);
+                Check.That(client3.State).IsEqualTo(NetworkClientState.Closed);
+                Check.That(network.ConnectedSocketCount).IsEqualTo(0);
+
+                server.StartListening(serverAddress);
+                client1.IsStarted = false;
+                client2.IsStarted = false;
+                client3.IsStarted = false;
+
+                client1.StartConnectingTo(serverAddress);
+                client2.StartConnectingTo(serverAddress);
+                client3.StartConnectingTo(serverAddress);
+
+                Wait(20);
+
+                Check.That(network.ConnectedSocketCount).IsEqualTo(6);
             }
 
         }
@@ -177,9 +248,9 @@ namespace NetworkTest
                     receivedMessages.Add(args);
                     args.Socket.SendMessage("response");
                 };
-                var client1 = network1.CreateClient("127.0.0.0:1");
-                var client2 = network1.CreateClient("127.0.0.0:2");
-                var client3 = network1.CreateClient("127.0.0.0:3");
+                var client1 = new NetworkClient(network1,"127.0.0.0:1");
+                var client2 = new NetworkClient(network1,"127.0.0.0:2");
+                var client3 = new NetworkClient(network1, "127.0.0.0:3");
                 List<object> messagesReceivedByClients = new List<object>();
                 client1.ClientChannel.MesageReceived += (o,m) => { messagesReceivedByClients.Add(m); };
                 client2.ClientChannel.MesageReceived += (o,m) => { messagesReceivedByClients.Add(m); };

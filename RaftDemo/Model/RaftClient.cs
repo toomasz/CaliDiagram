@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NetworkModel;
+using NetworkModel.InProcNetwork;
 
 namespace RaftDemo.Model
 {
@@ -13,7 +14,7 @@ namespace RaftDemo.Model
         public RaftClient(INetworkModel networkModel, string clientId) : base(networkModel)
         {
             this.Id = clientId;
-            Client = networkModel.CreateClient(clientId);
+            Client = new NetworkClient(networkModel) { MaxConnectAttempts = -1 };
             Client.ClientChannel.StateChanged += ClientChannel_StateChanged;
         }
 
@@ -21,7 +22,7 @@ namespace RaftDemo.Model
         {
             
         }
-        public INetworkClient Client
+        public NetworkClient Client
         {
             get;
             private set;

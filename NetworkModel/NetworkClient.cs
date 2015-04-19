@@ -7,23 +7,33 @@ using System.Timers;
 
 namespace NetworkModel.InProcNetwork
 {
-    public class InProcClient: INetworkClient
+    public class NetworkClient
     {
-        public InProcClient(InProcNetwork network,string address = null)
+        public NetworkClient(INetworkModel network,string address = null)
         {
             this.Network = network;
-            if (address == null)
-                address = Network.GetNextClientSocketAddress();
 
-            _Channel = new InProcSocket(network, ChannelType.Client) { LocalAddress = address };
+            _Channel = network.CreateClientSocket(address);
             _Channel.StateChanged += _Channel_StateChanged;
             reconnectTimer.Elapsed += reconnectTimer_Elapsed;
         }
+
+        /// <summary>
+        /// Number of connect attempts
+        /// 0,1  - no attempt to reconnect, just try to connect once
+        /// -1 - infinity reconnect attempts
+        /// </summary>
+        public int MaxConnectAttempts
+        {
+            get;
+            set;
+        }
+
         int failedCount = 0;
         void reconnectTimer_Elapsed(object sender, ElapsedEventArgs e)
         {
             reconnectTimer.Stop();
-            Network.RequestClientConnectioTo(_Channel, RemoteAddress);
+            _Channel.RequestConnectionTo(RemoteAddress);
         }
         Timer reconnectTimer = new Timer();
         void _Channel_StateChanged(object sender, ConnectionState e)
@@ -46,12 +56,19 @@ namespace NetworkModel.InProcNetwork
                 ChangeStateTo(NetworkClientState.Connected);
                 break;
             }
-            if (e == ConnectionState.ConnectionFailed)
+            if (e == ConnectionState.ConnectionFailed || e == ConnectionState.Closed)
             {
+                failedCount++;
+
                 if (!IsStarted)
                     return;
-
-                failedCount++;
+                if(MaxConnectAttempts != -1)
+                {
+                    if (failedCount >= MaxConnectAttempts)
+                        return;
+                }
+              
+                
                 if (failedCount < 4)
                     reconnectTimer.Interval = 400;
                 else if (failedCount < 8)
@@ -64,9 +81,9 @@ namespace NetworkModel.InProcNetwork
                 reconnectTimer.Start();
             }
         }
-        InProcNetwork Network;
+        INetworkModel Network;
 
-        InProcSocket _Channel;
+        INetworkSocket _Channel;
         public INetworkSocket ClientChannel
         {
             get
@@ -90,6 +107,11 @@ namespace NetworkModel.InProcNetwork
                 }
             }
         }
+        public void StartConnectingTo(string remoteAddress)
+        {
+            this.RemoteAddress = remoteAddress;
+            IsStarted = true;
+        }
         void HandleStartStop(bool isStarted)
         {
             if (isStarted)
@@ -100,12 +122,14 @@ namespace NetworkModel.InProcNetwork
 
         void StartConnection(string remoteAddress)
         {
+            failedCount = 0;
+
             if (string.IsNullOrWhiteSpace(remoteAddress))
                 ChangeStateTo(NetworkClientState.InvalidAddress);
             else
             {
                 IsStarted = true;
-                Network.RequestClientConnectioTo(_Channel, remoteAddress);
+                _Channel.RequestConnectionTo(RemoteAddress);
             }
         }
 

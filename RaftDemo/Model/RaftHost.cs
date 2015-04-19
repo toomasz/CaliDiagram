@@ -20,7 +20,7 @@ namespace RaftDemo.Model
             if (Id == null)
                 throw new ArgumentException("Id");
             Raft = new RaftNode<string>(raftEventListener, raftSettings, Id);
-            Server = networkModel.CreateServer(Id);
+            Server = networkModel.CreateServer(Id, startListening: false);
         }
         INetworkServer Server { get; set; }
         public RaftNode<string> Raft
@@ -38,6 +38,7 @@ namespace RaftDemo.Model
         protected override void OnInitialized()
         {
             base.OnInitialized();
+            Server.StartListening(Id);
             RaftTimer = new TimeoutTimer(this);
             var raftOperationResult = Raft.Start();
             ProcessRaftResult(raftOperationResult);
@@ -45,6 +46,7 @@ namespace RaftDemo.Model
         protected override void OnDestroyed()
         {
             RaftTimer.Dispose();
+            Server.Dispose();
         }
         INetworkSocket leaderChannel;
         protected override void OnMessageReceived(INetworkSocket channel, object message)
@@ -112,7 +114,6 @@ namespace RaftDemo.Model
             if (OnRaftEvent != null)
                 OnRaftEvent(this, raftResult);
         }
-
         
     }
 }

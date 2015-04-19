@@ -39,15 +39,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Actors\ActorBase.cs" />
+    <Compile Include="Actors\ClientActor.cs" />
+    <Compile Include="Actors\ActorChannel.cs" />
+    <Compile Include="Actors\ServerActor.cs" />
     <Compile Include="ChannelType.cs" />
     <Compile Include="NetworkClientState.cs" />
     <Compile Include="ConnectionState.cs" />
     <Compile Include="INetworkSocket.cs" />
-    <Compile Include="INetworkClient.cs" />
     <Compile Include="INetworkModel.cs" />
     <Compile Include="INetworkServer.cs" />
     <Compile Include="InProcNetwork\InProcSocket.cs" />
-    <Compile Include="InProcNetwork\InProcClient.cs" />
+    <Compile Include="NetworkClient.cs" />
     <Compile Include="InProcNetwork\InProcNetwork.cs" />
     <Compile Include="InProcNetwork\InProcServer.cs" />
     <Compile Include="InProcNetwork\SocketId.cs" />

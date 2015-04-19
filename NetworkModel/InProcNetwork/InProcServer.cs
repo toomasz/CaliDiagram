@@ -15,13 +15,21 @@ namespace NetworkModel.InProcNetwork
         }
         InProcNetwork Network;
         public bool StartListening(string address)
-        {            
+        {
+            Address = address;
             var listeningChannel = new InProcSocket(Network, ChannelType.Listening) { LocalAddress = address };
             listeningChannel.ParentServer = this;
             Network.RegisterListeningEndpoint(address, listeningChannel);
             ListeningChannel = listeningChannel;
             return true;
         }
+
+        public string Address
+        {
+            get;
+            private set;
+        }
+
         public INetworkSocket ListeningChannel
         {
             get;
@@ -61,5 +69,30 @@ namespace NetworkModel.InProcNetwork
                 MessageReceived(this, new MessageReceivedArgs(socket, message));
         }
         public event EventHandler<MessageReceivedArgs> MessageReceived;
+
+        public void Dispose()
+        {
+            Stop();
+        }
+
+
+        public bool Stop()
+        {
+            Network.UnregisterListeningEnpointFromNetwork(Address);
+            ListeningChannel = null;
+            
+            List<INetworkSocket> sockets = new List<INetworkSocket>();
+            foreach (var clientSocket in ClientChannels)
+                sockets.Add(clientSocket);
+
+            for (int i = 0; i < sockets.Count; i++)
+            {
+                sockets[i].Close();
+            }
+            return true;
+        }
+
+
+        
     }
 }

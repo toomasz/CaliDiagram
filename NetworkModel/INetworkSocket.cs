@@ -49,5 +49,7 @@ namespace NetworkModel
         /// State of connection
         /// </summary>
         ConnectionState State { get; }
+
+        void RequestConnectionTo(string remoteAddress);
     }
 }
