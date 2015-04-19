@@ -101,6 +101,8 @@ namespace NetworkModel.InProcNetwork.TaskScheduling
             }
         }
 
+        public event EventHandler<Exception> OnException;
+
         bool RunTask(TaskSchedlulerTask task)
         {
             try
@@ -111,6 +113,8 @@ namespace NetworkModel.InProcNetwork.TaskScheduling
             }
             catch(Exception ex)
             {
+                if (OnException != null)
+                    OnException(this, ex);
                 Trace.TraceWarning("Failed to run task");
                 Exceptions.Add(ex);
                 return false;

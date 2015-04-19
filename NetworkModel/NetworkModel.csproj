@@ -40,6 +40,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actors\ActorBase.cs" />
+    <Compile Include="Actors\ActorBase.EventLoop.cs" />
+    <Compile Include="Actors\ActorEvents\ActorEventBase.cs" />
+    <Compile Include="Actors\ActorEvents\ChannelAddedEvent.cs" />
+    <Compile Include="Actors\ActorEvents\ChannelRemovedEvent.cs" />
+    <Compile Include="Actors\ActorEvents\MessageReceivedEvent.cs" />
+    <Compile Include="Actors\ActorEvents\TimerElapsedEvent.cs" />
+    <Compile Include="Actors\ActorState.cs" />
+    <Compile Include="Actors\ActorTimer.cs" />
     <Compile Include="Actors\ClientActor.cs" />
     <Compile Include="Actors\ActorChannel.cs" />
     <Compile Include="Actors\ServerActor.cs" />
@@ -58,6 +66,9 @@
     <Compile Include="InProcNetwork\TaskScheduling\TaskSchedulerTask.cs" />
     <Compile Include="NetworkNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Actors\ActorBase.VirtualFunctions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -10,36 +10,81 @@ namespace NetworkModel.Actors
     /// <summary>
     /// Base actor class
     /// </summary>
-    public class ActorBase
+    public partial class ActorBase : IDisposable
     {
+        public class ClientInfo
+        {
+            public string Address;
+            public NetworkClient Client;
+        }
+
         public INetworkModel NetworkModel { get; private set; }
         public ActorBase(INetworkModel networkModel)
         {
             this.NetworkModel = networkModel;
+            Clients = new List<ClientInfo>();
         }
 
-        public List<NetworkClient> Clients { get; private set; }
-        
+        public List<ClientInfo> Clients { get; private set; } 
+
+        /// <summary>
+        /// Actor state
+        /// </summary>
+        public ActorState State { get; private set; }
+
+        /// <summary>
+        /// Start actor
+        /// </summary>
+        public virtual void Start()
+        {
+            State = ActorState.Starting;
+            RequestStartEventLoop();
+
+            foreach (var clientInfo in Clients)
+            {
+                CreateNetworkClient(clientInfo);
+            }
+        }
+
+        /// <summary>
+        /// Return numbers of client attempting to connect to other actors
+        /// </summary>
+        public int WorkingClientCount
+        {
+            get { return Clients.Count(c => c.Client != null); }
+        }
+
+
+        /// <summary>
+        /// Stop actor
+        /// </summary>
+        public virtual void Stop()
+        {
+            State = ActorState.Stopping;
+            RequestStopEventLoop();
+        }
+
+        void CreateNetworkClient(ClientInfo client)
+        {
+            if(client.Client != null)
+                throw new InvalidOperationException("Client already created for address " + client.Address);
+            NetworkClient networkClient = new NetworkClient(NetworkModel);
+            networkClient.StartConnectingTo(client.Address);
+            client.Client = networkClient;
+        }
         public void RequestConnectionTo(string actorAddress)
         {
-            NetworkClient Client = new NetworkClient(NetworkModel);
-            Clients.Add(Client);
-            Client.RemoteAddress = actorAddress;
-            Client.IsStarted = true;
-           
-        }
-
-        public virtual void MessageReceived(object message, ActorChannel source)
-        {
+            ClientInfo client = new ClientInfo {Address = actorAddress};
+            Clients.Add(client);
+            if (State == ActorState.Started)
+                CreateNetworkClient(client);
             
         }
-        public virtual void ChannelCreated(ActorChannel channel)
-        {
 
-        }
-        public virtual void ChannelDestoryed(ActorChannel channel)
+        
+        public void Dispose()
         {
-           
+            
         }
     }
 }

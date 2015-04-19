@@ -14,25 +14,48 @@ namespace NetworkModel.Actors
         public INetworkServer Server { get; private set; }
         public ServerActor(INetworkModel networkModel, string address):base(networkModel)
         {
-            Server = networkModel.CreateServer(address);
+            Address = address;
+            Server = networkModel.CreateServer(address, false);
             Server.MessageReceived += Server_MessageReceived;
             Server.ClientConnected += Server_ClientConnected;
             Server.ClientDisconnected += Server_ClientDisconnected;
         }
+        /// <summary>
+        /// Listening address
+        /// </summary>
+        public string Address { get; private set; }
+        public override void Start()
+        {
+            base.Start();
+            Server.StartListening(Address);
+        }
 
+        public override void Stop()
+        {
+            base.Stop();
+            Server.Stop();
+        }
+
+        Dictionary<INetworkSocket, ActorChannel> ServerSocketToChannel = new Dictionary<INetworkSocket, ActorChannel>();
+        
         void Server_ClientDisconnected(object sender, INetworkSocket e)
         {
-            
+            ActorChannel actorChannel = new ActorChannel(e);
+            ServerSocketToChannel.Add(e, actorChannel);
+            RaiseChannelRemoved(actorChannel);
         }
 
         void Server_ClientConnected(object sender, INetworkSocket e)
         {
-            
+            var channel = ServerSocketToChannel[e];
+            RaiseChannelAdded(channel);
         }
 
         void Server_MessageReceived(object sender, MessageReceivedArgs e)
         {
-            base.MessageReceived(e.Message, new ActorChannel(e.Socket));
+            var channel = ServerSocketToChannel[e.Socket];
+            RaiseMessageReceived(channel, e.Message);
         }
+        
     }
 }

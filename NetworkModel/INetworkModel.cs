@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace NetworkModel
 {
-    public interface INetworkModel
+    public interface INetworkModel : IDisposable
     {
         /// <summary>
         /// Create network client
@@ -20,5 +20,20 @@ namespace NetworkModel
         /// </summary>
         /// <returns></returns>
         INetworkServer CreateServer(string socketAddress, bool startListening = true);
+
+        /// <summary>
+        /// Number of listening sockets in network model instance
+        /// </summary>
+        int ListeningSocketCount { get; }
+
+        /// <summary>
+        /// Number of connected sockets in network model instance
+        /// </summary>
+        int ConnectedSocketCount { get; }
+
+        /// <summary>
+        /// Exceptions thrown from other threads
+        /// </summary>
+        List<Exception> Exceptions { get; } 
     }
 }

@@ -12,6 +12,7 @@ namespace NetworkModel.InProcNetwork
         {
             ConnectionEstablishLatency = 0;
             TaskScheduler = new TaskScheduler();
+            Exceptions = new List<Exception>();
         }        
 
         /// <summary>
@@ -98,5 +99,10 @@ namespace NetworkModel.InProcNetwork
         {
             TaskScheduler.Dispose();
         }
+
+        /// <summary>
+        /// Exceptions occured in other threads
+        /// </summary>
+        public List<Exception> Exceptions { get; private set; }
     }
 }

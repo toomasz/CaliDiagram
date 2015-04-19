@@ -15,6 +15,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetworkModel", "NetworkMode
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskSchedulerRun", "TaskSchedulerRun\TaskSchedulerRun.csproj", "{F7117825-CEBA-406F-A36D-5AC6EC8B21C8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{7F1C7E91-5A81-4DCA-A1A0-F9EC76234E50}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActorTest", "ActorTest\ActorTest.csproj", "{99B2CD00-E8C0-4098-A6EA-6D76CABEA28D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,8 +91,22 @@ Global
 		{F7117825-CEBA-406F-A36D-5AC6EC8B21C8}.Release|ARM.ActiveCfg = Release|Any CPU
 		{F7117825-CEBA-406F-A36D-5AC6EC8B21C8}.Release|x64.ActiveCfg = Release|Any CPU
 		{F7117825-CEBA-406F-A36D-5AC6EC8B21C8}.Release|x86.ActiveCfg = Release|Any CPU
+		{99B2CD00-E8C0-4098-A6EA-6D76CABEA28D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99B2CD00-E8C0-4098-A6EA-6D76CABEA28D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99B2CD00-E8C0-4098-A6EA-6D76CABEA28D}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{99B2CD00-E8C0-4098-A6EA-6D76CABEA28D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{99B2CD00-E8C0-4098-A6EA-6D76CABEA28D}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{99B2CD00-E8C0-4098-A6EA-6D76CABEA28D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99B2CD00-E8C0-4098-A6EA-6D76CABEA28D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99B2CD00-E8C0-4098-A6EA-6D76CABEA28D}.Release|ARM.ActiveCfg = Release|Any CPU
+		{99B2CD00-E8C0-4098-A6EA-6D76CABEA28D}.Release|x64.ActiveCfg = Release|Any CPU
+		{99B2CD00-E8C0-4098-A6EA-6D76CABEA28D}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{33347B72-6FA5-451D-921A-B0724AE8BFE5} = {7F1C7E91-5A81-4DCA-A1A0-F9EC76234E50}
+		{99B2CD00-E8C0-4098-A6EA-6D76CABEA28D} = {7F1C7E91-5A81-4DCA-A1A0-F9EC76234E50}
 	EndGlobalSection
 EndGlobal
