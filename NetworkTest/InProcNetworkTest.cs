@@ -126,13 +126,22 @@ namespace NetworkTest
 
                 Wait(10);
                 Check.That(client.State).IsEqualTo(NetworkClientState.Connected);
-
-                client.IsStarted = false;
-
-                Wait(10);
-                // connect to not existing host with connect attempts = 1
-                client.MaxConnectAttempts = 1;
-                client.StartConnectingTo("127.0.0.0:81");
+            }
+        }
+        [TestMethod]
+        public void ClientReconnect()
+        {
+            using (InProcNetwork network = new InProcNetwork { ConnectionEstablishLatency = 5, ConnectionCloseLatency = 5 })
+            {
+                string serverAddress = "127.0.0.0:80";
+                
+                var server = network.CreateServer(serverAddress, startListening:false);
+                var client = new NetworkClient(network) {MaxConnectAttempts = 1};
+                
+                client.StartConnectingTo(serverAddress);
+                // server is not started
+                Wait(5);
+                client.StartConnectingTo(serverAddress);
                 Wait(10);
                 Check.That(client.State).IsEqualTo(NetworkClientState.ConnectFailed);
 
@@ -140,13 +149,15 @@ namespace NetworkTest
 
                 // connect to not existing host with connect attempts = 1
                 client.MaxConnectAttempts = -1;
-                client.StartConnectingTo("127.0.0.0:81");
+                client.StartConnectingTo(serverAddress);
                 Wait(10);
                 Check.That(client.State).IsEqualTo(NetworkClientState.Reconnecting);
 
+                server.StartListening(serverAddress);
+                Wait(800);
+                Check.That(client.State).IsEqualTo(NetworkClientState.Connected);
             }
         }
-
         [TestMethod]
         public void ConnectionCloseFromServerSide()
         {
