@@ -22,10 +22,13 @@ namespace NetworkModel.Actors
         public ActorBase(INetworkModel networkModel)
         {
             this.NetworkModel = networkModel;
-            Clients = new List<ClientInfo>();
+            NetworkClientContexts = new List<ClientInfo>();
         }
 
-        public List<ClientInfo> Clients { get; private set; } 
+        /// <summary>
+        /// List of client contexts [client - this actor to server - other actor] connections
+        /// </summary>
+        public List<ClientInfo> NetworkClientContexts { get; private set; } 
 
         /// <summary>
         /// Actor state
@@ -40,7 +43,7 @@ namespace NetworkModel.Actors
             State = ActorState.Starting;
             RequestStartEventLoop();
 
-            foreach (var clientInfo in Clients)
+            foreach (var clientInfo in NetworkClientContexts)
             {
                 CreateNetworkClient(clientInfo);
             }
@@ -51,7 +54,7 @@ namespace NetworkModel.Actors
         /// </summary>
         public int WorkingClientCount
         {
-            get { return Clients.Count(c => c.NetworkClient != null); }
+            get { return NetworkClientContexts.Count(c => c.NetworkClient != null); }
         }
 
 
@@ -73,10 +76,10 @@ namespace NetworkModel.Actors
             networkClient.StartConnectingTo(client.Address);
             client.NetworkClient = networkClient;
         }
-        public void RequestConnectionTo(string actorAddress)
+        public void AddConnectionTo(string actorAddress)
         {
             ClientInfo client = new ClientInfo {Address = actorAddress};
-            Clients.Add(client);
+            NetworkClientContexts.Add(client);
             if (State == ActorState.Started)
                 CreateNetworkClient(client);
             

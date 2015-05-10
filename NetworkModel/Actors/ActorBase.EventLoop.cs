@@ -73,7 +73,7 @@ namespace NetworkModel.Actors
 
                     // channel added
                     var channelAddedEvent = evt as ChannelAddedEvent;
-                    if(channelAddedEvent != null)
+                    if (channelAddedEvent != null)
                     {
                         OnChannelCreated(channelAddedEvent.Channel);
                     }
@@ -86,7 +86,7 @@ namespace NetworkModel.Actors
 
                     // message received
                     var messageReceivedEvent = evt as MessageReceivedEvent;
-                    if(messageReceivedEvent != null)
+                    if (messageReceivedEvent != null)
                     {
                         OnMessageReceived(messageReceivedEvent.Channel, messageReceivedEvent.Message);
                     }
@@ -95,7 +95,7 @@ namespace NetworkModel.Actors
                     var timerElapsedEvent = evt as TimerElapsedEvent;
                     if (evt != null)
                     {
-                        
+
                     }
 
                     // dispatch event to listeners
@@ -103,13 +103,18 @@ namespace NetworkModel.Actors
                     DispatchActorEvent(evt);
                 }
             }
-            catch (OperationCanceledException)
+            catch (OperationCanceledException ex)
             {
-                Console.WriteLine("OperationCanceledException {0}");
+                Console.WriteLine("OperationCanceledException {0}", ex.Message);
+                State = ActorState.Error;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Actor Event loop exception {0}", ex.Message);
                 State = ActorState.Error;
             }
 
-            foreach (var clientInfo in Clients)
+            foreach (var clientInfo in NetworkClientContexts)
             {
                 clientInfo.NetworkClient.IsStarted = false;
                 clientInfo.NetworkClient = null;
