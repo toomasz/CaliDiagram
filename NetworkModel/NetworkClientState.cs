@@ -42,6 +42,11 @@ namespace NetworkModel
         /// <summary>
         /// Disconnecting
         /// </summary>
-        Disconnecting
+        Disconnecting,
+        /// <summary>
+        /// Connection was closed due to server decision/failure or data link failure
+        /// Client might enter this state if MaxReconnectProbes is set to 1
+        /// </summary>
+        Disconnected
     }
 }

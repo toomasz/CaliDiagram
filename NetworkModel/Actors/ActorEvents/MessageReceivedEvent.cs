@@ -13,6 +13,14 @@ namespace NetworkModel.Actors.ActorEvents
             Message = message;
             Channel = channel;
         }
+
+        public override ActorEventType EventType
+        {
+            get
+            {
+                 return ActorEventType.MessageReceived;
+            }
+        }
         public ActorChannel Channel { get; private set; }
         public object Message { get; private set; }
     }

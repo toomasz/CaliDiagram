@@ -14,8 +14,9 @@ namespace NetworkModel.InProcNetwork
             this.Network = network;
 
             _Channel = network.CreateClientSocket(address);
-            _Channel.StateChanged += _Channel_StateChanged;
+            
             reconnectTimer.Elapsed += reconnectTimer_Elapsed;
+            MaxConnectAttempts = 1;
         }
 
         /// <summary>
@@ -36,48 +37,74 @@ namespace NetworkModel.InProcNetwork
             _Channel.RequestConnectionTo(RemoteAddress);
         }
         Timer reconnectTimer = new Timer();
-        void _Channel_StateChanged(object sender, ConnectionState e)
+
+        private void _Channel_StateChanged(object sender, ConnectionState e)
         {
             switch (e)
             {
-            case ConnectionState.Connecting:
-                ChangeStateTo(NetworkClientState.Connecting);
-                break;
-            case ConnectionState.ConnectionFailed:
-                ChangeStateTo(NetworkClientState.ConnectFailed);
-                break;
-            case ConnectionState.Established:
-                ChangeStateTo(NetworkClientState.Connected);
-                break;
-            }
-            if (e == ConnectionState.ConnectionFailed || e == ConnectionState.Closed)
-            {
-                failedCount++;
-
-                if (!IsStarted)
-                    return;
-                if(MaxConnectAttempts != -1)
+                case ConnectionState.Connecting:
+                    ChangeStateTo(NetworkClientState.Connecting);
+                    break;
+                case ConnectionState.Established:
+                    ChangeStateTo(NetworkClientState.Connected);
+                    break;
+                case ConnectionState.Closed:
                 {
-                    if (failedCount >= MaxConnectAttempts)
+                    failedCount++;
+                    if (MaxConnectAttempts != -1)
                     {
-                        ChangeStateTo(NetworkClientState.ConnectFailed);
-                        return;
+                        if (failedCount >= MaxConnectAttempts)
+                        {
+                            ChangeStateTo(NetworkClientState.Disconnected);
+                            return;
+                        }
                     }
-                }
-                ChangeStateTo(NetworkClientState.Reconnecting);
-                
-                if (failedCount < 4)
-                    reconnectTimer.Interval = 400;
-                else if (failedCount < 8)
-                    reconnectTimer.Interval = 800;
-                else if (failedCount < 16)
-                    reconnectTimer.Interval = 1800;
-                else
-                    reconnectTimer.Interval = 4000;
+                    ChangeStateTo(NetworkClientState.Reconnecting);
 
-                reconnectTimer.Start();
+                    if (failedCount < 4)
+                        reconnectTimer.Interval = 400;
+                    else if (failedCount < 8)
+                        reconnectTimer.Interval = 800;
+                    else if (failedCount < 16)
+                        reconnectTimer.Interval = 1800;
+                    else
+                        reconnectTimer.Interval = 4000;
+
+                    reconnectTimer.Start();
+                    break;
+                }
+                case ConnectionState.ConnectionFailed:
+                {
+                    failedCount++;
+
+                    if (!IsStarted)
+                        return;
+
+                    if (MaxConnectAttempts != -1)
+                    {
+                        if (failedCount >= MaxConnectAttempts)
+                        {
+                            ChangeStateTo(NetworkClientState.ConnectFailed);
+                            return;
+                        }
+                    }
+                    ChangeStateTo(NetworkClientState.Reconnecting);
+
+                    if (failedCount < 4)
+                        reconnectTimer.Interval = 400;
+                    else if (failedCount < 8)
+                        reconnectTimer.Interval = 800;
+                    else if (failedCount < 16)
+                        reconnectTimer.Interval = 1800;
+                    else
+                        reconnectTimer.Interval = 4000;
+
+                    reconnectTimer.Start();
+                    break;
+                }
             }
         }
+
         INetworkModel Network;
 
         INetworkSocket _Channel;
@@ -119,6 +146,7 @@ namespace NetworkModel.InProcNetwork
 
         void StartConnection(string remoteAddress)
         {
+            _Channel.StateChanged += _Channel_StateChanged;
             failedCount = 0;
 
             if (string.IsNullOrWhiteSpace(remoteAddress))
@@ -134,6 +162,7 @@ namespace NetworkModel.InProcNetwork
         { 
             IsStarted = false;
             reconnectTimer.Stop();
+            _Channel.StateChanged -= _Channel_StateChanged;
             if(_Channel.State != ConnectionState.Closed)
                 _Channel.Close();
             ChangeStateTo(NetworkClientState.Stopped);

@@ -6,8 +6,11 @@ using System.Threading.Tasks;
 
 namespace NetworkModel.Actors.ActorEvents
 {
-    public abstract class ActorEventBase
+    public enum ActorEventType
     {
-        public abstract ActorEventType EventType { get; }
+        ChannelAdded,
+        ChannelRemoved,
+        MessageReceived,
+        TimerElapsed
     }
 }

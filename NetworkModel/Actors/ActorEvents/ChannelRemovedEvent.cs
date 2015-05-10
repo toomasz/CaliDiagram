@@ -12,6 +12,13 @@ namespace NetworkModel.Actors.ActorEvents
         {
             Channel = channel;
         }
+        public override ActorEventType EventType
+        {
+            get
+            {
+                return ActorEventType.ChannelRemoved;
+            }
+        }
         public ActorChannel Channel { get ; private set;}
     }
 }

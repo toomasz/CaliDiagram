@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NetworkModel.Actors.ActorEvents;
 
 namespace NetworkModel.Actors
 {
@@ -14,5 +15,8 @@ namespace NetworkModel.Actors
         protected virtual void OnChannelRemoved(ActorChannel channel) { }
         protected virtual void OnMessageReceived(ActorChannel channel, object message) { }
         protected virtual void OnCommandReceived(string command) { }
+
+
+        public event EventHandler<ActorEventBase> ActorEvent;
     }
 }

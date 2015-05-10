@@ -49,6 +49,13 @@ namespace NetworkModel.Actors
             private set;
         }
 
+        public void DispatchActorEvent(ActorEventBase actorEvent)
+        {
+            EventHandler<ActorEventBase> actorEventHandler = ActorEvent;
+            if (actorEventHandler != null)
+                actorEventHandler(this, actorEvent);
+        }
+
         void EventLoop()
         {
             
@@ -83,7 +90,17 @@ namespace NetworkModel.Actors
                     {
                         OnMessageReceived(messageReceivedEvent.Channel, messageReceivedEvent.Message);
                     }
-                   
+
+                    // timer elapsed
+                    var timerElapsedEvent = evt as TimerElapsedEvent;
+                    if (evt != null)
+                    {
+                        
+                    }
+
+                    // dispatch event to listeners
+
+                    DispatchActorEvent(evt);
                 }
             }
             catch (OperationCanceledException)

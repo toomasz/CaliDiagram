@@ -42,6 +42,7 @@
     <Compile Include="Actors\ActorBase.cs" />
     <Compile Include="Actors\ActorBase.EventLoop.cs" />
     <Compile Include="Actors\ActorEvents\ActorEventBase.cs" />
+    <Compile Include="Actors\ActorEvents\ActorEventType.cs" />
     <Compile Include="Actors\ActorEvents\ChannelAddedEvent.cs" />
     <Compile Include="Actors\ActorEvents\ChannelRemovedEvent.cs" />
     <Compile Include="Actors\ActorEvents\MessageReceivedEvent.cs" />
