@@ -40,15 +40,17 @@ namespace NetworkModel.Actors
         
         void Server_ClientDisconnected(object sender, INetworkSocket e)
         {
-            ActorChannel actorChannel = new ActorChannel(e);
-            ServerSocketToChannel.Add(e, actorChannel);
-            RaiseChannelRemoved(actorChannel);
+            
+            var channel = ServerSocketToChannel[e];
+            
+            RaiseChannelRemoved(channel);
         }
 
         void Server_ClientConnected(object sender, INetworkSocket e)
         {
-            var channel = ServerSocketToChannel[e];
-            RaiseChannelAdded(channel);
+            ActorChannel actorChannel = new ActorChannel(e);
+            ServerSocketToChannel.Add(e, actorChannel);
+            RaiseChannelAdded(actorChannel);
         }
 
         void Server_MessageReceived(object sender, MessageReceivedArgs e)

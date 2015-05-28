@@ -47,9 +47,14 @@ namespace NetworkModel.InProcNetwork
                     break;
                 case ConnectionState.Established:
                     ChangeStateTo(NetworkClientState.Connected);
+                    RaiseConnectionStateChaned(true);
+                    break;
+                case  ConnectionState.Closing:
+                    RaiseConnectionStateChaned(false);
                     break;
                 case ConnectionState.Closed:
                 {
+                    RaiseConnectionStateChaned(false);
                     failedCount++;
                     if (MaxConnectAttempts != -1)
                     {
@@ -75,6 +80,7 @@ namespace NetworkModel.InProcNetwork
                 }
                 case ConnectionState.ConnectionFailed:
                 {
+                    RaiseConnectionStateChaned(false);
                     failedCount++;
 
                     if (!IsStarted)
@@ -199,6 +205,23 @@ namespace NetworkModel.InProcNetwork
             private set;
         }
 
+        public bool IsEstablished { get; private set; }
+        void RaiseConnectionStateChaned(bool isEstablished)
+        {
+            if (IsEstablished != isEstablished)
+            {
+                IsEstablished = isEstablished;
+                var connectionStateChanged = ConnectionStateChanged;
+                if (connectionStateChanged != null)
+                    connectionStateChanged(this, isEstablished);
+            }
+        }
         public event EventHandler<NetworkClientState> StateChanged;
+        /// <summary>
+        /// Fired when connection is established/closed
+        /// true-established
+        /// false-closed
+        /// </summary>
+        public event EventHandler<bool> ConnectionStateChanged;
     }
 }

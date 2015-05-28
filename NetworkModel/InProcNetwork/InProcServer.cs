@@ -38,11 +38,15 @@ namespace NetworkModel.InProcNetwork
 
         internal void AddClientChannel(InProcSocket newClient)
         {
+            if (ClientConnected != null)
+                ClientConnected(this, newClient);
             ClientChannels.Add(newClient);
             newClient.ParentServer = this;
         }
         internal void RemoveClientChannel(InProcSocket exisitingClient)
         {
+            if (ClientDisconnected != null)
+                ClientDisconnected(this, exisitingClient);
             exisitingClient.ParentServer = null;
             if (!ClientChannels.Remove(exisitingClient))
                 throw new Exception("Failed to remove socket from server client list: " + exisitingClient.ToString());

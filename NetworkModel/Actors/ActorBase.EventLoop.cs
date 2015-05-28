@@ -32,11 +32,14 @@ namespace NetworkModel.Actors
         }
         protected void RaiseChannelAdded(ActorChannel channel)
         {
+            Channels.Add(channel);
             var channelAddedEvent = new ChannelAddedEvent(channel);
             InputQueue.Add(channelAddedEvent);
         }
         protected void RaiseChannelRemoved(ActorChannel channel)
         {
+            if(!Channels.Remove(channel))
+                throw new InvalidOperationException("Failed to remove channel from actor");
             var channelRemovedEvent = new ChannelRemovedEvent(channel);
             InputQueue.Add(channelRemovedEvent);
         }

@@ -13,5 +13,10 @@ namespace ActorTest
         public TestClientActor(INetworkModel networkModel) : base(networkModel)
         {
         }
+
+        public void BroadcastMessage(object message)
+        {
+            
+        }
     }
 }

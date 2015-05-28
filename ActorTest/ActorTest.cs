@@ -164,7 +164,8 @@ namespace ActorTest
 
                 Check.That(clientActor1.WorkingClientCount).IsEqualTo(1);
 
-                Check.That(serverActorEvents.Count).IsEqualTo(2);
+                Check.That(serverActorEvents.Count).IsEqualTo(1);
+                Check.That(serverActorEvents[0]).IsInstanceOf<ChannelAddedEvent>();
 
             }
         }

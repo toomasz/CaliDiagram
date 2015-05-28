@@ -18,15 +18,20 @@ namespace NetworkModel.Actors
             public NetworkClient NetworkClient;
         }
 
-        public INetworkModel NetworkModel { get; private set; }
         public ActorBase(INetworkModel networkModel)
         {
             this.NetworkModel = networkModel;
             NetworkClientContexts = new List<ClientInfo>();
+            Channels = new List<ActorChannel>();
         }
 
         /// <summary>
-        /// List of client contexts [client - this actor to server - other actor] connections
+        /// Network model used by actor
+        /// </summary>
+        public INetworkModel NetworkModel { get; private set; }
+
+        /// <summary>
+        /// List of clientInfo contexts [clientInfo - this actor to server - other actor] connections
         /// </summary>
         public List<ClientInfo> NetworkClientContexts { get; private set; } 
 
@@ -35,6 +40,7 @@ namespace NetworkModel.Actors
         /// </summary>
         public ActorState State { get; private set; }
 
+        public List<ActorChannel> Channels { get; private set; } 
         /// <summary>
         /// Start actor
         /// </summary>
@@ -50,7 +56,7 @@ namespace NetworkModel.Actors
         }
 
         /// <summary>
-        /// Return numbers of client attempting to connect to other actors
+        /// Return numbers of clientInfo attempting to connect to other actors
         /// </summary>
         public int WorkingClientCount
         {
@@ -67,15 +73,23 @@ namespace NetworkModel.Actors
             RequestStopEventLoop();
         }
 
-        void CreateNetworkClient(ClientInfo client)
+        void CreateNetworkClient(ClientInfo clientInfo)
         {
-            if(client.NetworkClient != null)
-                throw new InvalidOperationException("NetworkClient already created for address " + client.Address);
+            if(clientInfo.NetworkClient != null)
+                throw new InvalidOperationException("NetworkClient already created for address " + clientInfo.Address);
 
             NetworkClient networkClient = new NetworkClient(NetworkModel) {MaxConnectAttempts = -1};
-            networkClient.StartConnectingTo(client.Address);
-            client.NetworkClient = networkClient;
+            networkClient.StartConnectingTo(clientInfo.Address);
+            networkClient.ConnectionStateChanged += networkClient_ConnectionStateChanged;
+            clientInfo.NetworkClient = networkClient;
         }
+
+        void networkClient_ConnectionStateChanged(object sender, bool e)
+        {
+            throw new NotImplementedException();
+        }
+
+    
         public void AddConnectionTo(string actorAddress)
         {
             ClientInfo client = new ClientInfo {Address = actorAddress};
@@ -85,6 +99,15 @@ namespace NetworkModel.Actors
             
         }
 
+        protected void SendMessage(ActorChannel channel, object message)
+        {
+            channel.Socket.SendMessage(message);
+        }
+
+        protected virtual void BroadcastMessage(object message)
+        {
+           throw  new NotImplementedException();
+        }
         
         public void Dispose()
         {
